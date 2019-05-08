@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "yarn && react-scripts build",
     "build:prod": "REACT_APP_STAGE=prod yarn build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
