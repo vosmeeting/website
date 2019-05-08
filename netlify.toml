@@ -1,7 +1,7 @@
 [build]
   base    = "client"
   command = "yarn build"
-  publish = "build"
+  publish = "client/build"
 # [[redirects]]
 #   from = "/*"
 #   to = "/index.html"
