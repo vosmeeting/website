@@ -1,0 +1,25 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "Website for the annual VOS Meeting",
+  "license": "MIT",
+  "author": {
+    "name": "Phil Armour",
+    "url": "https://vosmeeting.com"
+  },
+  "scripts": {
+    "start": "cd client && yarn start",
+    "build": "cd client && yarn build",
+    "build:prod": "cd client && yarn build:prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vosmeeting/website"
+  },
+  "bugs": {
+    "url": "https://github.com/vosmeeting/website/issues"
+  },
+  "keywords": [
+    "vosm"
+  ]
+}
