@@ -116,7 +116,7 @@ class RegisterInfo extends Component {
   render() {
     const isRegistered = (
       <div>
-        <h5>If paying by credit card</h5>
+        <h5>Please pay by credit card</h5>
         <p>You should receive a receipt from Stripe in a few minutes after the payment is processed. If you don't receive the email or if there's an error in payment - please <a href="mailto:vetophthosurgerymeeting@gmail.com">email us</a> with details. <b>You may close this window after receiving the email receipt.</b></p> 
         <h5>Cancellation Policy</h5>
         <p>Cancellations received by June 4th  will receive a full refund less a 10% administrative fee. 
@@ -213,7 +213,6 @@ class RegisterForm extends React.Component {
 
     
     const soldOut = (this.props.availability.registration <= 0);
-
     const dipdisabled = (this.props.dipRegistrantNumber <= 0);
     const otherdisabled = (this.props.otherRegistrantNumber <= 0);
 
@@ -241,7 +240,7 @@ class RegisterForm extends React.Component {
     const paymentLink = (
       <div>
             <h3>Thank you for registering!</h3>
-            <h2><b>Please click the link below to get the payment pop-up window for ${amount} if paying by credit-card.</b></h2>
+            <h2><b>Please click the link below to get the payment pop-up window for ${amount} to pay by credit-card.</b></h2>
             <div className="row">
               <div className="col-md-8 col-md-offset-3">
                 <Checkout
@@ -252,6 +251,9 @@ class RegisterForm extends React.Component {
                 />
               </div>
             </div>
+            <p><b>For questions question or concerns do not hesitate to email us at: <a href="mailto:vetophthosurgerymeeting@gmail.com">vetophthosurgerymeeting@gmail.com</a>, or Dr. Enry Garcia over the phone at 970-232-5225</b></p>
+
+            {/*
             <div className="row">
               <div className="col-md-8 col-md-offset-4">
                 <h6>-OR-</h6>
@@ -264,6 +266,7 @@ class RegisterForm extends React.Component {
                 Lombard, IL USA 60148<br/>
               </address>
               <p>(Postmarked by June 4th for early registration. we will send you a confirmation email once the check has arrived. If you have any question or concerns do not hesitate to email us at: vetophthosurgerymeeting@gmail.com, or Dr. Enry Garcia over the phone at 970-232-5225)</p>
+            */}
       </div>
     );
 
@@ -330,10 +333,10 @@ class RegisterForm extends React.Component {
               value={this.props.category}
               onChange={this.handleInputChange}>
               <option value="">Select One</option>
-              <option value={REGISTRATION.CATEGORY.DIPLOMATE} disabled={dipdisabled} >ACVO/ECVO Diplomate/Board Eligible (${REGISTRATION.COST.DIPLOMATE})</option>
-              <option value={REGISTRATION.CATEGORY.PRESENTER} disabled={dipdisabled} >Speaker (${REGISTRATION.COST.PRESENTER})</option>
-              <option value={REGISTRATION.CATEGORY.RESIDENT} disabled={otherdisabled} >Resident/Ophthalmology Intern (${REGISTRATION.COST.RESIDENT})</option>
-              <option value={REGISTRATION.CATEGORY.OTHER} disabled={otherdisabled} >Non-Diplomates (${REGISTRATION.COST.OTHER})</option>
+              <option value={REGISTRATION.CATEGORY.DIPLOMATE} >ACVO/ECVO Diplomate/Board Eligible (${REGISTRATION.COST.DIPLOMATE})</option>
+              <option value={REGISTRATION.CATEGORY.PRESENTER} >Speaker (${REGISTRATION.COST.PRESENTER})</option>
+              <option value={REGISTRATION.CATEGORY.RESIDENT}  >Resident/Ophthalmology Intern (${REGISTRATION.COST.RESIDENT})</option>
+              <option value={REGISTRATION.CATEGORY.OTHER}  >Non-Diplomates (${REGISTRATION.COST.OTHER})</option>
             </select>
           </div>
           <div className="form-group">
