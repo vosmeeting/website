@@ -6,12 +6,13 @@ import Checkout from './Checkout';
 import Log from './log';
 import Routes from "./Routes";
 import './App.css';
+import config from './config';
 
 
 /**
  * Helper function to calculate the registration fee based on the Category of Registration selected
  */
-function getRegCost(category){ 
+const getRegCost = (category) => { 
   Log('getRegCost called');
   switch (category) {
     case REGISTRATION.CATEGORY.DIPLOMATE:
@@ -26,7 +27,44 @@ function getRegCost(category){
       Log('No Category Selected for getRegCost(): ' + category);
       return 0;
   }
-}
+};
+
+
+const getCategoryText = (category) => { 
+  Log('getCategoryText:', category)
+  switch (category){
+    case REGISTRATION.CATEGORY.DIPLOMATE:
+      return 'ACVO/ECVO Diplomate/Board Eligible';
+    case REGISTRATION.CATEGORY.PRESENTER:
+      return 'Speaker';
+    case REGISTRATION.CATEGORY.RESIDENT:
+      return 'Resident/Ophthalmology Intern';
+    case REGISTRATION.CATEGORY.OTHER:
+      return 'Non-Diplomates';
+  }};
+
+
+const getOrderText = (name, email, category, wetlab1, wetlab2, wetlab3, wetlab4, reception) => {      
+    const registrationOrderText = `VOSM Registration - ${getCategoryText(category)} Registration for ${name} (${email})`
+    let labsOrderText = '';
+    if (wetlab1 != WETLABS.NO){
+      labsOrderText += ' | Phacodynamics Lecture';
+    }
+    if (wetlab2 != WETLABS.NO){
+      labsOrderText += ' | Phacodynamics Wet Lab-' + 
+        (wetlab2 === WETLABS.GR1 ? 'Group 1' : 'Group 2');
+    }
+    if (wetlab3 != WETLABS.NO){
+      labsOrderText += ' | Anesthetic Complications Management-' + 
+        (wetlab3 === WETLABS.GR1 ? 'Group 1' : 'Group 2');
+    }
+    if (wetlab4 != WETLABS.NO){
+      labsOrderText += ' | Endothelial Transplantation-' + 
+        (wetlab4 === WETLABS.OBSERVER ? 'Symposium' : 'Full-Participant');
+    }
+    const receptionText = ' | Reception: '+ reception
+    return registrationOrderText + labsOrderText + receptionText;
+  }
 
 
 /**
@@ -98,8 +136,11 @@ class RegisterInfo extends Component {
           <small>Onsite registration: +$100</small>
         </ul>
         <p><b>We are an approved AAVSB-provider for RACE Credits; final credit hours are still pending. Last year the program had 11hs of RACE credits.</b></p>
+        <p>Number of available registration spots: <b>{this.props.availability.registration}</b></p>
+        {/*
         <p>Number of available diplomate registration spots: <b>{this.props.dipRegistrantNumber}</b></p>
         <p>Number of available house officer or other registration spots: <b>{this.props.otherRegistrantNumber}</b></p>
+        */}
           <hr/>
         <h5><b>Extracurricular Wet Labs/Lectures</b></h5>
         <p>This year we are happy to announce we will be offering a number of additional lectures and hands-on opportunities.</p>
@@ -170,6 +211,9 @@ class RegisterForm extends React.Component {
 
   render() {
 
+    
+    const soldOut = (this.props.availability.registration <= 0);
+
     const dipdisabled = (this.props.dipRegistrantNumber <= 0);
     const otherdisabled = (this.props.otherRegistrantNumber <= 0);
 
@@ -187,16 +231,23 @@ class RegisterForm extends React.Component {
     amount += getWebLabCost(this.props);
     Log('here is the amount (after):' + amount);
 
-    let paymentLink = (
+    Log('props going to payment link', this.props);  
+
+    const orderTxt = getOrderText(this.props.name, this.props.email, this.props.category, 
+      this.props.wetlab1, this.props.wetlab2, this.props.wetlab3, this.props.wetlab4, this.props.reception);
+    Log('orderTxt:', orderTxt)
+
+
+    const paymentLink = (
       <div>
             <h3>Thank you for registering!</h3>
             <h2><b>Please click the link below to get the payment pop-up window for ${amount} if paying by credit-card.</b></h2>
             <div className="row">
               <div className="col-md-8 col-md-offset-3">
                 <Checkout
-                  // name={this.props.name}
-                  description={'VOSM Registration'}
-                  // email={this.state.email}
+                  name='Vet Ophtho Surgery Meeting'
+                  description={orderTxt}
+                  email={this.props.email}
                   amount={amount}
                 />
               </div>
@@ -216,12 +267,18 @@ class RegisterForm extends React.Component {
       </div>
     );
 
-    if (this.props.registered)
+    const soldOutMessage = ( 
+      <p> Sorry this year's conference is <b>Sold Out</b></p>
+    );
+
+
+    if (this.props.registered){
       return paymentLink;
-    if (!this.props.registered) {
-
-      const registrationText = "Register! ($" + amount + ")";
-
+    }
+    else if (!this.props.registered && soldOut){
+      return soldOutMessage;
+    }
+    else { //if (!this.props.registered) {
       return (
         <form role="form" id="contact-form" method="post" onSubmit={this.handleSubmit}>
           <div className="form-group">
@@ -400,7 +457,7 @@ class RegisterForm extends React.Component {
             </div>
           </div>          
           <div className="submit">
-            <input type="submit" className="btn btn-info btn-fill" defaultValue={registrationText} />
+            <input type="submit" className="btn btn-info btn-fill" defaultValue={"Register! ($" + amount + ")"} />
           </div>
         </form>
       );
@@ -420,6 +477,7 @@ class RegApp extends React.Component {
       category: '',
       country: '',
       reception: WETLABS.NO,
+      availability: {},
       dipRegistrantNumber: '',
       otherRegistrantNumber: '',
       wetlab1Number: 0,
@@ -434,24 +492,28 @@ class RegApp extends React.Component {
       wetlab3: WETLABS.NO,
       wetlab4: WETLABS.NO
     }
-    Log('RegApp Constructed!');
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);    
+    Log('RegApp Constructed!', config);
   }
 
-  componentDidMount(){
+//  componentDidMount(){
+  componentWillMount() {
     Log('base', base);
     this.firebaseRef = base.initializedApp.database().ref('attendees');
-//  }
-//  componentWillMount() {
     this.ref = base.syncState('dipRegistrantNumber', {
       context: this,
       state: 'dipRegistrantNumber'
     });
-
     this.ref2 = base.syncState('otherRegistrantNumber', {
       context: this,
       state: 'otherRegistrantNumber'
+    });
+
+    // a single container for availability counts
+    base.syncState('availability', {
+      context: this,
+      state: 'availability'
     });
 
     base.syncState('wetlab1Number', {
@@ -510,6 +572,10 @@ class RegApp extends React.Component {
       wetlab3: this.state.wetlab3,
       wetlab4: this.state.wetlab4
     });
+
+    const availability = {...this.state.availability};
+    availability.registration--;
+    this.setState({ availability })
 
     switch (this.state.category) {
       case 'aecvodip':
@@ -587,6 +653,7 @@ class RegApp extends React.Component {
             country={this.state.country}
             onInputChange={this.handleInputChange}
             handleSubmit={this.handleSubmit} 
+            availability={this.state.availability}
             dipRegistrantNumber={this.state.dipRegistrantNumber}
             otherRegistrantNumber={this.state.otherRegistrantNumber}
             wetlab1Number={this.state.wetlab1Number}
@@ -605,7 +672,8 @@ class RegApp extends React.Component {
         <div className="col-md-6">
           <RegisterInfo
             category={this.state.category}
-            registered={this.state.registered} 
+            registered={this.state.registered}
+            availability={this.state.availability}
             dipRegistrantNumber={this.state.dipRegistrantNumber}
             otherRegistrantNumber={this.state.otherRegistrantNumber}
             wetlab1Number={this.state.wetlab1Number}

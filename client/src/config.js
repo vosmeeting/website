@@ -1,3 +1,5 @@
+import merge from 'lodash/merge';
+
 let BASE_PATH;
 if (typeof window !== 'undefined') {
   BASE_PATH = location.protocol + '//' + location.host;
@@ -6,6 +8,13 @@ if (typeof window !== 'undefined') {
   // work out what you want to do server-side...
   BASE_PATH = 'broken://';
 }
+
+// shared configs - can include nested attributes
+const base = {
+  stipe: {
+    currency: 'USD'
+  }
+};
 
 const dev = {
   env: 'dev',
@@ -41,8 +50,9 @@ const config = process.env.REACT_APP_STAGE === 'prod'
   ? prod
   : dev;
 
+
 export default {
   // Add common config values here
   MAX_ATTACHMENT_SIZE: 5000000,
-  ...config
+  ...merge({}, base, config)
 };

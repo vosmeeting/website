@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "firebase": "^3.7.6",
+    "lodash.merge": "^4.6.1",
     "re-base": "^4.0.0",
     "react": "^15.5.3",
     "react-dom": "^15.5.3",

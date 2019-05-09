@@ -2,7 +2,3 @@
   base    = "client"
   command = "yarn build"
   publish = "client/build"
-# [[redirects]]
-#   from = "/*"
-#   to = "/index.html"
-#   status = 200

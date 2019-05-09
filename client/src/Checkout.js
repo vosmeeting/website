@@ -4,15 +4,15 @@ import StripeCheckout from 'react-stripe-checkout';
 import Log from './log';
 
 import config from './config';
+const CURRENCY = config.stipe.currency;
 const STRIPE_PUBLISHABLE = config.stipe.publishable;
 const PAYMENT_SERVER_URL = config.endpoints.payment;
 
 
-const CURRENCY = 'USD';
-
 const fromUSDToCent = amount => amount * 100;
 
-const onToken = (amount, description) => token =>
+const onToken = (amount, description) => token => {
+  Log('token back from stripe',token);
   axios.post(PAYMENT_SERVER_URL,
     {
       description: description,
@@ -26,7 +26,8 @@ const onToken = (amount, description) => token =>
     })
     .catch(error => {
       Log('Error:', error);
-    })
+    });
+  }
 
 const Checkout = ({ name, description, amount }) =>
   <StripeCheckout
