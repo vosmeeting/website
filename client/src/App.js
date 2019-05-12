@@ -41,24 +41,26 @@ const getCategoryText = (category) => {
       return 'Resident/Ophthalmology Intern';
     case REGISTRATION.CATEGORY.OTHER:
       return 'Non-Diplomates';
+    default:
+      return 'none';
   }};
 
 
 const getOrderText = (name, email, category, wetlab1, wetlab2, wetlab3, wetlab4, reception) => {      
     const registrationOrderText = `VOSM Registration - ${getCategoryText(category)} Registration for ${name} (${email})`
     let labsOrderText = '';
-    if (wetlab1 != WETLABS.NO){
+    if (wetlab1 !== WETLABS.NO){
       labsOrderText += ' | Phacodynamics Lecture';
     }
-    if (wetlab2 != WETLABS.NO){
+    if (wetlab2 !== WETLABS.NO){
       labsOrderText += ' | Phacodynamics Wet Lab-' + 
         (wetlab2 === WETLABS.GR1 ? 'Group 1' : 'Group 2');
     }
-    if (wetlab3 != WETLABS.NO){
+    if (wetlab3 !== WETLABS.NO){
       labsOrderText += ' | Anesthetic Complications Management-' + 
         (wetlab3 === WETLABS.GR1 ? 'Group 1' : 'Group 2');
     }
-    if (wetlab4 != WETLABS.NO){
+    if (wetlab4 !== WETLABS.NO){
       labsOrderText += ' | Endothelial Transplantation-' + 
         (wetlab4 === WETLABS.OBSERVER ? 'Symposium' : 'Full-Participant');
     }
