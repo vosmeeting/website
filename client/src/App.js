@@ -23,6 +23,8 @@ const getRegCost = (category) => {
       return REGISTRATION.COST.RESIDENT;
     case REGISTRATION.CATEGORY.OTHER:
       return REGISTRATION.COST.OTHER;
+    case 're-register':
+      return 0;
     default:
       Log('No Category Selected for getRegCost(): ' + category);
       return 0;
@@ -41,6 +43,8 @@ const getCategoryText = (category) => {
       return 'Resident/Ophthalmology Intern';
     case REGISTRATION.CATEGORY.OTHER:
       return 'Non-Diplomates';
+    case 're-register':
+      return 'Already Registered';
     default:
       return 'none';
   }};
@@ -340,6 +344,7 @@ class RegisterForm extends React.Component {
               <option value={REGISTRATION.CATEGORY.PRESENTER} >Speaker (${REGISTRATION.COST.PRESENTER})</option>
               <option value={REGISTRATION.CATEGORY.RESIDENT}  >Resident/Ophthalmology Intern (${REGISTRATION.COST.RESIDENT})</option>
               <option value={REGISTRATION.CATEGORY.OTHER}  >Non-Diplomates (${REGISTRATION.COST.OTHER})</option>
+              <option value="re-register" >Already Registered ($0)</option>
             </select>
           </div>
           <div className="form-group">
@@ -580,8 +585,11 @@ class RegApp extends React.Component {
     });
 
     const availability = {...this.state.availability};
-    availability.registration--;
-    this.setState({ availability })
+    
+    if (this.state.category !== 're-register')
+      availability.registration--;
+      this.setState({ availability })
+    }
 
     switch (this.state.category) {
       case 'aecvodip':
