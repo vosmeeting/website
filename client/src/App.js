@@ -158,13 +158,14 @@ class RegisterInfo extends Component {
             <p><b>{this.props.wetlab2Gr2Number}</b> seats available for Group 2</p>
             <p>5-10 B+L machines present depending on the number of attendees.</p>
             <p>Fee: $100 (residents: $25)</p>
-        </div>    
+        </div>
         <b>3. Updates on anesthetic complications management lecture (Dr. Kristen Messenger, DVM, PhD, DACVAA, DACVCP)</b>
         <div className="hanging-text">
             <p>(Group 1: Friday 2:30-3:30pm, or Group 2: 4:00-5:00pm)</p>
             <p><b>{this.props.wetlab3Gr1Number}</b> seats available for Group 1</p>
             <p><b>{this.props.wetlab3Gr2Number}</b> seats available for Group 2</p>
             <p>Fee: $50</p>
+            <p><i>Dr. Stephanie Bell is the course director and will later contact the participants of the anesthesia lecture to provide more information</i></p>
         </div>    
         <b>4. Endothelial Transplantation Symposium/Wet Lab (Dr. Micki Armour VMD, DACVO)</b>
         <div className="hanging-text">
@@ -271,7 +272,7 @@ class RegisterForm extends React.Component {
     );
 
     const soldOutMessage = ( 
-      <p> Sorry this year's conference is <b>Sold Out</b></p>
+      <p> Sorry this year's conference is <b>Not Currently Available</b> - please check back soon</p>
     );
 
 
@@ -399,7 +400,7 @@ class RegisterForm extends React.Component {
                       </label>
                     }
                     <br/>
-                    {wetlab2Gr2Disabled ? <label className="radio-inline">Group 2: [Sold Out]</label> :
+                    {wetlab3Gr2Disabled ? <label className="radio-inline">Group 2: [Sold Out]</label> :
                       <label className="radio-inline">
                         <input type="radio" name="wetlab3" value={WETLABS.GR2}
                         checked={this.props.wetlab3 === WETLABS.GR2}
@@ -480,7 +481,7 @@ class RegApp extends React.Component {
       category: '',
       country: '',
       reception: WETLABS.NO,
-      availability: {},
+      availability: { registration: 0 },
       dipRegistrantNumber: '',
       otherRegistrantNumber: '',
       wetlab1Number: 0,
