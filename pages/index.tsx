@@ -1,11 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Splide, SplideSlide } from '@splidejs/react-splide'
-import { AutoScroll } from '@splidejs/splide-extension-auto-scroll'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Autoplay, FreeMode } from 'swiper'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import { Autoplay } from 'swiper'
+import { Swiper, SwiperSlide } from 'swiper/react'
 import hyatt from '../assets/hyatt.png'
 import { P, Title } from '../components/typography'
 

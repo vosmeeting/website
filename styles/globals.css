@@ -1,5 +1,4 @@
 @import './fonts.css';
-@import '~@splidejs/splide/dist/css/splide.min.css';
 @import '~swiper/css';
 @tailwind base;
 @tailwind components;
