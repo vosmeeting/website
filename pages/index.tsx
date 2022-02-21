@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+import { Page } from '@shopify/polaris'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -12,7 +13,7 @@ const images = Array.from({ length: 8 }).map((_, i) => ({
 }))
 const Home: NextPage = () => {
   return (
-    <div>
+    <Page>
       <Head>
         <title>Veterinary Opthalmic Surgery Meeting</title>
         <meta
@@ -117,7 +118,7 @@ const Home: NextPage = () => {
           </ul>
         </section>
       </div>
-    </div>
+    </Page>
   )
 }
 
