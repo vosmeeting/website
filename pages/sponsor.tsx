@@ -10,15 +10,16 @@ import {
   List,
   Page,
   TextContainer,
-  TextField,
+  TextField
 } from '@shopify/polaris'
 import {
   getValues,
   notEmpty,
   numericString,
   useField,
-  useForm,
+  useForm
 } from '@shopify/react-form'
+import NextLink from 'next/link'
 import { useMemo } from 'react'
 import * as yup from 'yup'
 import Button from '../components/Buttons'
@@ -30,10 +31,8 @@ import {
   GeneralSupport,
   MarketingOpportunities,
   Price,
-  SponsorshipPreferences,
-  SponsorshipPreferences as SponsorshipPreferrences,
+  SponsorshipPreferences
 } from './const'
-import NextLink from 'next/link'
 
 export default function Sponsor() {
   const schema = {
@@ -152,7 +151,7 @@ export default function Sponsor() {
       let remoteErrors = []
 
       try {
-        await createCheckOutSession(form)
+        await createCheckOutSession({...form, images: [`${process.env.NEXT_PUBLIC_HOST}/vosm_logo.png`] })
       } catch (e) {
         remoteErrors.push(e) // your API call goes here
       }
@@ -186,10 +185,11 @@ export default function Sponsor() {
   }, [fields])
 
   return (
-    <Page 
-    title='Application	for	Commercial	Exhibits and	Sponsorship' 
-    subtitle='4th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	22-24, 2022' 
-    additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL" >
+    <Page
+      title="Application	for	Commercial	Exhibits and	Sponsorship"
+      subtitle="4th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	22-24, 2022"
+      additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
+    >
       <Layout>
         <Layout.Section>
           <Card
@@ -410,7 +410,11 @@ export default function Sponsor() {
               <Heading>More information:</Heading>
               <List>
                 <List.Item>
-                  <NextLink href={'/application-guide#marketing-opportunities'}>
+                  <NextLink
+                    href={
+                      '/application-guide#marketing-opportunities'
+                    }
+                  >
                     <Link>
                       Marketing and Sponsorship
                       Opportunities
@@ -424,16 +428,22 @@ export default function Sponsor() {
                   </p>
                 </List.Item>
                 <List.Item>
-                  <NextLink href={'/application-guide#important-dates'}>
+                  <NextLink
+                    href={
+                      '/application-guide#important-dates'
+                    }
+                  >
                     <Link>Application Guide</Link>
                   </NextLink>
                   <p>
                     Full payment is required for
                     registration. Fees are due immediately
-                    upon registration. Please refer to this <NextLink href="/application-guide"><Link>
-                      section</Link></NextLink> for
-                    remaining due dates. If an invoice or
-                    W-9 is needed, please let us know
+                    upon registration. Please refer to this{' '}
+                    <NextLink href="/application-guide">
+                      <Link>section</Link>
+                    </NextLink>{' '}
+                    for remaining due dates. If an invoice
+                    or W-9 is needed, please let us know
                   </p>
                 </List.Item>
               </List>
@@ -444,3 +454,5 @@ export default function Sponsor() {
     </Page>
   )
 }
+
+type Props = { host: string | null };

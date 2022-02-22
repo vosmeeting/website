@@ -21,6 +21,7 @@ const CreateStripeSession = async (req, res: NextApiResponse) => {
       currency: 'usd',
       product_data: {
         name: 'vosm sponsorship form',
+        images: item.images
       },
       unit_amount: dollar * 100,
     },

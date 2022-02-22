@@ -1,23 +1,32 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Page } from '@shopify/polaris'
+import { Banner, Card, Layout, Page } from '@shopify/polaris'
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 
-const Home: NextPage = () => {
+const PaymentSuccess: NextPage = () => {
+  const router = useRouter()
   return (
     <Page>
-      <Head>
-        <title>Veterinary Opthalmic Surgery Meeting</title>
-        <meta
-          name="description"
-          content="We are excited to announce the 3rd Veterinary Ophthalmic Surgery Meeting. This long awaited event will be an innovative meeting, with a dynamic format developed to encourage a candid debate among Veterinary Ophthalmologists with interests in Surgery."
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      
 
-      <div className="bg-white p-16 min-h-screen grid grid-cols-1 gap-y-28 shadow-sm rounded-lg ">payment success..</div>
+      
+        <Layout>
+          <Layout.Section>
+            
+              <Banner
+                title="Your payment was succesfull!"
+                status="success"
+                action={{ content: 'Go Home', onAction: () => router.push('/') }}
+              >
+                <p>Your submission is received and we will contact you soon.</p>
+              </Banner>
+            
+          </Layout.Section>
+        </Layout>
+      
     </Page>
   )
 }
 
-export default Home
+export default PaymentSuccess

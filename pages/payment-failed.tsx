@@ -1,9 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Page } from '@shopify/polaris'
+import { Banner, Layout, Page } from '@shopify/polaris'
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 
 const Home: NextPage = () => {
+  const router = useRouter()
   return (
     <Page>
       <Head>
@@ -15,7 +17,25 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="bg-white p-16 min-h-screen grid grid-cols-1 gap-y-28 shadow-sm rounded-lg ">payment failed..</div>
+<Page>
+      
+
+      
+        <Layout>
+          <Layout.Section>
+            
+              <Banner
+                title="Oops! Your payment was failed."
+                status="critical"
+                action={{ content: 'Back to sponsor form', onAction: () => router.push('/sponsor') }}
+              >
+                <p></p>
+              </Banner>
+            
+          </Layout.Section>
+        </Layout>
+      
+    </Page>
     </Page>
   )
 }
