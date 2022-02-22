@@ -32,7 +32,7 @@ import {
   MarketingOpportunities,
   Price,
   SponsorshipPreferences
-} from './const'
+} from '../utils/const'
 
 export default function Sponsor() {
   const schema = {

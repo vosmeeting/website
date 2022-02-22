@@ -1,4 +1,4 @@
-import { BoothLocations, SponsorshipPreferences, MarketingOpportunities, GeneralSupport } from "../pages/const"
+import { BoothLocations, SponsorshipPreferences, MarketingOpportunities, GeneralSupport } from "../utils/const"
 
 const calcPrice = ({ boothLocation, sponsorshipPreferrence, marketingOpportunities, generalSupports, }: any) => {
 
