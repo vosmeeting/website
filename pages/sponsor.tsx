@@ -22,6 +22,8 @@ import { useMemo } from 'react'
 import * as yup from 'yup'
 import Button from '../components/Buttons'
 import CustomChoiceList from '../components/CustomChoiceList'
+import calcPrice from '../services/calc-price'
+import createCheckOutSession from '../services/stripe'
 import {
   BoothLocations,
   GeneralSupport,
@@ -140,12 +142,17 @@ export default function Sponsor() {
     }),
   }
 
-  const { fields, submit, submitting, dirty, submitErrors } = useForm({
+  const { fields, submit, submitting, submitErrors } = useForm({
     fields: schema,
     async onSubmit(form) {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log(form)
-      const remoteErrors: any = [] // your API call goes here
+      let remoteErrors = [];
+
+      try {
+        await createCheckOutSession(form)
+      } catch (e) {
+        remoteErrors.push(e) // your API call goes here
+      }
+
       if (remoteErrors.length > 0) {
         return { status: 'fail', errors: remoteErrors }
       }
@@ -169,19 +176,8 @@ export default function Sponsor() {
     ) : null
 
   const totalPrice = useMemo(() => {
-    const { boothLocation, sponsorshipPreferrence, marketingOpportunities, generalSupports, } = getValues(fields)
-
-    const boothPrice = BoothLocations.find(e => e.name === boothLocation)?.price as number
-    const boothDisc = SponsorshipPreferrences.find(s => s.name === sponsorshipPreferrence)?.disc  as number
-    const sponsorshipPrice = SponsorshipPreferrences.find(s => s.name === sponsorshipPreferrence)?.price as number
-
-    const marketingPrices = MarketingOpportunities.filter(value => marketingOpportunities.includes(value.name)).reduce((acc, v) => v.price + acc, 0)
-    const generalSupportPrices = GeneralSupport.filter(value => generalSupports.includes(value.name)).reduce((acc, v) => v.price + acc, 0)
-
-    console.log({marketingPrice: marketingPrices, generalSupportPrice: generalSupportPrices});
-    
-    const total = (1 - boothDisc / 100) * boothPrice + sponsorshipPrice + marketingPrices + generalSupportPrices
-
+    const values = getValues(fields)
+    const total = calcPrice({...values})
     return new Price(total)
   }, [fields])
 
@@ -372,7 +368,6 @@ export default function Sponsor() {
               </TextContainer>
               <div className="flex justify-end mt-10">
                 <Button
-                  primary
                   type="submit"
                   className='px-10'
                   style={{ minWidth: 150 }}
