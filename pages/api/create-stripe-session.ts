@@ -14,7 +14,7 @@ const CreateStripeSession = async (req, res: NextApiResponse) => {
   const redirectURL =
     process.env.NODE_ENV === 'development'
       ? 'http://localhost:3000'
-      : 'https://vosm.vercel.app';
+      : process.env.NEXT_PUBLIC_HOST;
 
   const transformedItem = {
     price_data: {

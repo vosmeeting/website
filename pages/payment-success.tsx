@@ -8,23 +8,19 @@ const PaymentSuccess: NextPage = () => {
   const router = useRouter()
   return (
     <Page>
-      
+      <Layout>
+        <Layout.Section>
+          <Banner
+            title="Your payment was succesfull!"
+            status="success"
+            action={{ content: 'Go Home', onAction: () => router.push('/') }}
+          >
+            <p>Your submission is received and we will contact you soon.</p>
+          </Banner>
 
-      
-        <Layout>
-          <Layout.Section>
-            
-              <Banner
-                title="Your payment was succesfull!"
-                status="success"
-                action={{ content: 'Go Home', onAction: () => router.push('/') }}
-              >
-                <p>Your submission is received and we will contact you soon.</p>
-              </Banner>
-            
-          </Layout.Section>
-        </Layout>
-      
+        </Layout.Section>
+      </Layout>
+
     </Page>
   )
 }
