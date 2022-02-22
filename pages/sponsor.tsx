@@ -6,6 +6,7 @@ import {
   FormLayout,
   Heading,
   Layout,
+  Link,
   List,
   Page,
   TextContainer,
@@ -32,6 +33,7 @@ import {
   SponsorshipPreferences,
   SponsorshipPreferences as SponsorshipPreferrences,
 } from './const'
+import NextLink from 'next/link'
 
 export default function Sponsor() {
   const schema = {
@@ -72,7 +74,7 @@ export default function Sponsor() {
               .required('Company/Contact is required')
               .email('please provide a valid email')
               .validateSync(input)
-          } catch (e: any) {
+          } catch (e) {
             return e.message
           }
         },
@@ -109,16 +111,18 @@ export default function Sponsor() {
       validates: [notEmpty('Booth Options is required')],
     }),
 
-    generalSupports: useField<(
-      | 'wi-fi'
-      | 'resident sponsorship'
-      | 'sponsored lecture'
-      | 'av services'
-      | 'continental breakfast'
-      | 'plated lunch'
-      | 'reception jazz band'
-      | 'reception food'
-      | 'reception drinks')[]
+    generalSupports: useField<
+      (
+        | 'wi-fi'
+        | 'resident sponsorship'
+        | 'sponsored lecture'
+        | 'av services'
+        | 'continental breakfast'
+        | 'plated lunch'
+        | 'reception jazz band'
+        | 'reception food'
+        | 'reception drinks'
+      )[]
     >({
       value: ['wi-fi'],
       validates: [notEmpty('Booth Options is required')],
@@ -137,7 +141,7 @@ export default function Sponsor() {
         | 'Proceedings - Back covers'
       )[]
     >({
-      value:['Packet inserts'],
+      value: ['Packet inserts'],
       validates: [notEmpty('Booth Options is required')],
     }),
   }
@@ -145,7 +149,7 @@ export default function Sponsor() {
   const { fields, submit, submitting, submitErrors } = useForm({
     fields: schema,
     async onSubmit(form) {
-      let remoteErrors = [];
+      let remoteErrors = []
 
       try {
         await createCheckOutSession(form)
@@ -177,7 +181,7 @@ export default function Sponsor() {
 
   const totalPrice = useMemo(() => {
     const values = getValues(fields)
-    const total = calcPrice({...values})
+    const total = calcPrice({ ...values })
     return new Price(total)
   }, [fields])
 
@@ -188,9 +192,6 @@ export default function Sponsor() {
           <Card
             title="Online store dashboard"
             sectioned
-            actions={[
-              { content: 'Proceed to payment', onAction: submit },
-            ]}
           >
             <Form noValidate onSubmit={submit}>
               {errorBanner}
@@ -234,50 +235,55 @@ export default function Sponsor() {
                   />
 
                   <TextField
+                    multiline={2}
+                    label="Company Address"
+                    autoComplete="address"
+                    {...fields.address}
+                  />
+
+                  <TextField
                     placeholder="www.company.com"
                     label="Company Website"
                     autoComplete="off"
                     {...fields.website}
                   />
-                  <TextField
-                    multiline={4}
-                    label="Company Address"
-                    autoComplete="address"
-                    {...fields.address}
-                  />
                 </FormLayout.Group>
 
-                <TextContainer>
-                  <Heading>Booth layout options</Heading>
-                  <List>
-                    <List.Item>
-                      Previous sponsors have priority in
-                      choosing booth space
-                    </List.Item>
-                    <List.Item>
-                      Companies exhibiting at the
-                      exhibitor hall can get 2 booths max
-                    </List.Item>
-                    <List.Item>
-                      Companies exhibiting in the lecture
-                      hall can get 1 booth max
-                    </List.Item>
-                    <List.Item>
-                      Companies cannot share booths
-                    </List.Item>
-                    <List.Item>
-                      Registration fee is per booth and
-                      includes only one representative;
-                      additional representative = $350
-                      [includes daily breakfast+ lunch and
-                      reception with hors D'oeuvres].
-                    </List.Item>
-                    <List.Item>
-                      Booths are small. The limit is 2
-                      reps per booth
-                    </List.Item>
-                  </List>
-                </TextContainer>
+                <FormLayout.Group>
+                  <TextContainer>
+                    <Heading>Booth layout options</Heading>
+                    <List>
+                      <List.Item>
+                        Previous sponsors have priority
+                        in choosing booth space
+                      </List.Item>
+                      <List.Item>
+                        Companies exhibiting at the
+                        exhibitor hall can get 2 booths
+                        max
+                      </List.Item>
+                      <List.Item>
+                        Companies exhibiting in the
+                        lecture hall can get 1 booth max
+                      </List.Item>
+                      <List.Item>
+                        Companies cannot share booths
+                      </List.Item>
+                      <List.Item>
+                        Registration fee is per booth
+                        and includes only one
+                        representative; additional
+                        representative = $350 [includes
+                        daily breakfast+ lunch and
+                        reception with hors D'oeuvres].
+                      </List.Item>
+                      <List.Item>
+                        Booths are small. The limit is 2
+                        reps per booth
+                      </List.Item>
+                    </List>
+                  </TextContainer>
+                </FormLayout.Group>
                 <FormLayout.Group>
                   <CustomChoiceList
                     title="Booth option"
@@ -300,7 +306,9 @@ export default function Sponsor() {
                     choices={BoothLocations.map(
                       ({ name, price }, i) => ({
                         label: name,
-                        helpText: new Price(price).toDollar(),
+                        helpText: new Price(
+                          price
+                        ).toDollar(),
                         value: name,
                       })
                     )}
@@ -315,7 +323,9 @@ export default function Sponsor() {
                         return {
                           label: s.name,
                           helpText:
-                            `${new Price(s.price).toDollar()}` +
+                            `${new Price(
+                              s.price
+                            ).toDollar()}` +
                             (s.disc
                               ? `, ${s.disc}% booth disc`
                               : ''),
@@ -329,12 +339,16 @@ export default function Sponsor() {
                     title="General Support"
                     allowMultiple
                     selected={fields.generalSupports.value}
-                    onChange={fields.generalSupports.onChange}
+                    onChange={
+                      fields.generalSupports.onChange
+                    }
                     choices={GeneralSupport.map((s, i) => {
                       return {
                         disabled: s.label.includes('*'), // disable exclusive package for now
                         label: s.label,
-                        helpText: new Price(s.price).toDollar(),
+                        helpText: new Price(
+                          s.price
+                        ).toDollar(),
                         value: s.name,
                       }
                     })}
@@ -343,8 +357,13 @@ export default function Sponsor() {
                   <ChoiceList
                     allowMultiple
                     title={'Marketing Opportunities'}
-                    onChange={fields.marketingOpportunities.onChange}
-                    selected={fields.marketingOpportunities.value} 
+                    onChange={
+                      fields.marketingOpportunities
+                        .onChange
+                    }
+                    selected={
+                      fields.marketingOpportunities.value
+                    }
                     choices={MarketingOpportunities.map(
                       (o, i) => {
                         return {
@@ -352,7 +371,9 @@ export default function Sponsor() {
                             '*'
                           ), // disable exclusive package for now
                           label: o.name,
-                          helpText: new Price(o.price).toDollar(),
+                          helpText: new Price(
+                            o.price
+                          ).toDollar(),
                           value: o.name,
                         }
                       }
@@ -369,16 +390,51 @@ export default function Sponsor() {
               <div className="flex justify-end mt-10">
                 <Button
                   type="submit"
-                  className='px-10'
+                  className="px-10"
                   style={{ minWidth: 150 }}
                   // disabled={!dirty}
                   loading={submitting}
                 >
-
-                  <b> Proceed to payment {totalPrice.toDollar()}</b>
+                  <b>
+                    {' '}
+                    Proceed to payment{' '}
+                    {totalPrice.toDollar()}
+                  </b>
                 </Button>
               </div>
             </Form>
+            <TextContainer>
+              <Heading>More information:</Heading>
+              <List>
+                <List.Item>
+                  <NextLink href={'/application-guide#marketing-opportunities'}>
+                    <Link>
+                      Marketing and Sponsorship
+                      Opportunities
+                    </Link>
+                  </NextLink>
+                  <p>
+                    Refer to this page for registration
+                    packet for marketing options,
+                    sponsorship levels and general support
+                    categories
+                  </p>
+                </List.Item>
+                <List.Item>
+                  <NextLink href={'/application-guide#important-dates'}>
+                    <Link>Application Guide</Link>
+                  </NextLink>
+                  <p>
+                    Full payment is required for
+                    registration. Fees are due immediately
+                    upon registration. Please refer to this <NextLink href="/application-guide"><Link>
+                      section</Link></NextLink> for
+                    remaining due dates. If an invoice or
+                    W-9 is needed, please let us know
+                  </p>
+                </List.Item>
+              </List>
+            </TextContainer>
           </Card>
         </Layout.Section>
       </Layout>
