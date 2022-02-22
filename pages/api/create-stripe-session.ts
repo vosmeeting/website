@@ -20,7 +20,8 @@ const CreateStripeSession = async (req, res: NextApiResponse) => {
     price_data: {
       currency: 'usd',
       product_data: {
-        name: 'vosm sponsorship form',
+        name: 'Application	for	Commercial	Exhibits and	Sponsorship',
+        description: '4th Veterinary	Ophthalmic	Surgery	Meeting	Jul	22-24, 2022',
         images: item.images
       },
       unit_amount: dollar * 100,

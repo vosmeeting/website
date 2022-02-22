@@ -193,7 +193,7 @@ export default function Sponsor() {
       <Layout>
         <Layout.Section>
           <Card
-            title=" Company Contact Information and Selections"
+            title="Company Contact Information and Selections"
             sectioned
           >
             <Form noValidate onSubmit={submit}>
