@@ -7,6 +7,7 @@ export class Price extends Number {
     return this.value.toLocaleString('en-us', {
       style: 'currency',
       currency: 'USD',
+      maximumFractionDigits: 0
     })
   }
 }
@@ -18,7 +19,7 @@ export const BoothLocations = [
   },
   { name: 'Exhibit Hall Booth', price: 1000 },
   { name: 'Additional rep', price: 350 },
-].map((obj) => ({ ...obj, price: new Price(obj.price) }))
+]
 
 export const SponsorshipPreferences = [
   {
@@ -45,19 +46,19 @@ export const SponsorshipPreferences = [
     name: 'Bronze',
     price: 2000,
   },
-].map((obj) => ({ ...obj, price: new Price(obj.price) }))
+]
 
 export const GeneralSupport = [
-  { name: 'Wi-Fi', price: 1000 },
-  { name: 'Resident sponsorship (registration for 10) ', price: 2500 },
-  { name: 'Sponsored Lecture ', price: 3000 },
-  { name: 'A/V Services* ', price: 2000 },
-  { name: 'Continental breakfast* ', price: 2000 },
-  { name: 'Plated lunch* ', price: 3000 },
-  { name: 'Reception JAZZ BAND * ', price: 2000 },
-  { name: 'Reception food* ', price: 3000 },
-  { name: 'Reception drinks* ', price: 3000 },
-].map((obj) => ({ ...obj, price: new Price(obj.price) }))
+  { name: 'wi-fi', label: 'Wi-Fi', price: 1000 },
+  { name: 'resident sponsorship', label: 'Resident sponsorship (registration for 10)', price: 2500 },
+  { name: 'sponsored lecture', label: 'Sponsored Lecture ', price: 3000 },
+  { name: 'av services', label: 'A/V Services*', price: 2000 },
+  { name: 'continental breakfast', label: 'Continental breakfast* ', price: 2000 },
+  { name: 'plated lunch', label: 'Plated lunch* ', price: 3000 },
+  { name: 'reception jazz band', label: 'Reception JAZZ BAND*', price: 2000 },
+  { name: 'reception food', label: 'Reception food*', price: 3000 },
+  { name: 'reception drinks', label: 'Reception drinks* ', price: 3000 },
+]
 
 export const MarketingOpportunities = [
   { name: 'Packet inserts', price: 1000 },
@@ -69,4 +70,4 @@ export const MarketingOpportunities = [
   { name: 'Proceedings - Full page', price: 1000 },
   { name: 'Proceedings - ½ page', price: 750 },
   { name: 'Proceedings - Back covers', price: 2000 },
-].map((obj) => ({ ...obj, price: new Price(obj.price) }))
+]

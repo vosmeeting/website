@@ -1,6 +1,5 @@
 import {
   Banner,
-  Button,
   Card,
   ChoiceList,
   Form,
@@ -9,45 +8,45 @@ import {
   Layout,
   List,
   Page,
-  RadioButton,
-  Stack,
   TextContainer,
   TextField,
 } from '@shopify/polaris'
 import {
-  asChoiceField,
-  lengthMoreThan,
+  getValues,
   notEmpty,
   numericString,
-  useChoiceField,
   useField,
   useForm,
 } from '@shopify/react-form'
+import { useMemo } from 'react'
 import * as yup from 'yup'
+import Button from '../components/Buttons'
+import CustomChoiceList from '../components/CustomChoiceList'
 import {
+  BoothLocations,
   GeneralSupport,
   MarketingOpportunities,
+  Price,
   SponsorshipPreferences,
+  SponsorshipPreferences as SponsorshipPreferrences,
 } from './const'
 
 export default function Sponsor() {
   const schema = {
     companyName: useField({
       value: '',
-      validates: [
-yup.string().required('this is required').validateSync
-      ],
+      validates: [notEmpty('company name is required')],
     }),
     companyTelephone: useField({
       value: '',
       validates: [
-        yup
-          .string()
-          .required('please provide a company telephone number')
-          .matches(
-            /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im,
-            'phone number is invalid'
-          ).validateSync,
+        notEmpty("phone number can't be empty"),
+        (input) => {
+          const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+          if (!phoneRegex.test(input)) {
+            return 'please input a valid phone number'
+          }
+        },
       ],
     }),
     address: useField({
@@ -60,35 +59,84 @@ yup.string().required('this is required').validateSync
     }),
     contactName: useField({
       value: '',
-      validates: [
-        yup.string().required('please provide a contact name')
-          .validateSync,
-      ],
+      validates: [notEmpty('please provide a contact name')],
     }),
     email: useField({
       value: '',
       validates: [
-        (input) =>
-          yup
-            .string()
-            .required('this is required')
-            .email('please provide a valid email')
-            .validateSync(input),
+        (input) => {
+          try {
+            yup.string()
+              .required('Company/Contact is required')
+              .email('please provide a valid email')
+              .validateSync(input)
+          } catch (e: any) {
+            return e.message
+          }
+        },
       ],
     }),
     cityStateZip: useField({
       value: '',
-      validates: [yup.string().required('this is required').validateSync],
+      validates: [notEmpty('City/State/Zip is required')],
     }),
     website: useField({
       value: '',
-      validates: [yup.string().url('must be a valid url').validateSync],
-    }),
-    boothOption: useField<'1st'| '2nd'|'3rd' |'4th'>({
-      value: '1st',
       validates: [
-        yup.string().required('this fields is required').validateSync,
+        (input) => {
+          if (!yup.string().url(input).isValidSync) {
+            return 'please input a valid url'
+          }
+        },
       ],
+    }),
+    boothOption: useField<'1st' | '2nd' | '3rd' | '4th'>({
+      value: '1st',
+      validates: [notEmpty('Booth Options is required')],
+    }),
+    boothLocation: useField<
+      'Lecture Hall Booth' | 'Exhibit Hall Booth' | 'Additional rep'
+    >({
+      value: 'Lecture Hall Booth',
+      validates: [notEmpty('Booth location is required')],
+    }),
+    sponsorshipPreferrence: useField<
+      'Prime' | 'Platinum' | 'Gold' | 'Silver' | 'Bronze'
+    >({
+      value: 'Prime',
+      validates: [notEmpty('Booth Options is required')],
+    }),
+
+    generalSupports: useField<(
+      | 'wi-fi'
+      | 'resident sponsorship'
+      | 'sponsored lecture'
+      | 'av services'
+      | 'continental breakfast'
+      | 'plated lunch'
+      | 'reception jazz band'
+      | 'reception food'
+      | 'reception drinks')[]
+    >({
+      value: ['wi-fi'],
+      validates: [notEmpty('Booth Options is required')],
+    }),
+
+    marketingOpportunities: useField<
+      (
+        | 'Packet inserts'
+        | 'Attendee list'
+        | 'Meeting bag'
+        | 'Lanyards'
+        | 'Badges'
+        | 'Pen on meeting bags'
+        | 'Proceedings - Full page'
+        | 'Proceedings - ½ page'
+        | 'Proceedings - Back covers'
+      )[]
+    >({
+      value:['Packet inserts'],
+      validates: [notEmpty('Booth Options is required')],
     }),
   }
 
@@ -120,11 +168,34 @@ yup.string().required('this is required').validateSync
       </Layout.Section>
     ) : null
 
+  const totalPrice = useMemo(() => {
+    const { boothLocation, sponsorshipPreferrence, marketingOpportunities, generalSupports, } = getValues(fields)
+
+    const boothPrice = BoothLocations.find(e => e.name === boothLocation)?.price as number
+    const boothDisc = SponsorshipPreferrences.find(s => s.name === sponsorshipPreferrence)?.disc  as number
+    const sponsorshipPrice = SponsorshipPreferrences.find(s => s.name === sponsorshipPreferrence)?.price as number
+
+    const marketingPrices = MarketingOpportunities.filter(value => marketingOpportunities.includes(value.name)).reduce((acc, v) => v.price + acc, 0)
+    const generalSupportPrices = GeneralSupport.filter(value => generalSupports.includes(value.name)).reduce((acc, v) => v.price + acc, 0)
+
+    console.log({marketingPrice: marketingPrices, generalSupportPrice: generalSupportPrices});
+    
+    const total = (1 - boothDisc / 100) * boothPrice + sponsorshipPrice + marketingPrices + generalSupportPrices
+
+    return new Price(total)
+  }, [fields])
+
   return (
     <Page>
       <Layout>
         <Layout.Section>
-          <Card title="Online store dashboard" sectioned>
+          <Card
+            title="Online store dashboard"
+            sectioned
+            actions={[
+              { content: 'Proceed to payment', onAction: submit },
+            ]}
+          >
             <Form noValidate onSubmit={submit}>
               {errorBanner}
               <FormLayout>
@@ -211,51 +282,73 @@ yup.string().required('this is required').validateSync
                     </List.Item>
                   </List>
                 </TextContainer>
-                <FormLayout.Group
-                  title={
-                    'Booth Options (refer to booth floor layout sent over email)'
-                  }
-                >
-                  <Stack vertical>
-                    {['1st', '2nd', '3rd', '4th'].map(choice => {
-                      return <RadioButton key={choice} label={`${choice} Options`} {...asChoiceField(fields.boothOption, choice)} />
-                    })}
-                  </Stack>
+                <FormLayout.Group>
+                  <CustomChoiceList
+                    title="Booth option"
+                    subTitle="*refer to booth floor layout sent over email"
+                    choices={[
+                      '1st',
+                      '2nd',
+                      '3rd',
+                      '4th',
+                    ].map((c) => ({
+                      label: `${c} option`,
+                      value: c,
+                    }))}
+                    field={fields.boothOption}
+                  />
+
+                  <CustomChoiceList
+                    title={'Locations'}
+                    field={fields.boothLocation}
+                    choices={BoothLocations.map(
+                      ({ name, price }, i) => ({
+                        label: name,
+                        helpText: new Price(price).toDollar(),
+                        value: name,
+                      })
+                    )}
+                  />
                 </FormLayout.Group>
+
                 <FormLayout.Group condensed>
-                  <ChoiceList
-                    selected={['0']}
-                    title={<b>Sponsorship Prefferences</b>}
+                  <CustomChoiceList
+                    title="Sponsorship preferrence"
                     choices={SponsorshipPreferences.map(
                       (s, i) => {
                         return {
                           label: s.name,
                           helpText:
-                            `${s.price.toDollar()}` +
+                            `${new Price(s.price).toDollar()}` +
                             (s.disc
                               ? `, ${s.disc}% booth disc`
-                              : null),
-                          value: i.toString(),
+                              : ''),
+                          value: s.name,
                         }
                       }
                     )}
+                    field={fields.sponsorshipPreferrence}
                   />
                   <ChoiceList
-                    selected={['0']}
-                    title={<b>General support</b>}
+                    title="General Support"
+                    allowMultiple
+                    selected={fields.generalSupports.value}
+                    onChange={fields.generalSupports.onChange}
                     choices={GeneralSupport.map((s, i) => {
                       return {
-                        disabled: s.name.includes('*'), // disable exclusive package for now
-                        label: s.name,
-                        helpText: s.price.toDollar(),
-                        value: i.toString(),
+                        disabled: s.label.includes('*'), // disable exclusive package for now
+                        label: s.label,
+                        helpText: new Price(s.price).toDollar(),
+                        value: s.name,
                       }
                     })}
                   />
 
                   <ChoiceList
-                    title={<b>Marketing Opportunities</b>}
-                    selected={['0']}
+                    allowMultiple
+                    title={'Marketing Opportunities'}
+                    onChange={fields.marketingOpportunities.onChange}
+                    selected={fields.marketingOpportunities.value} 
                     choices={MarketingOpportunities.map(
                       (o, i) => {
                         return {
@@ -263,8 +356,8 @@ yup.string().required('this is required').validateSync
                             '*'
                           ), // disable exclusive package for now
                           label: o.name,
-                          helpText: o.price.toDollar(),
-                          value: i.toString(),
+                          helpText: new Price(o.price).toDollar(),
+                          value: o.name,
                         }
                       }
                     )}
@@ -277,13 +370,19 @@ yup.string().required('this is required').validateSync
                   *=exclusive sponsorship
                 </p>
               </TextContainer>
-              <Button
-                submit
-                // disabled={!dirty}
-                loading={submitting}
-              >
-                Proceed to payment
-              </Button>
+              <div className="flex justify-end mt-10">
+                <Button
+                  primary
+                  type="submit"
+                  className='px-10'
+                  style={{ minWidth: 150 }}
+                  // disabled={!dirty}
+                  loading={submitting}
+                >
+
+                  <b> Proceed to payment {totalPrice.toDollar()}</b>
+                </Button>
+              </div>
             </Form>
           </Card>
         </Layout.Section>
