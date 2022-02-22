@@ -266,6 +266,26 @@
     lodash "^4.17.4"
     react-transition-group "^4.4.2"
 
+"@shopify/predicates@^2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@shopify/predicates/-/predicates-2.0.6.tgz#f606561ab9aa6c126c89cac9fc6aa17bed4b75e1"
+  integrity sha512-s3IuLNZc0MRfWmnBhy7c8zdOc7Spjaq2G1bilzWtPh0NkVndVrImDnbbMAGQF6KizCwC4EsQJXyLWizROlTYYA==
+
+"@shopify/react-form@^1.1.14":
+  version "1.1.14"
+  resolved "https://registry.yarnpkg.com/@shopify/react-form/-/react-form-1.1.14.tgz#f01367f054d76512a45914ca1ee1e6460fa25a2b"
+  integrity sha512-DUkFaZrIGHO6qxzV84mt2OWjTmwrZWVuP+c9AtMehdPHKYgCiKr9f97QGM6PEp/1g/RuEOPMpWG7RQZx+l7TTQ==
+  dependencies:
+    "@shopify/predicates" "^2.0.6"
+    "@shopify/react-hooks" "^2.1.14"
+    fast-deep-equal "^3.1.3"
+    get-value "^3.0.1"
+
+"@shopify/react-hooks@^2.1.14":
+  version "2.1.14"
+  resolved "https://registry.yarnpkg.com/@shopify/react-hooks/-/react-hooks-2.1.14.tgz#a901fd93217b2807b4c6248d7a1becea281b0225"
+  integrity sha512-u066fZs4HsN5kZUJ7Z+EDTDbTLGd53Wcrs7AqkQ+1T9c/XPaejmyzLkLSI3D0HU0/mwNCg3EmGOfrBrKKU1mdg==
+
 "@tailwindcss/typography@^0.5.2":
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/@tailwindcss/typography/-/typography-0.5.2.tgz#24b069dab24d7a2467d01aca0dd432cb4b29f0ee"
@@ -1472,6 +1492,13 @@ get-symbol-description@^1.0.0:
     call-bind "^1.0.2"
     get-intrinsic "^1.1.1"
 
+get-value@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/get-value/-/get-value-3.0.1.tgz#5efd2a157f1d6a516d7524e124ac52d0a39ef5a8"
+  integrity sha512-mKZj9JLQrwMBtj5wxi6MH8Z5eSKaERpAwjg43dPtlGI1ZVEgH/qC7T8/6R2OBSUA+zzHBZgICsVJaEIV2tKTDA==
+  dependencies:
+    isobject "^3.0.1"
+
 github-from-package@0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/github-from-package/-/github-from-package-0.0.0.tgz#97fb5d96bfde8973313f20e8288ef9a167fa64ce"
@@ -1881,6 +1908,11 @@ isexe@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
+
+isobject@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
+  integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
 jest-worker@27.0.0-next.5:
   version "27.0.0-next.5"
