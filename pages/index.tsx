@@ -1,11 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Page } from '@shopify/polaris'
+import { Page, Button as ShopifyButton } from '@shopify/polaris'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Autoplay } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import hyatt from '../assets/hyatt.png'
+import Button from '../components/Buttons'
 import { P, Title } from '../components/typography'
 
 const images = Array.from({ length: 8 }).map((_, i) => ({
@@ -116,6 +118,9 @@ const Home: NextPage = () => {
               </li>
             ))}
           </ul>
+          <Link href="/sponsor" passHref>
+            <ShopifyButton>Become a sponsor</ShopifyButton>
+          </Link>
         </section>
       </div>
     </Page>

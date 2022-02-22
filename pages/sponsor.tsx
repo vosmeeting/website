@@ -430,7 +430,7 @@ export default function Sponsor() {
                 <List.Item>
                   <NextLink
                     href={
-                      '/application-guide#important-dates'
+                      '/application-guide'
                     }
                   >
                     <Link>Application Guide</Link>
@@ -439,7 +439,7 @@ export default function Sponsor() {
                     Full payment is required for
                     registration. Fees are due immediately
                     upon registration. Please refer to this{' '}
-                    <NextLink href="/application-guide">
+                    <NextLink href="/application-guide#important-dates">
                       <Link>section</Link>
                     </NextLink>{' '}
                     for remaining due dates. If an invoice
