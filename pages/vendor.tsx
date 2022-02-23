@@ -18,10 +18,11 @@ import {
   useField,
   useForm,
 } from '@shopify/react-form'
+import { omit } from 'lodash'
 import NextLink from 'next/link'
 import * as yup from 'yup'
 import Button from '../components/Buttons'
-import createCheckOutSession from '../services/stripe'
+import createVendorCheckoutSession from '../services/stripe'
 import { Price } from '../utils/const'
 
 export default function Sponsor() {
@@ -35,8 +36,7 @@ export default function Sponsor() {
       validates: [
         notEmpty("phone number can't be empty"),
         (input) => {
-          const phoneRegex =
-            /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+          const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
           if (!phoneRegex.test(input)) {
             return 'please input a valid phone number'
           }
@@ -71,12 +71,18 @@ export default function Sponsor() {
   const { fields, submit, submitting, submitErrors } = useForm({
     fields: schema,
     async onSubmit(form) {
+      const item = {
+        images: [`${process.env.NEXT_PUBLIC_HOST}/vosm_logo.png`],
+        amount: form.amount,
+      }
+      const vendor = omit(form, 'amount')
+
       let remoteErrors = []
 
       try {
-        await createCheckOutSession({
-          ...form,
-          images: [`${process.env.NEXT_PUBLIC_HOST}/vosm_logo.png`],
+        await createVendorCheckoutSession({
+          item,
+          vendor,
         })
       } catch (e) {
         remoteErrors.push(e) // your API call goes here
@@ -142,7 +148,7 @@ export default function Sponsor() {
                 <TextField
                   label="Amount"
                   inputMode="numeric"
-                  type='number'
+                  type="number"
                   autoComplete="off"
                   {...fields.amount}
                 />

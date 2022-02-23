@@ -1,12 +1,13 @@
 import { NextApiResponse } from 'next'
 // import calcPrice from "../../services/calc-price";
 import omit from 'lodash/omit'
+import Stripe from 'stripe'
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
 
 // eslint-disable-next-line import/no-anonymous-default-export
 const CreateStripeSession = async (req, res: NextApiResponse) => {
-  const { item } = req.body
+  const { item, vendor } = req.body
 
   // const dollar = calcPrice(item)
   const cents = Number(item.amount) * 100
@@ -30,15 +31,22 @@ const CreateStripeSession = async (req, res: NextApiResponse) => {
   }
 
   try {
+    const cust = await stripe.customers.create({
+      email: vendor.email,
+      name: vendor.companyName,
+      phone: vendor.companyTelephone,
+    })
+    console.log('created customer', cust)
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [transformedItem],
       mode: 'payment',
       success_url: redirectURL + '/payment-success',
       cancel_url: redirectURL + '/payment-failed',
-      customer_email: item.email,
-      metadata: omit(item, 'images'),
+      customer: cust.id,
     })
+    console.log('created session', session)
 
     res.json({ id: session.id })
   } catch (e) {
