@@ -11,7 +11,13 @@ import {
   TextContainer,
   TextField,
 } from '@shopify/polaris'
-import { getValues, notEmpty, numericString, useField, useForm } from '@shopify/react-form'
+import {
+  getValues,
+  notEmpty,
+  numericString,
+  useField,
+  useForm,
+} from '@shopify/react-form'
 import NextLink from 'next/link'
 import * as yup from 'yup'
 import Button from '../components/Buttons'
@@ -36,18 +42,6 @@ export default function Sponsor() {
         },
       ],
     }),
-    address: useField({
-      value: '',
-      validates: [notEmpty('address is required')],
-    }),
-    fax: useField({
-      value: '',
-      validates: [numericString('please provide a valid fax number')],
-    }),
-    contactName: useField({
-      value: '',
-      validates: [notEmpty('please provide a contact name')],
-    }),
     email: useField({
       value: '',
       validates: [
@@ -64,26 +58,13 @@ export default function Sponsor() {
         },
       ],
     }),
-    cityStateZip: useField({
-      value: '',
-      validates: [notEmpty('City/State/Zip is required')],
-    }),
-    website: useField({
+    amount: useField({
       value: '',
       validates: [
-        (input) => {
-          if (!yup.string().url(input).isValidSync) {
-            return 'please input a valid url'
-          }
-        },
+        notEmpty('Donation amount is required!'),
+        numericString('must be a valid amount: only numeric is accepted'),
       ],
     }),
-		amount: useField({
-			value: '',
-			validates: [
-				notEmpty('Donation amount is required!'), numericString('must be a valid amount: only numeric is accepted')
-			]
-		})
   }
 
   const { fields, submit, submitting, submitErrors } = useForm({
@@ -130,17 +111,17 @@ export default function Sponsor() {
     >
       <Layout>
         <Layout.Section>
-          <Card title="Company Contact Information and Selections" sectioned>
+          <Card title="Company Contact Information" sectioned>
             <Form noValidate onSubmit={submit}>
               {errorBanner}
               <FormLayout>
+                <TextField
+                  label="Company Name"
+                  placeholder="Acme corp"
+                  autoComplete="off"
+                  {...fields.companyName}
+                />
                 <FormLayout.Group>
-                  <TextField
-                    label="Company Name"
-                    placeholder="Acme corp"
-                    autoComplete="off"
-                    {...fields.companyName}
-                  />
                   <TextField
                     label="Company Telephone"
                     placeholder="202-555-0124"
@@ -148,41 +129,22 @@ export default function Sponsor() {
                     inputMode="tel"
                     {...fields.companyTelephone}
                   />
-                  <TextField label="Fax" autoComplete="fax" {...fields.fax} />
-                  <TextField
-                    label="Contact name"
-                    autoComplete="fullName"
-                    placeholder="John Anderson"
-                    {...fields.contactName}
-                  />
                   <TextField
                     label="Company/Contact Email"
                     placeholder="john@company.mail.com"
-                    autoComplete="off"
+                    autoComplete="email"
                     {...fields.email}
                   />
-
-                  <TextField
-                    label="City/State/Zip"
-                    autoComplete="off"
-                    {...fields.cityStateZip}
-                  />
-
-                  <TextField
-                    multiline={2}
-                    label="Company Address"
-                    autoComplete="address"
-                    {...fields.address}
-                  />
-
-                  <TextField
-                    placeholder="www.company.com"
-                    label="Company Website"
-                    autoComplete="off"
-                    {...fields.website}
-                  />
                 </FormLayout.Group>
-								<TextField label="Amount" inputMode='numeric' autoComplete='off' {...fields.amount} />
+                <FormLayout.Group>
+
+                </FormLayout.Group>
+                <TextField
+                  label="Amount"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  {...fields.amount}
+                />
               </FormLayout>
               <div className="flex justify-end mt-10">
                 <Button
@@ -191,7 +153,10 @@ export default function Sponsor() {
                   style={{ minWidth: 150 }}
                   loading={submitting}
                 >
-                  <b>Proceed to payment {new Price(getValues(fields).amount).toDollar()}</b>
+                  <b>
+                    Proceed to payment{' '}
+                    {new Price(getValues(fields).amount).toDollar()}
+                  </b>
                 </Button>
               </div>
             </Form>
