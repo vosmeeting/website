@@ -108,6 +108,7 @@ export default function Sponsor() {
       title="Application	for	Commercial	Exhibits and	Sponsorship"
       subtitle="4th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	22-24, 2022"
       additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
+      narrowWidth
     >
       <Layout>
         <Layout.Section>
