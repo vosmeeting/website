@@ -37,7 +37,7 @@ const Home: NextPage = () => {
             <br />
             <P>
               This is a limited-space event that will take place on July
-              22-24th, 2022 in Chicago, IL. Come be part of an interactive
+              22-24<sup>th</sup>, 2022 in Chicago, IL. Come be part of an interactive
               gathering that will challenge and inspire young professionals and
               engage the most renowned clinicians with compelling case
               discussions, pertinent peals, updates from human meetings, and

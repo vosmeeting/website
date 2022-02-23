@@ -34,7 +34,7 @@ const Header = () => {
             4th Veterinary Ophthalmic Surgery Meeting
           </h1>
           <p className="text-xl font-sans font-normal">
-            July 22-24th, Chicago, IL
+            July 22-24<sup>th</sup> 2022, Chicago, IL
           </p>
         </div>
       </div>
