@@ -191,6 +191,9 @@ export default function Sponsor() {
       additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
     >
       <Layout>
+        <Banner status='warning' title='This is work in progress page'>
+          We will notify you when it's ready
+        </Banner>
         <Layout.Section>
           <Card
             title="Company Contact Information and Selections"
@@ -395,6 +398,7 @@ export default function Sponsor() {
                   type="submit"
                   className="px-10"
                   style={{ minWidth: 150 }}
+                  disabled
                   // disabled={!dirty}
                   loading={submitting}
                 >

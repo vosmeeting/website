@@ -5,6 +5,8 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 const Home: NextPage = () => {
+  // todo: handle error from sponsor and participant page
+  // right now it only handles from vendor
   const router = useRouter()
   return (
     <Page>
@@ -23,7 +25,7 @@ const Home: NextPage = () => {
               <Banner
                 title="Oops! Your payment was failed."
                 status="critical"
-                action={{ content: 'Back to sponsor form', onAction: () => router.push('/become-a-sponsor') }}
+                action={{ content: 'Back to vendor form', onAction: () => router.push('/vendor') }}
               >
                 <p></p>
               </Banner>
