@@ -89,7 +89,7 @@ export default function Sponsor() {
   const [remoteErrors, setRemoteErrors] = useState([])
 
   useEffect(() => {
-    setRemoteErrors([new Error(error)])
+    if (error) setRemoteErrors([new Error(error)])
   }, [error])
 
   const { fields, submit, submitting } = useForm({
