@@ -118,7 +118,7 @@ const Home: NextPage = () => {
               </li>
             ))}
           </ul>
-          <Link href="/sponsor" passHref>
+          <Link href="/become-a-sponsor" passHref>
             <ShopifyButton>Become a sponsor</ShopifyButton>
           </Link>
         </section>

@@ -16,18 +16,14 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-<Page>
-      
-
-      
+      <Page>
         <Layout>
           <Layout.Section>
             
               <Banner
                 title="Oops! Your payment was failed."
                 status="critical"
-                action={{ content: 'Back to sponsor form', onAction: () => router.push('/sponsor') }}
+                action={{ content: 'Back to sponsor form', onAction: () => router.push('/become-a-sponsor') }}
               >
                 <p></p>
               </Banner>

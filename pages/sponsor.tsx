@@ -70,7 +70,7 @@ export default function Sponsor() {
         (input) => {
           try {
             yup.string()
-              .required('Company/Contact is required')
+              .required('Company/Contact email is required')
               .email('please provide a valid email')
               .validateSync(input)
           } catch (e) {

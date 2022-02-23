@@ -1,10 +1,10 @@
 export class Price extends Number {
-  constructor(private value: number) {
-    super()
+  constructor(value: number | string) {
+    super(value)
   }
 
   toDollar() {
-    return this.value.toLocaleString('en-us', {
+    return this.toLocaleString('en-us', {
       style: 'currency',
       currency: 'USD',
       maximumFractionDigits: 0

@@ -1,5 +1,6 @@
 import { NextApiResponse } from "next";
-import calcPrice from "../../services/calc-price";
+// import calcPrice from "../../services/calc-price";
+import omit from 'lodash/omit'
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -7,8 +8,8 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const CreateStripeSession = async (req, res: NextApiResponse) => {
   const { item } = req.body;
 
-  console.log({ item });
-  const dollar = calcPrice(item)
+  // const dollar = calcPrice(item)
+  const cents = Number(item.amount) * 100
 
 
   const redirectURL =
@@ -24,7 +25,7 @@ const CreateStripeSession = async (req, res: NextApiResponse) => {
         description: '4th Veterinary	Ophthalmic	Surgery	Meeting	Jul	22-24, 2022',
         images: item.images
       },
-      unit_amount: dollar * 100,
+      unit_amount: cents
     },
     quantity: 1,
   };
@@ -37,7 +38,10 @@ const CreateStripeSession = async (req, res: NextApiResponse) => {
       mode: 'payment',
       success_url: redirectURL + '/payment-success',
       cancel_url: redirectURL + '/payment-failed',
+      customer_email: item.email,
+      metadata: omit(item, 'images')
     });
+    
     res.json({ id: session.id });
   } catch (e) {
     res.status(500).send(e.message)
