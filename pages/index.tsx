@@ -45,7 +45,7 @@ const Home: NextPage = () => {
             </P>
           </div>
 
-          <div className="col-span-12 sm:col-span-5">
+          <div className="col-span-12 sm:col-span-6">
             <Swiper
               className="rounded-lg shadow-xl"
               modules={[Autoplay]}
@@ -72,9 +72,9 @@ const Home: NextPage = () => {
           </div>
         </section>
 
-        <section className="">
+        <section className="grid">
           <Title className="pb-4 font-normal">Location</Title>
-          <div className="flex">
+          <div className="flex flex-col sm:flex-row">
             <div className="relative w-5/12 overflow-hidden rounded-lg shadow-lg">
               <Image src={hyatt} layout="fill" objectFit="cover" alt="haytt" />
             </div>

@@ -170,7 +170,7 @@ export default function Sponsor() {
                   {...fields.amount}
                 />
               </FormLayout>
-              <div className="mt-10 flex justify-end">
+              <div className="mt-10 flex justify-center sm:justify-end">
                 <Button
                   type="submit"
                   className="px-10"

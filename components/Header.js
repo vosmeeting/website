@@ -8,7 +8,7 @@ import Link from 'next/link'
 // TODO: haven't handled the responsive design extensively
 const Header = () => {
   return (
-    <div className="min-h-72 relative w-full bg-vosm-blue flex flex-row justify-between items-end px-24 pb-10 pt-10">
+    <div className="min-h-72 relative w-full bg-vosm-blue flex flex-row justify-between items-end px-4 xl:px-24 pb-10 pt-10">
       <Image
         className="mix-blend-color-burn "
         alt="building"
@@ -18,8 +18,8 @@ const Header = () => {
         quality={100}
       />
 
-      <div className="flex items-center gap-x-5 ">
-        <div className="w-64 ">
+      <div className="flex flex-col md:flex-row items-center gap-x-5 ">
+        <div className="w-64 text-center ">
           <Image
             quality={100}
             width={208}
@@ -29,9 +29,9 @@ const Header = () => {
             layout="fixed"
           />
         </div>
-        <div className="text-slate-50 font-normal ">
+        <div className="text-slate-50 font-normal text-center sm:text-left">
           <p className="text-2xl">We are excited to announce</p>
-          <h1 className="text-4xl font-semibold">
+          <h1 className=" text-xl sm:text-4xl font-semibold">
             4th Veterinary Ophthalmic Surgery Meeting
           </h1>
           <p className="text-xl font-sans font-normal">
@@ -42,9 +42,7 @@ const Header = () => {
 
       <div className="justify-between items-center gap-2 z-10 hidden sm:flex">
         <Button variant="secondary" className="px-10">
-          <Link href={'/register'}>
-            Register Now
-          </Link>
+          <Link href={'/register'}>Register Now</Link>
         </Button>
       </div>
     </div>

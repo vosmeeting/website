@@ -9,7 +9,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <AppProvider i18n={enTranslations}>
       <Header />
-      <div className="bg-slate-100 p-16">
+      <div className="bg-slate-100 p-4 sm:p-8 md:p-16">
         <Component {...pageProps} />
       </div>
       <Footer />
