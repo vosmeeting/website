@@ -13,7 +13,10 @@ const PaymentSuccess: NextPage = () => {
           <Banner
             title="Your payment was succesfull!"
             status="success"
-            action={{ content: 'Go Home', onAction: () => router.push('/') }}
+            action={{
+              content: 'Go Back',
+              onAction: () => router.push('/vendor'),
+            }}
           >
             <p>Your submission is received and we will contact you soon.</p>
           </Banner>

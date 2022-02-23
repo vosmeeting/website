@@ -9,11 +9,13 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import hyatt from '../assets/hyatt.png'
 import Button from '../components/Buttons'
 import { P, Title } from '../components/typography'
+import Error from 'next/error'
 
 const images = Array.from({ length: 8 }).map((_, i) => ({
   url: `/vosm-images/vosm-${i + 1}.png`,
 }))
 const Home: NextPage = () => {
+  return <Error statusCode={404} />
   return (
     <Page>
       <Head>

@@ -3,6 +3,7 @@ import { notEmpty, useField, useForm } from '@shopify/react-form'
 import { useRouter } from 'next/router'
 import * as yup from 'yup'
 import createCheckOutSession from '../services/stripe'
+import Error from 'next/error'
 
 export default function Sponsor() {
   const schema = {
@@ -66,6 +67,7 @@ export default function Sponsor() {
       </Layout.Section>
     ) : null
 
+  return <Error statusCode={404} />
   return (
     <Page
       subtitle="4th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	22-24, 2022"

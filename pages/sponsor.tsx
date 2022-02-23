@@ -33,6 +33,7 @@ import {
   Price,
   SponsorshipPreferences,
 } from '../utils/const'
+import Error from 'next/error'
 
 export default function Sponsor() {
   const schema = {
@@ -188,6 +189,7 @@ export default function Sponsor() {
     return new Price(total)
   }, [fields])
 
+  return <Error statusCode={404} />
   return (
     <Page
       title="Application	for	Commercial	Exhibits and	Sponsorship"
