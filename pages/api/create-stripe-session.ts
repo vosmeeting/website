@@ -2,6 +2,7 @@ import { NextApiResponse } from 'next'
 // import calcPrice from "../../services/calc-price";
 import omit from 'lodash/omit'
 import Stripe from 'stripe'
+import queryString from 'query-string'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
 
@@ -43,7 +44,14 @@ const CreateStripeSession = async (req, res: NextApiResponse) => {
       line_items: [transformedItem],
       mode: 'payment',
       success_url: redirectURL + '/payment-success',
-      cancel_url: redirectURL + '/payment-failed',
+      cancel_url: queryString.stringifyUrl({
+        url: redirectURL + '/vendor',
+        query: {
+          ...vendor,
+          ...item,
+          error: 'payment was cancelled',
+        },
+      }),
       customer: cust.id,
     })
     console.log('created session', session)

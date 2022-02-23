@@ -45,8 +45,7 @@ export default function Sponsor() {
       validates: [
         notEmpty("phone number can't be empty"),
         (input) => {
-          const phoneRegex =
-            /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+          const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
           if (!phoneRegex.test(input)) {
             return 'please input a valid phone number'
           }
@@ -197,9 +196,10 @@ export default function Sponsor() {
     >
       <Layout>
         <Layout.Section>
-          <Banner status="warning" title="This is work in progress page">
-            We will notify you when it's ready
-          </Banner>
+          <Banner
+            status="warning"
+            title="This is work in progress page"
+          ></Banner>
         </Layout.Section>
         <Layout.Section>
           <Card title="Company Contact Information and Selections" sectioned>

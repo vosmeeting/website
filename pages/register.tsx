@@ -79,9 +79,7 @@ export default function Sponsor() {
               status="warning"
               title="This page is work in progress"
               action={{ content: 'Go Home', onAction: () => router.push('/') }}
-            >
-              we will notify you when it's ready
-            </Banner>
+            ></Banner>
           </Card>
         </Layout.Section>
       </Layout>

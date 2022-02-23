@@ -20,19 +20,37 @@ import {
 } from '@shopify/react-form'
 import { omit } from 'lodash'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import * as yup from 'yup'
 import Button from '../components/Buttons'
 import createVendorCheckoutSession from '../services/stripe'
 import { Price } from '../utils/const'
 
 export default function Sponsor() {
+  const route = useRouter()
+  const {
+    companyName = '',
+    companyTelephone = '',
+    email = '',
+    amount = '',
+    error = '',
+  } = route.query as {
+    companyName: string
+    companyTelephone: string
+    email: string
+    amount: string
+    error: string
+  }
+  console.log(route.query)
+
   const schema = {
     companyName: useField({
-      value: '',
+      value: companyName,
       validates: [notEmpty('company name is required')],
     }),
     companyTelephone: useField({
-      value: '',
+      value: companyTelephone,
       validates: [
         notEmpty("phone number can't be empty"),
         (input) => {
@@ -44,7 +62,7 @@ export default function Sponsor() {
       ],
     }),
     email: useField({
-      value: '',
+      value: email,
       validates: [
         (input) => {
           try {
@@ -60,7 +78,7 @@ export default function Sponsor() {
       ],
     }),
     amount: useField({
-      value: '',
+      value: amount,
       validates: [
         notEmpty('Donation amount is required!'),
         numericString('must be a valid amount: only numeric is accepted'),
@@ -68,7 +86,13 @@ export default function Sponsor() {
     }),
   }
 
-  const { fields, submit, submitting, submitErrors } = useForm({
+  const [remoteErrors, setRemoteErrors] = useState([])
+
+  useEffect(() => {
+    setRemoteErrors([new Error(error)])
+  }, [error])
+
+  const { fields, submit, submitting } = useForm({
     fields: schema,
     async onSubmit(form) {
       const item = {
@@ -77,19 +101,14 @@ export default function Sponsor() {
       }
       const vendor = omit(form, 'amount')
 
-      let remoteErrors = []
-
       try {
         await createVendorCheckoutSession({
           item,
           vendor,
         })
       } catch (e) {
-        remoteErrors.push(e) // your API call goes here
-      }
-
-      if (remoteErrors.length > 0) {
-        return { status: 'fail', errors: remoteErrors }
+        setRemoteErrors([e])
+        return
       }
 
       return { status: 'success' }
@@ -97,17 +116,15 @@ export default function Sponsor() {
   })
 
   const errorBanner =
-    submitErrors.length > 0 ? (
-      <Layout.Section>
-        <Banner status="critical">
-          <p>There were some issues with your form submission:</p>
-          <ul>
-            {submitErrors.map(({ message }, index) => {
-              return <li key={`${message}${index}`}>{message}</li>
-            })}
-          </ul>
-        </Banner>
-      </Layout.Section>
+    remoteErrors.length > 0 ? (
+      <Banner status="critical">
+        <p>There were some issues with your form submission:</p>
+        <List>
+          {remoteErrors.map(({ message }, index) => {
+            return <List.Item key={`${message}${index}`}>{message}</List.Item>
+          })}
+        </List>
+      </Banner>
     ) : null
 
   return (
@@ -117,11 +134,11 @@ export default function Sponsor() {
       additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
       narrowWidth
     >
-      <Layout>
-        <Layout.Section>
-          <Card title="Company Contact Information" sectioned>
+      <Card title="Company Contact Information" sectioned>
+        <Layout>
+          <Layout.Section>{errorBanner}</Layout.Section>
+          <Layout.Section>
             <Form noValidate onSubmit={submit}>
-              {errorBanner}
               <FormLayout>
                 <TextField
                   label="Company Name"
@@ -167,6 +184,8 @@ export default function Sponsor() {
                 </Button>
               </div>
             </Form>
+          </Layout.Section>
+          <Layout.Section>
             <TextContainer>
               <Heading>More information:</Heading>
               <List>
@@ -195,9 +214,9 @@ export default function Sponsor() {
                 </List.Item>
               </List>
             </TextContainer>
-          </Card>
-        </Layout.Section>
-      </Layout>
+          </Layout.Section>
+        </Layout>
+      </Card>
     </Page>
   )
 }
