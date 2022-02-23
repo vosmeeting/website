@@ -117,7 +117,7 @@ export default function Sponsor() {
 
   const errorBanner =
     remoteErrors.length > 0 ? (
-      <Banner status="critical">
+      <Banner status="critical" onDismiss={() => setRemoteErrors([])}>
         <p>There were some issues with your form submission:</p>
         <List>
           {remoteErrors.map(({ message }, index) => {
