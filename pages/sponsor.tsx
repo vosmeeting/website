@@ -10,14 +10,14 @@ import {
   List,
   Page,
   TextContainer,
-  TextField
+  TextField,
 } from '@shopify/polaris'
 import {
   getValues,
   notEmpty,
   numericString,
   useField,
-  useForm
+  useForm,
 } from '@shopify/react-form'
 import NextLink from 'next/link'
 import { useMemo } from 'react'
@@ -31,7 +31,7 @@ import {
   GeneralSupport,
   MarketingOpportunities,
   Price,
-  SponsorshipPreferences
+  SponsorshipPreferences,
 } from '../utils/const'
 
 export default function Sponsor() {
@@ -45,7 +45,8 @@ export default function Sponsor() {
       validates: [
         notEmpty("phone number can't be empty"),
         (input) => {
-          const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+          const phoneRegex =
+            /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
           if (!phoneRegex.test(input)) {
             return 'please input a valid phone number'
           }
@@ -69,7 +70,8 @@ export default function Sponsor() {
       validates: [
         (input) => {
           try {
-            yup.string()
+            yup
+              .string()
               .required('Company/Contact email is required')
               .email('please provide a valid email')
               .validateSync(input)
@@ -151,7 +153,10 @@ export default function Sponsor() {
       let remoteErrors = []
 
       try {
-        await createCheckOutSession({...form, images: [`${process.env.NEXT_PUBLIC_HOST}/vosm_logo.png`] })
+        await createCheckOutSession({
+          ...form,
+          images: [`${process.env.NEXT_PUBLIC_HOST}/vosm_logo.png`],
+        })
       } catch (e) {
         remoteErrors.push(e) // your API call goes here
       }
@@ -191,14 +196,13 @@ export default function Sponsor() {
       additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
     >
       <Layout>
-        <Banner status='warning' title='This is work in progress page'>
-          We will notify you when it's ready
-        </Banner>
         <Layout.Section>
-          <Card
-            title="Company Contact Information and Selections"
-            sectioned
-          >
+          <Banner status="warning" title="This is work in progress page">
+            We will notify you when it's ready
+          </Banner>
+        </Layout.Section>
+        <Layout.Section>
+          <Card title="Company Contact Information and Selections" sectioned>
             <Form noValidate onSubmit={submit}>
               {errorBanner}
               <FormLayout>
@@ -216,11 +220,7 @@ export default function Sponsor() {
                     inputMode="tel"
                     {...fields.companyTelephone}
                   />
-                  <TextField
-                    label="Fax"
-                    autoComplete="fax"
-                    {...fields.fax}
-                  />
+                  <TextField label="Fax" autoComplete="fax" {...fields.fax} />
                   <TextField
                     label="Contact name"
                     autoComplete="fullName"
@@ -260,32 +260,25 @@ export default function Sponsor() {
                     <Heading>Booth layout options</Heading>
                     <List>
                       <List.Item>
-                        Previous sponsors have priority
-                        in choosing booth space
+                        Previous sponsors have priority in choosing booth space
                       </List.Item>
                       <List.Item>
-                        Companies exhibiting at the
-                        exhibitor hall can get 2 booths
+                        Companies exhibiting at the exhibitor hall can get 2
+                        booths max
+                      </List.Item>
+                      <List.Item>
+                        Companies exhibiting in the lecture hall can get 1 booth
                         max
                       </List.Item>
+                      <List.Item>Companies cannot share booths</List.Item>
                       <List.Item>
-                        Companies exhibiting in the
-                        lecture hall can get 1 booth max
+                        Registration fee is per booth and includes only one
+                        representative; additional representative = $350
+                        [includes daily breakfast+ lunch and reception with hors
+                        D'oeuvres].
                       </List.Item>
                       <List.Item>
-                        Companies cannot share booths
-                      </List.Item>
-                      <List.Item>
-                        Registration fee is per booth
-                        and includes only one
-                        representative; additional
-                        representative = $350 [includes
-                        daily breakfast+ lunch and
-                        reception with hors D'oeuvres].
-                      </List.Item>
-                      <List.Item>
-                        Booths are small. The limit is 2
-                        reps per booth
+                        Booths are small. The limit is 2 reps per booth
                       </List.Item>
                     </List>
                   </TextContainer>
@@ -294,12 +287,7 @@ export default function Sponsor() {
                   <CustomChoiceList
                     title="Booth option"
                     subTitle="*refer to booth floor layout sent over email"
-                    choices={[
-                      '1st',
-                      '2nd',
-                      '3rd',
-                      '4th',
-                    ].map((c) => ({
+                    choices={['1st', '2nd', '3rd', '4th'].map((c) => ({
                       label: `${c} option`,
                       value: c,
                     }))}
@@ -309,52 +297,38 @@ export default function Sponsor() {
                   <CustomChoiceList
                     title={'Locations'}
                     field={fields.boothLocation}
-                    choices={BoothLocations.map(
-                      ({ name, price }, i) => ({
-                        label: name,
-                        helpText: new Price(
-                          price
-                        ).toDollar(),
-                        value: name,
-                      })
-                    )}
+                    choices={BoothLocations.map(({ name, price }, i) => ({
+                      label: name,
+                      helpText: new Price(price).toDollar(),
+                      value: name,
+                    }))}
                   />
                 </FormLayout.Group>
 
                 <FormLayout.Group condensed>
                   <CustomChoiceList
                     title="Sponsorship preferrence"
-                    choices={SponsorshipPreferences.map(
-                      (s, i) => {
-                        return {
-                          label: s.name,
-                          helpText:
-                            `${new Price(
-                              s.price
-                            ).toDollar()}` +
-                            (s.disc
-                              ? `, ${s.disc}% booth disc`
-                              : ''),
-                          value: s.name,
-                        }
+                    choices={SponsorshipPreferences.map((s, i) => {
+                      return {
+                        label: s.name,
+                        helpText:
+                          `${new Price(s.price).toDollar()}` +
+                          (s.disc ? `, ${s.disc}% booth disc` : ''),
+                        value: s.name,
                       }
-                    )}
+                    })}
                     field={fields.sponsorshipPreferrence}
                   />
                   <ChoiceList
                     title="General Support"
                     allowMultiple
                     selected={fields.generalSupports.value}
-                    onChange={
-                      fields.generalSupports.onChange
-                    }
+                    onChange={fields.generalSupports.onChange}
                     choices={GeneralSupport.map((s, i) => {
                       return {
                         disabled: s.label.includes('*'), // disable exclusive package for now
                         label: s.label,
-                        helpText: new Price(
-                          s.price
-                        ).toDollar(),
+                        helpText: new Price(s.price).toDollar(),
                         value: s.name,
                       }
                     })}
@@ -363,27 +337,16 @@ export default function Sponsor() {
                   <ChoiceList
                     allowMultiple
                     title={'Marketing Opportunities'}
-                    onChange={
-                      fields.marketingOpportunities
-                        .onChange
-                    }
-                    selected={
-                      fields.marketingOpportunities.value
-                    }
-                    choices={MarketingOpportunities.map(
-                      (o, i) => {
-                        return {
-                          disabled: o.name.includes(
-                            '*'
-                          ), // disable exclusive package for now
-                          label: o.name,
-                          helpText: new Price(
-                            o.price
-                          ).toDollar(),
-                          value: o.name,
-                        }
+                    onChange={fields.marketingOpportunities.onChange}
+                    selected={fields.marketingOpportunities.value}
+                    choices={MarketingOpportunities.map((o, i) => {
+                      return {
+                        disabled: o.name.includes('*'), // disable exclusive package for now
+                        label: o.name,
+                        helpText: new Price(o.price).toDollar(),
+                        value: o.name,
                       }
-                    )}
+                    })}
                   />
                 </FormLayout.Group>
               </FormLayout>
@@ -393,7 +356,7 @@ export default function Sponsor() {
                   *=exclusive sponsorship
                 </p>
               </TextContainer>
-              <div className="flex justify-end mt-10">
+              <div className="mt-10 flex justify-end">
                 <Button
                   type="submit"
                   className="px-10"
@@ -402,11 +365,7 @@ export default function Sponsor() {
                   // disabled={!dirty}
                   loading={submitting}
                 >
-                  <b>
-                    {' '}
-                    Proceed to payment{' '}
-                    {totalPrice.toDollar()}
-                  </b>
+                  <b> Proceed to payment {totalPrice.toDollar()}</b>
                 </Button>
               </div>
             </Form>
@@ -414,40 +373,26 @@ export default function Sponsor() {
               <Heading>More information:</Heading>
               <List>
                 <List.Item>
-                  <NextLink
-                    href={
-                      '/application-guide#marketing-opportunities'
-                    }
-                  >
-                    <Link>
-                      Marketing and Sponsorship
-                      Opportunities
-                    </Link>
+                  <NextLink href={'/application-guide#marketing-opportunities'}>
+                    <Link>Marketing and Sponsorship Opportunities</Link>
                   </NextLink>
                   <p>
-                    Refer to this page for registration
-                    packet for marketing options,
-                    sponsorship levels and general support
-                    categories
+                    Refer to this page for registration packet for marketing
+                    options, sponsorship levels and general support categories
                   </p>
                 </List.Item>
                 <List.Item>
-                  <NextLink
-                    href={
-                      '/application-guide'
-                    }
-                  >
+                  <NextLink href={'/application-guide'}>
                     <Link>Application Guide</Link>
                   </NextLink>
                   <p>
-                    Full payment is required for
-                    registration. Fees are due immediately
-                    upon registration. Please refer to this{' '}
+                    Full payment is required for registration. Fees are due
+                    immediately upon registration. Please refer to this{' '}
                     <NextLink href="/application-guide#important-dates">
                       <Link>section</Link>
                     </NextLink>{' '}
-                    for remaining due dates. If an invoice
-                    or W-9 is needed, please let us know
+                    for remaining due dates. If an invoice or W-9 is needed,
+                    please let us know
                   </p>
                 </List.Item>
               </List>
@@ -459,4 +404,4 @@ export default function Sponsor() {
   )
 }
 
-type Props = { host: string | null };
+type Props = { host: string | null }

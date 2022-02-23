@@ -3,6 +3,7 @@ import Image from 'next/image'
 import bg from '../assets/header_bg.png'
 import logo from '../assets/vosm_logo.png'
 import Button from './Buttons'
+import Link from 'next/link'
 
 // TODO: haven't handled the responsive design extensively
 const Header = () => {
@@ -41,7 +42,9 @@ const Header = () => {
 
       <div className="justify-between items-center gap-2 z-10 hidden sm:flex">
         <Button variant="secondary" className="px-10">
-          Register Now
+          <Link href={'/register'}>
+            Register Now
+          </Link>
         </Button>
       </div>
     </div>

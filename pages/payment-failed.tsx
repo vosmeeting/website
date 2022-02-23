@@ -21,19 +21,19 @@ const Home: NextPage = () => {
       <Page>
         <Layout>
           <Layout.Section>
-            
-              <Banner
-                title="Oops! Your payment was failed."
-                status="critical"
-                action={{ content: 'Back to vendor form', onAction: () => router.push('/vendor') }}
-              >
-                <p></p>
-              </Banner>
-            
+            <Banner
+              title="Oops! Your payment was failed."
+              status="critical"
+              action={{
+                content: 'Back to vendor form',
+                onAction: () => router.push('/vendor'),
+              }}
+            >
+              <p></p>
+            </Banner>
           </Layout.Section>
         </Layout>
-      
-    </Page>
+      </Page>
     </Page>
   )
 }

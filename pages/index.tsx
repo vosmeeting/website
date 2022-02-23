@@ -25,9 +25,9 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="bg-white p-16 min-h-screen grid grid-cols-1 gap-y-28 shadow-sm rounded-lg ">
-        <section className="grid grid-cols-12 h-72 items-center">
-          <div className="pr-10 col-span-12 sm:col-span-6 text-justify">
+      <div className="grid min-h-screen grid-cols-1 gap-y-28 rounded-lg bg-white p-16 shadow-sm ">
+        <section className="grid h-72 grid-cols-12 items-center">
+          <div className="col-span-12 pr-10 text-justify sm:col-span-6">
             <Title className="leading-normal">The conference</Title>
             <P>
               This long awaited event will be an innovative meeting, with a
@@ -36,8 +36,8 @@ const Home: NextPage = () => {
             </P>
             <br />
             <P>
-              This is a limited-space event that will take place on July
-              22-24<sup>th</sup>, 2022 in Chicago, IL. Come be part of an interactive
+              This is a limited-space event that will take place on July 22-24
+              <sup>th</sup>, 2022 in Chicago, IL. Come be part of an interactive
               gathering that will challenge and inspire young professionals and
               engage the most renowned clinicians with compelling case
               discussions, pertinent peals, updates from human meetings, and
@@ -45,7 +45,7 @@ const Home: NextPage = () => {
             </P>
           </div>
 
-          <div className="sm:col-span-5 col-span-12">
+          <div className="col-span-12 sm:col-span-5">
             <Swiper
               className="rounded-lg shadow-xl"
               modules={[Autoplay]}
@@ -73,26 +73,26 @@ const Home: NextPage = () => {
         </section>
 
         <section className="">
-          <Title className="font-normal pb-4">Location</Title>
+          <Title className="pb-4 font-normal">Location</Title>
           <div className="flex">
-            <div className="w-5/12 relative rounded-lg shadow-lg overflow-hidden">
+            <div className="relative w-5/12 overflow-hidden rounded-lg shadow-lg">
               <Image src={hyatt} layout="fill" objectFit="cover" alt="haytt" />
             </div>
-            <div className="pl-10 flex flex-col gap-y-5 ">
+            <div className="flex flex-col gap-y-5 pl-10 ">
               <div>
-                <h2 className="text-3xl pb-2 text-vosm-blue underline underline-offset-4">
+                <h2 className="pb-2 text-3xl text-vosm-blue underline underline-offset-4">
                   Hyatt Regency O'hare
                 </h2>
-                <h3 className=" text-sm  font-sans text-slate-600">
+                <h3 className=" font-sans  text-sm text-slate-600">
                   9300 Bryn Mawr Avenue <br />
                   Rosemont, Illinois 60018
                 </h3>
               </div>
               <div>
-                <h2 className="text-2xl pb-2 text-vosm-blue underline underline-offset-4">
+                <h2 className="pb-2 text-2xl text-vosm-blue underline underline-offset-4">
                   Alternative nearby hotels
                 </h2>
-                <ul className="leading-loose list-disc ml-5 text-slate-600 underline underline-offset-2 grid gap-y-2 ">
+                <ul className="ml-5 grid list-disc gap-y-2 leading-loose text-slate-600 underline underline-offset-2 ">
                   <li>
                     <a href="">Hilton Rosemont</a>
                   </li>
@@ -103,12 +103,12 @@ const Home: NextPage = () => {
             </div>
           </div>
         </section>
-        <section className="flex flex-col gap-10 items-center">
+        <section className="flex flex-col items-center gap-10">
           <Title>Sponsors</Title>
           <ul className="flex flex-wrap justify-center gap-10">
             {Array.from({ length: 7 }).map((sponsor, i) => (
               <li
-                className={`bg-vosm-light-blue flex items-center justify-center text-slate-50 rounded-${
+                className={`flex items-center justify-center bg-vosm-light-blue text-slate-50 rounded-${
                   i % 2 === 0 ? 'full' : 'lg'
                 }`}
                 style={{ width: 200, height: 200 }}

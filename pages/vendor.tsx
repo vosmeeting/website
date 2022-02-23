@@ -35,7 +35,8 @@ export default function Sponsor() {
       validates: [
         notEmpty("phone number can't be empty"),
         (input) => {
-          const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+          const phoneRegex =
+            /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
           if (!phoneRegex.test(input)) {
             return 'please input a valid phone number'
           }
@@ -137,17 +138,16 @@ export default function Sponsor() {
                     {...fields.email}
                   />
                 </FormLayout.Group>
-                <FormLayout.Group>
-
-                </FormLayout.Group>
+                <FormLayout.Group></FormLayout.Group>
                 <TextField
                   label="Amount"
                   inputMode="numeric"
+                  type='number'
                   autoComplete="off"
                   {...fields.amount}
                 />
               </FormLayout>
-              <div className="flex justify-end mt-10">
+              <div className="mt-10 flex justify-end">
                 <Button
                   type="submit"
                   className="px-10"

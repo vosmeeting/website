@@ -8,11 +8,11 @@ import { AppProvider, Page } from '@shopify/polaris'
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <AppProvider i18n={enTranslations}>
-        <Header />
+      <Header />
       <div className="bg-slate-100 p-16">
-          <Component {...pageProps} />
+        <Component {...pageProps} />
       </div>
-        <Footer />
+      <Footer />
     </AppProvider>
   )
 }

@@ -17,10 +17,8 @@ const PaymentSuccess: NextPage = () => {
           >
             <p>Your submission is received and we will contact you soon.</p>
           </Banner>
-
         </Layout.Section>
       </Layout>
-
     </Page>
   )
 }
