@@ -185,36 +185,6 @@ export default function Sponsor() {
               </div>
             </Form>
           </Layout.Section>
-          <Layout.Section>
-            <TextContainer>
-              <Heading>More information:</Heading>
-              <List>
-                <List.Item>
-                  <NextLink href={'/application-guide#marketing-opportunities'}>
-                    <Link>Marketing and Sponsorship Opportunities</Link>
-                  </NextLink>
-                  <p>
-                    Refer to this page for registration packet for marketing
-                    options, sponsorship levels and general support categories
-                  </p>
-                </List.Item>
-                <List.Item>
-                  <NextLink href={'/application-guide'}>
-                    <Link>Application Guide</Link>
-                  </NextLink>
-                  <p>
-                    Full payment is required for registration. Fees are due
-                    immediately upon registration. Please refer to this{' '}
-                    <NextLink href="/application-guide#important-dates">
-                      <Link>section</Link>
-                    </NextLink>{' '}
-                    for remaining due dates. If an invoice or W-9 is needed,
-                    please let us know
-                  </p>
-                </List.Item>
-              </List>
-            </TextContainer>
-          </Layout.Section>
         </Layout>
       </Card>
     </Page>
