@@ -39,7 +39,9 @@ const ComingSoon = () => {
           <Card sectioned>
             {submitErrors.length > 0 && (
               <Stack.Item>
-                <Banner title="something went wrong" status="critical" />
+                <Banner title="something went wrong" status="warning">
+                  {submitErrors[0]?.message}
+                </Banner>
               </Stack.Item>
             )}
             <Stack distribution="fillEvenly">
