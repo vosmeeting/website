@@ -1,8 +1,6 @@
+[[plugins]]
+package = "@netlify/plugin-nextjs"
+
 [build]
-  base    = "client"
   command = "yarn build"
-  publish = "client/build"
-# [[redirects]]
-#   from = "/*"
-#   to = "/index.html"
-#   status = 200
+  publish = ".next"

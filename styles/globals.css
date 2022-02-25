@@ -1,0 +1,7 @@
+/* @tailwind base; */
+@import './preflight.css';
+@tailwind components;
+@tailwind utilities;
+@import './fonts.css';
+@import '~swiper/css';
+@import '~@shopify/polaris/build/esm/styles.css';
