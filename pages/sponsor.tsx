@@ -34,6 +34,7 @@ import {
   SponsorshipPreferences,
 } from '../utils/const'
 import Error from 'next/error'
+import ComingSoon from '../components/ComingSoon'
 
 export default function Sponsor() {
   const schema = {
@@ -189,7 +190,7 @@ export default function Sponsor() {
     return new Price(total)
   }, [fields])
 
-  return <Error statusCode={404} />
+  return <ComingSoon />
   return (
     <Page
       title="Application	for	Commercial	Exhibits and	Sponsorship"

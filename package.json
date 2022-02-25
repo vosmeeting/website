@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^2.8.8",
-    "@shopify/polaris": "^9.0.0",
+    "@shopify/polaris": "8.2.2",
     "@shopify/react-form": "^1.1.14",
     "@stripe/stripe-js": "^1.23.0",
     "axios": "^0.26.0",

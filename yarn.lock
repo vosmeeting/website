@@ -314,12 +314,21 @@
   resolved "https://registry.npmjs.org/@shopify/polaris-icons/-/polaris-icons-4.17.0.tgz"
   integrity sha512-Vd6APDtyrCV+RkexqlzJ62iY3pInilGiClknpeK8wBq1suAZBa9A9g7WA0JM0RrjPHCGpG+W7Rb8iJitYYfOuQ==
 
-"@shopify/polaris@^9.0.0":
-  version "9.0.0"
-  resolved "https://registry.npmjs.org/@shopify/polaris/-/polaris-9.0.0.tgz"
-  integrity sha512-3hwlezHx2jJDvdsrQh5q2dK//p199LzftxyDomWb6+HyYU+Tp/GxZnC42kB/kfS4lQyGa0/zP8HQDnBc732NCw==
+"@shopify/polaris-tokens@^3.0.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@shopify/polaris-tokens/-/polaris-tokens-3.1.0.tgz#1e02974e8640b49678ca88ac0dae1de89ed706d9"
+  integrity sha512-SQPNtoevLxD3y1/nhXkthzhEyWAdi1+muxBn/DCHir1/+R/+1v/hkXDLG5o2X3jxqpnxd1R/rJVh9fMKmfWTyw==
+  dependencies:
+    hsluv "^0.1.0"
+    tslib "^1.14.1"
+
+"@shopify/polaris@8.2.2":
+  version "8.2.2"
+  resolved "https://registry.yarnpkg.com/@shopify/polaris/-/polaris-8.2.2.tgz#ec8d615287a4c6c9987c7cb40797c556e95f4034"
+  integrity sha512-GmGbVm7qeSv9KAyGBkQ4+WllNaQrH6UQ2k711maGiL3fXhqIxQjaSck2tGT4MoKOJ8T9M0OyrWfjj4Zz0/D44A==
   dependencies:
     "@shopify/polaris-icons" "^4.17.0"
+    "@shopify/polaris-tokens" "^3.0.0"
     "@types/react" "^17.0.19"
     "@types/react-dom" "^17.0.9"
     "@types/react-transition-group" "^4.4.2"
@@ -1712,6 +1721,11 @@ has@^1.0.3:
   integrity sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==
   dependencies:
     function-bind "^1.1.1"
+
+hsluv@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/hsluv/-/hsluv-0.1.0.tgz#29f40d49642bd56dd0c192122abcc723bb5c2d6c"
+  integrity sha512-ERcanKLAszD2XN3Vh5r5Szkrv9q0oSTudmP0rkiKAGM/3NMc9FLmMZBB7TSqTaXJfSDBOreYTfjezCOYbRKqlw==
 
 http-shutdown@^1.2.2:
   version "1.2.2"
@@ -3389,7 +3403,7 @@ tsconfig-paths@^3.12.0, tsconfig-paths@^3.9.0:
     minimist "^1.2.0"
     strip-bom "^3.0.0"
 
-tslib@^1.8.1:
+tslib@^1.14.1, tslib@^1.8.1:
   version "1.14.1"
   resolved "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
