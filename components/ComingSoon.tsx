@@ -11,24 +11,31 @@ import {
 } from '@shopify/polaris'
 import { notEmpty, useField, useForm } from '@shopify/react-form'
 import axios from 'axios'
+import { useState } from 'react'
 import Illustration from './ComingSoonIllustration'
 import { Title } from './typography'
 
 const ComingSoon = () => {
+  const [status, setStatus] = useState<
+    'idle' | 'submitted' | 'submitting' | 'error'
+  >('idle')
   const email = useField({
     value: '',
     validates: [notEmpty("email can't be empty!")],
   })
   const name = useField('')
-  const { submit, submitErrors, submitting } = useForm({
+  const { submit, submitErrors } = useForm({
     fields: {
       email,
     },
     async onSubmit(form) {
+      setStatus('submitting')
       try {
         await axios.post('api/create-stripe-customer', form)
+        setStatus('submitted')
         return { status: 'success' }
       } catch (e) {
+        setStatus('error')
         return { status: 'fail', errors: [e] }
       }
     },
@@ -38,10 +45,25 @@ const ComingSoon = () => {
       <Layout>
         <Layout.Section>
           <Card sectioned>
-            {submitErrors.length > 0 && (
+            {status === 'error' && (
               <Stack.Item>
-                <Banner title="something went wrong" status="warning">
+                <Banner
+                  title="something went wrong"
+                  status="warning"
+                  onDismiss={() => setStatus('idle')}
+                >
                   {submitErrors[0]?.message}
+                </Banner>
+              </Stack.Item>
+            )}
+            {status === 'submitted' && (
+              <Stack.Item>
+                <Banner
+                  onDismiss={() => setStatus('idle')}
+                  title="Thank you!"
+                  status="success"
+                >
+                  We will notify you when the feature is ready
                 </Banner>
               </Stack.Item>
             )}
@@ -69,7 +91,11 @@ const ComingSoon = () => {
                         ></TextField>
                       </FormLayout.Group>
 
-                      <Button primary loading={submitting} onClick={submit}>
+                      <Button
+                        primary
+                        loading={status === 'submitting'}
+                        onClick={submit}
+                      >
                         Notify Me
                       </Button>
                     </FormLayout>
