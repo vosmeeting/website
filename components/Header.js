@@ -41,7 +41,7 @@ const Header = () => {
       </div>
 
       <div className="justify-between items-center gap-2 z-10 hidden sm:flex">
-        <Button variant="secondary" className="px-10">
+        <Button monochrome className="px-10">
           <Link href={'/register'}>Register Now</Link>
         </Button>
       </div>

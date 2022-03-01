@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Page, Button as ShopifyButton } from '@shopify/polaris'
+import { Page } from '@shopify/polaris'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -9,14 +9,12 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import hyatt from '../assets/hyatt.png'
 import Button from '../components/Buttons'
 import { P, Title } from '../components/typography'
-import Error from 'next/error'
-import ComingSoon from '../components/ComingSoon'
 
 const images = Array.from({ length: 8 }).map((_, i) => ({
   url: `/vosm-images/vosm-${i + 1}.png`,
 }))
+
 const Home: NextPage = () => {
-  return <ComingSoon />
   return (
     <Page>
       <Head>
@@ -122,7 +120,9 @@ const Home: NextPage = () => {
             ))}
           </ul>
           <Link href="/sponsor" passHref>
-            <ShopifyButton>Become a sponsor</ShopifyButton>
+            <Button primary size="large">
+              Become a sponsor
+            </Button>
           </Link>
         </section>
       </div>
