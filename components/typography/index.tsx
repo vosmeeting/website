@@ -4,7 +4,10 @@ type IParagraph = React.FC<React.HTMLProps<HTMLParagraphElement>>
 export const Title: ITitle = ({ children, className, ...props }) => {
   return (
     <h1
-      className={classNames('font-serif text-6xl text-vosm-blue', className)}
+      className={classNames(
+        'font-serif text-4xl sm:text-6xl text-vosm-blue mb-2',
+        className
+      )}
       {...props}
     >
       {children}

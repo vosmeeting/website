@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Page } from '@shopify/polaris'
+import { Page, Layout, Card, List, Link as PolarisLink } from '@shopify/polaris'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -26,9 +26,9 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="grid min-h-screen grid-cols-1 gap-y-28 rounded-lg bg-white p-16 shadow-sm ">
-        <section className="grid h-72 grid-cols-12 items-center">
-          <div className="col-span-12 pr-10 text-justify sm:col-span-6">
+      <div className="grid min-h-screen grid-cols-1 gap-y-12 rounded-lg bg-white p-4 sm:p-16 shadow-sm">
+        <section className="grid grid-cols-1 sm:grid-cols-2 gap-12">
+          <div className="sm:text-justify">
             <Title className="leading-normal">The conference</Title>
             <P>
               This long awaited event will be an innovative meeting, with a
@@ -46,7 +46,7 @@ const Home: NextPage = () => {
             </P>
           </div>
 
-          <div className="col-span-12 sm:col-span-6">
+          <div>
             <Swiper
               className="rounded-lg shadow-xl"
               modules={[Autoplay]}
@@ -73,45 +73,48 @@ const Home: NextPage = () => {
           </div>
         </section>
 
-        <section className="grid">
-          <Title className="pb-4 font-normal">Location</Title>
-          <div className="flex flex-col sm:flex-row">
-            <div className="relative w-5/12 overflow-hidden rounded-lg shadow-lg">
-              <Image src={hyatt} layout="fill" objectFit="cover" alt="haytt" />
+        <section className="grid grid-cols-1 sm:grid-cols-2 text-center sm:text-left gap-x-12">
+          <Title className="font-normal col-span-full">Location</Title>
+
+          <div className="relative">
+            <Image src={hyatt} layout="fill" objectFit="cover" alt="haytt" />
+          </div>
+          <div className="">
+            <div>
+              <h2 className="pb-2 text-xl sm:text-3xl text-vosm-blue underline underline-offset-4">
+                Hyatt Regency O'hare
+              </h2>
+              <h3 className=" font-sans  text-sm text-slate-600">
+                9300 Bryn Mawr Avenue <br />
+                Rosemont, Illinois 60018
+              </h3>
             </div>
-            <div className="flex flex-col gap-y-5 pl-10 ">
-              <div>
-                <h2 className="pb-2 text-3xl text-vosm-blue underline underline-offset-4">
-                  Hyatt Regency O'hare
-                </h2>
-                <h3 className=" font-sans  text-sm text-slate-600">
-                  9300 Bryn Mawr Avenue <br />
-                  Rosemont, Illinois 60018
-                </h3>
-              </div>
-              <div>
-                <h2 className="pb-2 text-2xl text-vosm-blue underline underline-offset-4">
-                  Alternative nearby hotels
-                </h2>
-                <ul className="ml-5 grid list-disc gap-y-2 leading-loose text-slate-600 underline underline-offset-2 ">
-                  <li>
-                    <a href="">Hilton Rosemont</a>
-                  </li>
-                  <li>Embassy Suites</li>
-                  <li>Double Tree</li>
-                </ul>
+            <div>
+              <h2 className="pb-2 text-xl sm:text-2xl text-vosm-blue underline underline-offset-4">
+                Alternative nearby hotels
+              </h2>
+              <div className="flex justify-center sm:block">
+                <List>
+                  {['Hilton Rosemont', 'Embassy Suites', 'Double Tree'].map(
+                    (e) => (
+                      <List.Item key={e}>
+                        <PolarisLink url="" external>
+                          {e}
+                        </PolarisLink>
+                      </List.Item>
+                    )
+                  )}
+                </List>
               </div>
             </div>
           </div>
         </section>
-        <section className="flex flex-col items-center gap-10">
-          <Title>Sponsors</Title>
+        <section className="flex items-center flex-col gap-y-12">
+          <Title className="text-center sm:text-left">Sponsors</Title>
           <ul className="flex flex-wrap justify-center gap-10">
-            {Array.from({ length: 7 }).map((sponsor, i) => (
+            {Array.from({ length: 5 }).map((sponsor, i) => (
               <li
-                className={`flex items-center justify-center bg-vosm-light-blue text-slate-50 rounded-${
-                  i % 2 === 0 ? 'full' : 'lg'
-                }`}
+                className={`flex items-center justify-center bg-vosm-light-blue text-slate-50 rounded-2xl`}
                 style={{ width: 200, height: 200 }}
                 key={i}
               >
