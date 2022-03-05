@@ -109,7 +109,7 @@ const Home: NextPage = () => {
             </div>
           </div>
         </section>
-        <section className="flex items-center flex-col gap-y-12">
+        <section className="flex items-center flex-col gap-y-6 sm:gap-y-12">
           <Title className="text-center sm:text-left">Sponsors</Title>
           <ul className="flex flex-wrap justify-center gap-10">
             {Array.from({ length: 5 }).map((sponsor, i) => (
