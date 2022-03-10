@@ -100,6 +100,8 @@ const Home: NextPage = () => {
                 Rosemont, Illinois 60018
               </h3>
               (5 minutes from the airport)
+              <br />
+              Please register and a link to reserve a room will be provided.
             </div>
             <br />
             <div>
