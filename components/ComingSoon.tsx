@@ -31,7 +31,7 @@ const ComingSoon = () => {
     async onSubmit(form) {
       setStatus('submitting')
       try {
-        await axios.post('api/create-stripe-customer', form)
+        await axios.post('/api/create-stripe-customer', form)
         setStatus('submitted')
         return { status: 'success' }
       } catch (e) {
