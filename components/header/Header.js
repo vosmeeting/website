@@ -35,7 +35,11 @@ const Header = () => {
           </p>
         </div>
       </div>
-      <div className={'button-group'}>Registration Opens Soon</div>
+      <div className={'button-group'}>
+        <Button monochrome disabled>
+          <Link href={'/register'}>Registeration Opens Soon</Link>
+        </Button>
+      </div>
     </div>
   )
 }
