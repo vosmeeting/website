@@ -1,22 +1,22 @@
-import { NextApiResponse } from 'next'
-// import calcPrice from "../../services/calc-price";
-import omit from 'lodash/omit'
+import { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
 import queryString from 'query-string'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
 
 // eslint-disable-next-line import/no-anonymous-default-export
-const CreateStripeSession = async (req, res: NextApiResponse) => {
+const CreateStripeSession = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
   const { item, vendor } = req.body
 
   // const dollar = calcPrice(item)
   const cents = Number(item.amount) * 100
 
-  const redirectURL =
-    process.env.NODE_ENV === 'development'
-      ? 'http://localhost:3000'
-      : process.env.NEXT_PUBLIC_HOST
+  const host = req.headers.host
+  const protocol = /^localhost(:\d+)?$/.test(host) ? 'http:' : 'https:'
+  const redirectURL = protocol + '//' + host
 
   const transformedItem = {
     price_data: {
@@ -24,7 +24,7 @@ const CreateStripeSession = async (req, res: NextApiResponse) => {
       product_data: {
         name: 'Application	for	Commercial	Exhibits and	Sponsorship',
         description: '4th Veterinary	Ophthalmic	Surgery	Meeting	Jul	22-24, 2022',
-        images: item.images,
+        images: [redirectURL + '/vosm_logo.png'],
       },
       unit_amount: cents,
     },

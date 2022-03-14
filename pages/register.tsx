@@ -24,11 +24,12 @@ import { RegistrationTypeList } from './../components/RegistrationType'
 import { Country } from './api/get-countries'
 import {
   defaultRegistrationType,
-  registrationType as registrationTypes,
+  registrationTypes,
 } from './constants/registrationType'
 import { Price } from '../utils/const'
+import { createParticipantsCheckoutSession } from '../services/stripe'
 
-interface PersonalInformation {
+export interface PersonalInformation {
   fullName: string
   organization: string
   country: string
@@ -112,15 +113,12 @@ export default function Register() {
     async onSubmit(form) {
       let remoteErrors = []
       try {
-        // call submit service
-        await new Promise((resolve, reject) =>
-          setTimeout(() => reject(new Error('server error')), 3000)
-        )
+        await createParticipantsCheckoutSession({ participants: form.persons })
       } catch (e) {
         remoteErrors.push(e)
       }
-      if (remoteErrors.length) {
-        setRemoteErrors([remoteErrors])
+      if (remoteErrors.length > 0) {
+        setRemoteErrors([remoteErrors].map((e) => new Error(e)))
         return { status: 'fail', errors: remoteErrors }
       }
 
