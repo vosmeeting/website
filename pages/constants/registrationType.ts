@@ -3,7 +3,7 @@ export type RegistrationType = {
   label: string
   price: number
 }
-export const registrationType = [
+export const registrationTypes = [
   {
     value: 'avco/evco',
     label: `AVCO/EVCO Diplomate/Board Eligible`,
@@ -18,4 +18,4 @@ export const registrationType = [
   { value: 'non-diplomates', label: 'Non-Diplomates', price: 600 },
 ]
 
-export const defaultRegistrationType = registrationType[0]
+export const defaultRegistrationType = registrationTypes[0]

@@ -3,12 +3,9 @@ import {
   Card,
   Form,
   FormLayout,
-  Heading,
   Layout,
-  Link,
   List,
   Page,
-  TextContainer,
   TextField,
 } from '@shopify/polaris'
 import {
@@ -19,12 +16,11 @@ import {
   useForm,
 } from '@shopify/react-form'
 import { omit } from 'lodash'
-import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import * as yup from 'yup'
 import Button from '../components/Buttons'
-import createVendorCheckoutSession from '../services/stripe'
+import { createVendorCheckoutSession } from '../services/stripe'
 import { Price } from '../utils/const'
 
 export default function Sponsor() {
@@ -96,7 +92,6 @@ export default function Sponsor() {
     fields: schema,
     async onSubmit(form) {
       const item = {
-        images: [`${process.env.NEXT_PUBLIC_HOST}/vosm_logo.png`],
         amount: form.amount,
       }
       const vendor = omit(form, 'amount')
@@ -171,16 +166,9 @@ export default function Sponsor() {
                 />
               </FormLayout>
               <div className="mt-10 flex justify-center sm:justify-end">
-                <Button
-                  type="submit"
-                  className="px-10"
-                  style={{ minWidth: 150 }}
-                  loading={submitting}
-                >
-                  <b>
-                    Proceed to payment{' '}
-                    {new Price(getValues(fields).amount).toDollar()}
-                  </b>
+                <Button submit loading={submitting}>
+                  Proceed to payment
+                  {new Price(getValues(fields).amount).toDollar()}
                 </Button>
               </div>
             </Form>
