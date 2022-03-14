@@ -26,8 +26,8 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="grid min-h-screen grid-cols-1 gap-y-12 rounded-lg bg-white p-4 shadow-sm sm:p-16">
-        <section className="grid grid-cols-1 gap-12 sm:grid-cols-2">
+      <div className="font-sans text-base grid min-h-screen grid-cols-1 gap-y-12 rounded-lg bg-white p-4 shadow-sm sm:p-16">
+        <section className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           <div className="sm:text-justify">
             <Title className="leading-normal">The Conference</Title>
             <P>
