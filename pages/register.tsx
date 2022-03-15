@@ -1,7 +1,5 @@
 import {
   Banner,
-  Button,
-  ButtonGroup,
   Card,
   Form,
   FormLayout,
@@ -11,23 +9,18 @@ import {
   Select,
   TextField,
 } from '@shopify/polaris'
-import {
-  notEmpty,
-  useDynamicList,
-  useField,
-  useForm,
-} from '@shopify/react-form'
-import { useEffect, useMemo, useState } from 'react'
+import { notEmpty, useDynamicList, useForm } from '@shopify/react-form'
 import axios from 'axios'
+import { useEffect, useMemo, useState } from 'react'
 import * as yup from 'yup'
-import { RegistrationTypeList } from './../components/RegistrationType'
-import { Country } from './api/get-countries'
 import {
   defaultRegistrationType,
   registrationTypes,
-} from './constants/registrationType'
-import { Price } from '../utils/const'
+} from '../constants/registrationType'
 import { createParticipantsCheckoutSession } from '../services/stripe'
+import { Price } from '../utils/const'
+import { RegistrationTypeList } from './../components/RegistrationType'
+import { Country } from './api/get-countries'
 
 export interface PersonalInformation {
   fullName: string

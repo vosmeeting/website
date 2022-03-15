@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
 import queryString from 'query-string'
 import { PersonalInformation } from '../register'
-import { registrationTypes } from '../constants/registrationType'
+import { registrationTypes } from '../../constants/registrationType'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
 
