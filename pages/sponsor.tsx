@@ -25,7 +25,6 @@ import * as yup from 'yup'
 import Button from '../components/Buttons'
 import CustomChoiceList from '../components/CustomChoiceList'
 import calcPrice from '../services/calc-price'
-import createCheckOutSession from '../services/stripe'
 import {
   BoothLocations,
   GeneralSupport,
@@ -35,6 +34,7 @@ import {
 } from '../utils/const'
 import Error from 'next/error'
 import ComingSoon from '../components/ComingSoon'
+import { createVendorCheckoutSession } from '../services/stripe'
 
 export default function Sponsor() {
   const schema = {
@@ -154,7 +154,7 @@ export default function Sponsor() {
       let remoteErrors = []
 
       try {
-        await createCheckOutSession({
+        await createVendorCheckoutSession({
           ...form,
           images: [`${process.env.NEXT_PUBLIC_HOST}/vosm_logo.png`],
         })
