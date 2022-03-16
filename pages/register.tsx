@@ -11,6 +11,7 @@ import {
 } from '@shopify/polaris'
 import { notEmpty, useDynamicList, useForm } from '@shopify/react-form'
 import axios from 'axios'
+import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
 import * as yup from 'yup'
 import {
@@ -111,7 +112,9 @@ export default function Register() {
         remoteErrors.push(e)
       }
       if (remoteErrors.length > 0) {
-        setRemoteErrors([remoteErrors].map((e) => new Error(e)))
+        setRemoteErrors(
+          [remoteErrors].map((e) => new Error('there was some network issue'))
+        )
         return { status: 'fail', errors: remoteErrors }
       }
 
@@ -151,18 +154,24 @@ export default function Register() {
                 content: 'add more participant',
                 onAction: () =>
                   personalInformations.addItem({
-                    email: 'person@gmail.com',
+                    email: 'your.emal@domain.com',
                     registrationType: defaultRegistrationType.value,
+                    country: 'US',
                   }),
               },
             ]}
           >
             <Form onSubmit={form.submit}>
-              {personalInformations.fields.map((field, i) => {
+              {personalInformations.fields.map((field, i, arr) => {
                 return (
-                  <Card sectioned key={i} footerActionAlignment="left">
+                  <div
+                    className={classNames('rounded-lg my-6', {
+                      'p-4 shadow-sm border': arr.length > 1,
+                    })}
+                    key={i}
+                  >
                     <FormLayout>
-                      <Heading>Person {i + 1}</Heading>
+                      {arr.length > 1 && <Heading>Participant {i + 1}</Heading>}
                       <RegistrationTypeList
                         choiceList={registrationTypes}
                         selected={field.registrationType.value}
@@ -200,7 +209,7 @@ export default function Register() {
                         />
                       </FormLayout.Group>
                     </FormLayout>
-                  </Card>
+                  </div>
                 )
               })}
             </Form>

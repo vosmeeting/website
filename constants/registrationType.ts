@@ -6,8 +6,9 @@ export type RegistrationType = {
 export const registrationTypes = [
   {
     value: 'avco/evco',
-    label: `AVCO/EVCO Diplomate/Board Eligible`,
+    label: `ACVO/EVCO Diplomate/Board Eligible*`,
     price: 450,
+    optionalComment: '*actively taking boards at the moment',
   },
   { value: 'speaker', label: 'Speaker', price: 350 },
   {

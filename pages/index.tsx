@@ -46,8 +46,8 @@ const Home: NextPage = () => {
             <P>
               Come be part of an interactive gathering that will challenge and
               inspire young professionals and engage the most renowned
-              clinicians with compelling case discussions, pertinent peals,
-              updates from human meetings, and also a Keynote Lecture!
+              clinicians with compelling case discussions, pertinent peals, and
+              also a Keynote Lecture!
             </P>
           </div>
 
