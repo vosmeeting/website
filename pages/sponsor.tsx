@@ -35,8 +35,9 @@ import {
 import Error from 'next/error'
 import ComingSoon from '../components/ComingSoon'
 import { createVendorCheckoutSession } from '../services/stripe'
+import withComingSoon from '../components/hoc/withComingSoon'
 
-export default function Sponsor() {
+function Sponsor() {
   const schema = {
     companyName: useField({
       value: '',
@@ -190,7 +191,6 @@ export default function Sponsor() {
     return new Price(total)
   }, [fields])
 
-  return <ComingSoon />
   return (
     <Page
       title="Application	for	Commercial	Exhibits and	Sponsorship"
@@ -407,4 +407,4 @@ export default function Sponsor() {
   )
 }
 
-type Props = { host: string | null }
+export default withComingSoon(Sponsor)

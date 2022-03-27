@@ -22,7 +22,8 @@ import { createParticipantsCheckoutSession } from '../services/stripe'
 import { Price } from '../utils/const'
 import { RegistrationTypeList } from './../components/RegistrationType'
 import { Country } from './api/get-countries'
-
+import withComingSoon from '../components/hoc/withComingSoon'
+import { flags } from '../utils/featureFlag'
 export interface PersonalInformation {
   fullName: string
   organization: string
@@ -58,7 +59,7 @@ const ErrorBanner = ({ errors }) => {
   ) : null
 }
 
-export default function Register() {
+function Register() {
   const [remoteErrors, setRemoteErrors] = useState(null)
   const [countries, setCountries] = useState<Country[]>([
     { country: 'United States', abbreviation: 'US' },
@@ -154,7 +155,7 @@ export default function Register() {
                 content: 'add more participant',
                 onAction: () =>
                   personalInformations.addItem({
-                    email: 'your.emal@domain.com',
+                    email: 'your.email@domain.com',
                     registrationType: defaultRegistrationType.value,
                     country: 'US',
                   }),
@@ -219,3 +220,5 @@ export default function Register() {
     </Page>
   )
 }
+
+export default flags.registration ? Register : withComingSoon(Register)
