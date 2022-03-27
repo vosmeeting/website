@@ -9,6 +9,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import hyatt from '../assets/hyatt.png'
 import Button from '../components/Buttons'
 import { P, Title } from '../components/typography'
+import { flags } from '../utils/featureFlag'
 
 const images = Array.from({ length: 8 }).map((_, i) => ({
   url: `/vosm-images/vosm-${i + 1}.png`,
@@ -125,20 +126,22 @@ const Home: NextPage = () => {
             </div>
           </div>
         </section>
-        <section className="flex flex-col items-center gap-y-6 sm:gap-y-12">
-          <Title className="text-center sm:text-left">Sponsors</Title>
-          <ul className="flex flex-wrap justify-center gap-10">
-            {Array.from({ length: 3 }).map((sponsor, i) => (
-              <li
-                className={`flex items-center justify-center rounded-2xl bg-vosm-light-blue text-slate-50`}
-                style={{ width: 200, height: 200 }}
-                key={i}
-              >
-                sponsor {i + 1}
-              </li>
-            ))}
-          </ul>
-        </section>
+        {flags.sponsors && (
+          <section className="flex flex-col items-center gap-y-6 sm:gap-y-12">
+            <Title className="text-center sm:text-left">Sponsors</Title>
+            <ul className="flex flex-wrap justify-center gap-10">
+              {Array.from({ length: 3 }).map((sponsor, i) => (
+                <li
+                  className={`flex items-center justify-center rounded-2xl bg-vosm-light-blue text-slate-50`}
+                  style={{ width: 200, height: 200 }}
+                  key={i}
+                >
+                  sponsor {i + 1}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
     </Page>
   )
