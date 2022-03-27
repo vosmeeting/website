@@ -154,7 +154,7 @@ export default function Register() {
                 content: 'add more participant',
                 onAction: () =>
                   personalInformations.addItem({
-                    email: 'your.emal@domain.com',
+                    email: 'your.email@domain.com',
                     registrationType: defaultRegistrationType.value,
                     country: 'US',
                   }),
