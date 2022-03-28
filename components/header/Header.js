@@ -1,4 +1,3 @@
-import { TextContainer } from '@shopify/polaris'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -21,8 +20,10 @@ const Header = () => {
         quality={100}
       />
       <div className={styles['logo-and-title']}>
-        <div className={'logo'}>
-          <Image layout="responsive" alt="logo" src={logo} />
+        <div className="logo">
+          <Link passHref href="/">
+            <Image layout="responsive" alt="logo" src={logo} />
+          </Link>
         </div>
 
         <div className="text-center font-normal text-slate-50 sm:text-left">
