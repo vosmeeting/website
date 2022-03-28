@@ -1,8 +1,8 @@
 .main {
-  @apply px-4 flex flex-col relative bg-vosm-blue items-center gap-y-20 py-20;
+  @apply px-4 flex flex-col relative bg-vosm-blue items-center gap-y-5 py-10;
   height: 70vh;
   @screen sm {
-    @apply flex flex-row justify-between px-16 h-72;
+    @apply flex flex-row justify-between px-16 h-72 gap-y-20 py-20;
   }
 
   [class~='button-group'] {
