@@ -311,24 +311,15 @@
 
 "@shopify/polaris-icons@^4.17.0":
   version "4.17.0"
-  resolved "https://registry.npmjs.org/@shopify/polaris-icons/-/polaris-icons-4.17.0.tgz"
+  resolved "https://registry.yarnpkg.com/@shopify/polaris-icons/-/polaris-icons-4.17.0.tgz#6658154b0dfcc6ce9427095cb0a3423cf266d1de"
   integrity sha512-Vd6APDtyrCV+RkexqlzJ62iY3pInilGiClknpeK8wBq1suAZBa9A9g7WA0JM0RrjPHCGpG+W7Rb8iJitYYfOuQ==
 
-"@shopify/polaris-tokens@^3.0.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@shopify/polaris-tokens/-/polaris-tokens-3.1.0.tgz#1e02974e8640b49678ca88ac0dae1de89ed706d9"
-  integrity sha512-SQPNtoevLxD3y1/nhXkthzhEyWAdi1+muxBn/DCHir1/+R/+1v/hkXDLG5o2X3jxqpnxd1R/rJVh9fMKmfWTyw==
-  dependencies:
-    hsluv "^0.1.0"
-    tslib "^1.14.1"
-
-"@shopify/polaris@8.2.2":
-  version "8.2.2"
-  resolved "https://registry.yarnpkg.com/@shopify/polaris/-/polaris-8.2.2.tgz#ec8d615287a4c6c9987c7cb40797c556e95f4034"
-  integrity sha512-GmGbVm7qeSv9KAyGBkQ4+WllNaQrH6UQ2k711maGiL3fXhqIxQjaSck2tGT4MoKOJ8T9M0OyrWfjj4Zz0/D44A==
+"@shopify/polaris@^9.0.0":
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/@shopify/polaris/-/polaris-9.0.0.tgz#181b002d142e11cbacb36d4bba3b416b2c149de1"
+  integrity sha512-3hwlezHx2jJDvdsrQh5q2dK//p199LzftxyDomWb6+HyYU+Tp/GxZnC42kB/kfS4lQyGa0/zP8HQDnBc732NCw==
   dependencies:
     "@shopify/polaris-icons" "^4.17.0"
-    "@shopify/polaris-tokens" "^3.0.0"
     "@types/react" "^17.0.19"
     "@types/react-dom" "^17.0.9"
     "@types/react-transition-group" "^4.4.2"
@@ -402,21 +393,21 @@
 
 "@types/react-dom@^17.0.9":
   version "17.0.11"
-  resolved "https://registry.npmjs.org/@types/react-dom/-/react-dom-17.0.11.tgz"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.11.tgz#e1eadc3c5e86bdb5f7684e00274ae228e7bcc466"
   integrity sha512-f96K3k+24RaLGVu/Y2Ng3e1EbZ8/cVJvypZWd7cy0ofCBaf2lcM46xNhycMZ2xGwbBjRql7hOlZ+e2WlJ5MH3Q==
   dependencies:
     "@types/react" "*"
 
 "@types/react-transition-group@^4.4.2":
   version "4.4.4"
-  resolved "https://registry.npmjs.org/@types/react-transition-group/-/react-transition-group-4.4.4.tgz"
+  resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.4.4.tgz#acd4cceaa2be6b757db61ed7b432e103242d163e"
   integrity sha512-7gAPz7anVK5xzbeQW9wFBDg7G++aPLAFY0QaSMOou9rJZpbuI58WAuJrgu+qR92l61grlnCUe7AFX8KGahAgug==
   dependencies:
     "@types/react" "*"
 
 "@types/react@*", "@types/react@^17.0.19":
   version "17.0.39"
-  resolved "https://registry.npmjs.org/@types/react/-/react-17.0.39.tgz"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.39.tgz#d0f4cde092502a6db00a1cded6e6bf2abb7633ce"
   integrity sha512-UVavlfAxDd/AgAacMa60Azl7ygyQNRwC/DsHZmKgNvPmRR5p70AJ5Q9EAmL2NWOJmeV+vVUI4IAP7GZrN8h8Ug==
   dependencies:
     "@types/prop-types" "*"
@@ -769,7 +760,7 @@ chalk@^4.0.0, chalk@^4.1.2:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chokidar@^3.5.2, chokidar@^3.5.3:
+"chokidar@>=3.0.0 <4.0.0", chokidar@^3.5.2, chokidar@^3.5.3:
   version "3.5.3"
   resolved "https://registry.npmjs.org/chokidar/-/chokidar-3.5.3.tgz"
   integrity sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==
@@ -1080,7 +1071,7 @@ doctrine@^3.0.0:
 
 dom-helpers@^5.0.1:
   version "5.2.1"
-  resolved "https://registry.npmjs.org/dom-helpers/-/dom-helpers-5.2.1.tgz"
+  resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-5.2.1.tgz#d9400536b2bf8225ad98fe052e029451ac40e902"
   integrity sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==
   dependencies:
     "@babel/runtime" "^7.8.7"
@@ -1492,7 +1483,7 @@ flatted@^3.1.0:
 
 focus-visible@^5.2.0:
   version "5.2.0"
-  resolved "https://registry.npmjs.org/focus-visible/-/focus-visible-5.2.0.tgz"
+  resolved "https://registry.yarnpkg.com/focus-visible/-/focus-visible-5.2.0.tgz#3a9e41fccf587bd25dcc2ef045508284f0a4d6b3"
   integrity sha512-Rwix9pBtC1Nuy5wysTmKy+UjbDJpIfg8eHjw0rjZ1mX4GNLz1Bmd16uDpI3Gk1i70Fgcs8Csg2lPm8HULFg9DQ==
 
 follow-redirects@^1.14.8:
@@ -1722,11 +1713,6 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-hsluv@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/hsluv/-/hsluv-0.1.0.tgz#29f40d49642bd56dd0c192122abcc723bb5c2d6c"
-  integrity sha512-ERcanKLAszD2XN3Vh5r5Szkrv9q0oSTudmP0rkiKAGM/3NMc9FLmMZBB7TSqTaXJfSDBOreYTfjezCOYbRKqlw==
-
 http-shutdown@^1.2.2:
   version "1.2.2"
   resolved "https://registry.npmjs.org/http-shutdown/-/http-shutdown-1.2.2.tgz"
@@ -1756,6 +1742,11 @@ image-meta@^0.1.1:
   version "0.1.1"
   resolved "https://registry.npmjs.org/image-meta/-/image-meta-0.1.1.tgz"
   integrity sha512-+oXiHwOEPr1IE5zY0tcBLED/CYcre15J4nwL50x3o0jxWqEkyjrusiKP3YSU+tr9fvJp33ZcP5Gpj2295g3aEw==
+
+immutable@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-4.0.0.tgz#b86f78de6adef3608395efb269a91462797e2c23"
+  integrity sha512-zIE9hX70qew5qTUjSS7wi1iwj/l7+m54KWU247nhM3v806UdGj1yDndXj+IOYxxtW9zyLI+xqFNZjTuDaLUqFw==
 
 import-fresh@^3.0.0, import-fresh@^3.2.1:
   version "3.3.0"
@@ -2858,7 +2849,7 @@ react-refresh@0.8.3:
 
 react-transition-group@^4.4.2:
   version "4.4.2"
-  resolved "https://registry.npmjs.org/react-transition-group/-/react-transition-group-4.4.2.tgz"
+  resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.2.tgz#8b59a56f09ced7b55cbd53c36768b922890d5470"
   integrity sha512-/RNYfRAMlZwDSr6z4zNKV6xu53/e2BuaBbGhbyYIXTrmgu/bGHzmqOs7mJSJBHy9Ud+ApHx3QjrkKSp1pxvlFg==
   dependencies:
     "@babel/runtime" "^7.5.5"
@@ -2989,6 +2980,15 @@ safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   resolved "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.2.tgz"
   integrity sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==
 
+sass@^1.49.9:
+  version "1.49.9"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.49.9.tgz#b15a189ecb0ca9e24634bae5d1ebc191809712f9"
+  integrity sha512-YlYWkkHP9fbwaFRZQRXgDi3mXZShslVmmo+FVK3kHLUELHHEYrCmL1x6IUjC7wLS6VuJSAFXRQS/DxdsC4xL1A==
+  dependencies:
+    chokidar ">=3.0.0 <4.0.0"
+    immutable "^4.0.0"
+    source-map-js ">=0.6.2 <2.0.0"
+
 scheduler@^0.20.2:
   version "0.20.2"
   resolved "https://registry.npmjs.org/scheduler/-/scheduler-0.20.2.tgz"
@@ -3087,7 +3087,7 @@ slash@^3.0.0:
   resolved "https://registry.npmjs.org/slash/-/slash-3.0.0.tgz"
   integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
 
-source-map-js@^1.0.1, source-map-js@^1.0.2:
+"source-map-js@>=0.6.2 <2.0.0", source-map-js@^1.0.1, source-map-js@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/source-map-js/-/source-map-js-1.0.2.tgz"
   integrity sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==
@@ -3403,7 +3403,7 @@ tsconfig-paths@^3.12.0, tsconfig-paths@^3.9.0:
     minimist "^1.2.0"
     strip-bom "^3.0.0"
 
-tslib@^1.14.1, tslib@^1.8.1:
+tslib@^1.8.1:
   version "1.14.1"
   resolved "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==

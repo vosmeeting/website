@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import { Page, Button as ShopifyButton } from '@shopify/polaris'
+import { Page, Layout, Card, List, Link as PolarisLink } from '@shopify/polaris'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -9,14 +9,13 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import hyatt from '../assets/hyatt.png'
 import Button from '../components/Buttons'
 import { P, Title } from '../components/typography'
-import Error from 'next/error'
-import ComingSoon from '../components/ComingSoon'
+import { flags } from '../utils/featureFlag'
 
 const images = Array.from({ length: 8 }).map((_, i) => ({
   url: `/vosm-images/vosm-${i + 1}.png`,
 }))
+
 const Home: NextPage = () => {
-  return <ComingSoon />
   return (
     <Page>
       <Head>
@@ -28,27 +27,32 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="grid min-h-screen grid-cols-1 gap-y-28 rounded-lg bg-white p-16 shadow-sm ">
-        <section className="grid h-72 grid-cols-12 items-center">
-          <div className="col-span-12 pr-10 text-justify sm:col-span-6">
-            <Title className="leading-normal">The conference</Title>
+      <div className="font-sans text-base grid min-h-screen grid-cols-1 gap-y-12 rounded-lg bg-white p-4 shadow-sm sm:p-16">
+        <section className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+          <div className="sm:text-justify">
+            <Title className="leading-normal">The Conference</Title>
             <P>
-              This long awaited event will be an innovative meeting, with a
-              dynamic format developed to encourage a candid debate among
-              Veterinary Ophthalmologists with interests in Surgery.
+              We are excited to announce the <b>4th</b> Veterinary Ophthalmic
+              Surgery Meeting. This long awaited event will be an innovative
+              meeting, with a dynamic format developed to encourage a candid
+              debate among Veterinary Ophthalmologists with interests in
+              Surgery.
             </P>
             <br />
             <P>
               This is a limited-space event that will take place on July 22-24
-              <sup>th</sup>, 2022 in Chicago, IL. Come be part of an interactive
-              gathering that will challenge and inspire young professionals and
-              engage the most renowned clinicians with compelling case
-              discussions, pertinent peals, updates from human meetings, and
+              <sup>th</sup>, 2022 in Chicago, IL.
+            </P>
+            <br />
+            <P>
+              Come be part of an interactive gathering that will challenge and
+              inspire young professionals and engage the most renowned
+              clinicians with compelling case discussions, pertinent peals, and
               also a Keynote Lecture!
             </P>
           </div>
 
-          <div className="col-span-12 sm:col-span-6">
+          <div>
             <Swiper
               className="rounded-lg shadow-xl"
               modules={[Autoplay]}
@@ -75,56 +79,69 @@ const Home: NextPage = () => {
           </div>
         </section>
 
-        <section className="grid">
-          <Title className="pb-4 font-normal">Location</Title>
-          <div className="flex flex-col sm:flex-row">
-            <div className="relative w-5/12 overflow-hidden rounded-lg shadow-lg">
-              <Image src={hyatt} layout="fill" objectFit="cover" alt="haytt" />
+        <section className="grid grid-cols-1 gap-x-12 text-center sm:grid-cols-2 sm:text-left">
+          <Title className="col-span-full font-normal">Location</Title>
+
+          <div className="relative">
+            <Image src={hyatt} layout="fill" objectFit="cover" alt="haytt" />
+          </div>
+          <div className="">
+            <div>
+              <h2 className="pb-2 text-xl text-vosm-blue underline underline-offset-4 sm:text-3xl">
+                <a
+                  href="https://www.hyatt.com/hotel/illinois/hyatt-regency-ohare/chiro"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Hyatt Regency O'Hare
+                </a>
+              </h2>
+              <h3 className=" font-sans  text-sm text-slate-600">
+                9300 Bryn Mawr Avenue <br />
+                Rosemont, Illinois 60018
+              </h3>
+              (5 minutes from the airport)
+              <br />
+              Please register and a link to reserve a room will be provided.
             </div>
-            <div className="flex flex-col gap-y-5 pl-10 ">
-              <div>
-                <h2 className="pb-2 text-3xl text-vosm-blue underline underline-offset-4">
-                  Hyatt Regency O'hare
-                </h2>
-                <h3 className=" font-sans  text-sm text-slate-600">
-                  9300 Bryn Mawr Avenue <br />
-                  Rosemont, Illinois 60018
-                </h3>
-              </div>
-              <div>
-                <h2 className="pb-2 text-2xl text-vosm-blue underline underline-offset-4">
-                  Alternative nearby hotels
-                </h2>
-                <ul className="ml-5 grid list-disc gap-y-2 leading-loose text-slate-600 underline underline-offset-2 ">
-                  <li>
-                    <a href="">Hilton Rosemont</a>
-                  </li>
-                  <li>Embassy Suites</li>
-                  <li>Double Tree</li>
-                </ul>
+            <br />
+            <div>
+              <h2 className="pb-2 text-xl text-vosm-blue underline underline-offset-4 sm:text-2xl">
+                Alternative Hotels
+              </h2>
+              (literally down the block)
+              <div className="flex justify-center sm:block">
+                <List>
+                  {['Hilton Rosemont', 'Embassy Suites', 'Double Tree'].map(
+                    (e) => (
+                      <List.Item key={e}>
+                        <PolarisLink url="" external>
+                          {e}
+                        </PolarisLink>
+                      </List.Item>
+                    )
+                  )}
+                </List>
               </div>
             </div>
           </div>
         </section>
-        <section className="flex flex-col items-center gap-10">
-          <Title>Sponsors</Title>
-          <ul className="flex flex-wrap justify-center gap-10">
-            {Array.from({ length: 7 }).map((sponsor, i) => (
-              <li
-                className={`flex items-center justify-center bg-vosm-light-blue text-slate-50 rounded-${
-                  i % 2 === 0 ? 'full' : 'lg'
-                }`}
-                style={{ width: 200, height: 200 }}
-                key={i}
-              >
-                sponsor {i + 1}
-              </li>
-            ))}
-          </ul>
-          <Link href="/sponsor" passHref>
-            <ShopifyButton>Become a sponsor</ShopifyButton>
-          </Link>
-        </section>
+        {flags.sponsors && (
+          <section className="flex flex-col items-center gap-y-6 sm:gap-y-12">
+            <Title className="text-center sm:text-left">Sponsors</Title>
+            <ul className="flex flex-wrap justify-center gap-10">
+              {Array.from({ length: 3 }).map((sponsor, i) => (
+                <li
+                  className={`flex items-center justify-center rounded-2xl bg-vosm-light-blue text-slate-50`}
+                  style={{ width: 200, height: 200 }}
+                  key={i}
+                >
+                  sponsor {i + 1}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </div>
     </Page>
   )

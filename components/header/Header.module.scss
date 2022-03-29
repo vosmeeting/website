@@ -1,0 +1,25 @@
+.main {
+  @apply px-4 flex flex-col relative bg-vosm-blue items-center gap-y-5 py-10;
+  height: 70vh;
+  @screen sm {
+    @apply flex flex-row justify-between px-16 h-72 gap-y-20 py-20;
+  }
+
+  [class~='button-group'] {
+    @screen sm {
+      @apply self-end;
+    }
+  }
+}
+
+.logo-and-title {
+  @apply flex flex-col items-center gap-y-10;
+  @screen sm {
+    @apply flex flex-row gap-x-10;
+  }
+
+  [class~='logo'] {
+    @apply relative w-52;
+    cursor: pointer;
+  }
+}

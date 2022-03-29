@@ -1,0 +1,29 @@
+.CustomPropertyOverrides {
+  &[p-color-scheme='light'] {
+    --p-action-primary: rgba(16, 115, 192, 1);
+    --p-action-primary-hovered: rgba(13, 99, 167, 1);
+    --p-action-primary-pressed: rgba(9, 85, 143, 1);
+    --p-action-primary-depressed: rgba(4, 54, 95, 1);
+    --p-text-primary: rgba(15, 111, 185, 1);
+    --p-text-primary-hovered: rgba(12, 97, 163, 1);
+    --p-text-primary-pressed: rgba(9, 82, 139, 1);
+    --p-surface-primary-selected: rgba(246, 246, 248, 1);
+    --p-surface-primary-selected-hovered: rgba(195, 201, 214, 1);
+    --p-surface-primary-selected-pressed: rgba(174, 182, 199, 1);
+  }
+
+  &[p-color-scheme='dark'] {
+    --p-action-primary: rgba(16, 115, 192, 1);
+    --p-action-primary-disabled: rgba(8, 78, 132, 1);
+    --p-action-primary-hovered: rgba(21, 135, 224, 1);
+    --p-action-primary-pressed: rgba(24, 149, 245, 1);
+    --p-action-primary-depressed: rgba(72, 161, 253, 1);
+    --p-icon-on-primary: rgba(247, 249, 255, 1);
+    --p-text-primary: rgba(19, 127, 211, 1);
+    --p-text-primary-hovered: rgba(23, 143, 236, 1);
+    --p-text-primary-pressed: rgba(61, 159, 253, 1);
+    --p-surface-primary-selected: rgba(13, 17, 23, 1);
+    --p-surface-primary-selected-hovered: rgba(42, 46, 55, 1);
+    --p-surface-primary-selected-pressed: rgba(56, 62, 73, 1);
+  }
+}

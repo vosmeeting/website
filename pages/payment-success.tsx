@@ -1,11 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Banner, Card, Layout, Page } from '@shopify/polaris'
 import type { NextPage } from 'next'
-import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 const PaymentSuccess: NextPage = () => {
   const router = useRouter()
+  const from = router.query.from as string
   return (
     <Page>
       <Layout>
@@ -15,7 +15,7 @@ const PaymentSuccess: NextPage = () => {
             status="success"
             action={{
               content: 'Go Back',
-              onAction: () => router.push('/vendor'),
+              onAction: () => router.push(from ? from : '/'),
             }}
           >
             <p>Your submission is received and we will contact you soon.</p>

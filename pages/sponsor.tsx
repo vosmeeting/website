@@ -25,7 +25,6 @@ import * as yup from 'yup'
 import Button from '../components/Buttons'
 import CustomChoiceList from '../components/CustomChoiceList'
 import calcPrice from '../services/calc-price'
-import createCheckOutSession from '../services/stripe'
 import {
   BoothLocations,
   GeneralSupport,
@@ -35,8 +34,10 @@ import {
 } from '../utils/const'
 import Error from 'next/error'
 import ComingSoon from '../components/ComingSoon'
+import { createVendorCheckoutSession } from '../services/stripe'
+import withComingSoon from '../components/hoc/withComingSoon'
 
-export default function Sponsor() {
+function Sponsor() {
   const schema = {
     companyName: useField({
       value: '',
@@ -154,7 +155,7 @@ export default function Sponsor() {
       let remoteErrors = []
 
       try {
-        await createCheckOutSession({
+        await createVendorCheckoutSession({
           ...form,
           images: [`${process.env.NEXT_PUBLIC_HOST}/vosm_logo.png`],
         })
@@ -190,7 +191,6 @@ export default function Sponsor() {
     return new Price(total)
   }, [fields])
 
-  return <ComingSoon />
   return (
     <Page
       title="Application	for	Commercial	Exhibits and	Sponsorship"
@@ -407,4 +407,4 @@ export default function Sponsor() {
   )
 }
 
-type Props = { host: string | null }
+export default withComingSoon(Sponsor)
