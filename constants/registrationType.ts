@@ -16,7 +16,7 @@ export const registrationTypes = [
     label: 'Resident/Ophtalmology Intern',
     price: 250,
   },
-  { value: 'non-diplomates', label: 'Non-Diplomates', price: 600 },
+  { value: 'non-diplomates', label: 'Non-Diplomates', price: 500 },
 ]
 
 export const defaultRegistrationType = registrationTypes[0]
