@@ -1,4 +1,5 @@
 export interface ParticipantInformation {
+  id: string
   fullName: string
   organization: string
   country: string

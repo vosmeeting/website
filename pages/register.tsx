@@ -36,11 +36,14 @@ import withComingSoon from '../components/hoc/withComingSoon'
 import { flags } from '../utils/featureFlag'
 import { ParticipantInformation } from '../types'
 import { MobileCancelMajor } from '@shopify/polaris-icons'
+import { useRouter } from 'next/router'
 
+let num = 2
 function personalInformationFactory(
   props: Partial<ParticipantInformation>
 ): ParticipantInformation {
   return {
+    id: (num++).toString(),
     country: props.country || '',
     email: props.email || '',
     fullName: props.fullName || '',
@@ -79,7 +82,12 @@ const emailValidation = (input) => {
 }
 
 function Register() {
+  const route = useRouter()
   const [remoteErrors, setRemoteErrors] = useState(null)
+
+  const { error = '' } = route.query as {
+    error: string
+  }
   const [countries, setCountries] = useState<Country[]>([
     { country: 'United States', abbreviation: 'US' },
   ])
@@ -92,11 +100,14 @@ function Register() {
   const personalInformations = useDynamicList(
     {
       list: [
-        personalInformationFactory({
+        {
+          id: '1',
+          fullName: '',
+          organization: '',
           email: '',
           country: 'US',
           registrationType: defaultRegistrationType.value,
-        }),
+        },
       ],
       validates: {
         email: [emailValidation],
@@ -157,7 +168,6 @@ function Register() {
     },
   })
 
-  console.log(form.submitErrors)
   const totalPrice = useMemo(() => {
     return form.fields.persons.reduce((totalPrice, person) => {
       const price = registrationTypes.find(
@@ -167,6 +177,11 @@ function Register() {
       return totalPrice + price
     }, 0)
   }, [form.fields.persons])
+
+  // redirection error from Stripe's page
+  useEffect(() => {
+    if (error) setRemoteErrors([new Error(error)])
+  }, [error])
 
   return (
     <Page
