@@ -12,31 +12,30 @@ import {
   Select,
   TextField,
 } from '@shopify/polaris'
+import { MobileCancelMajor, CustomerPlusMajor } from '@shopify/polaris-icons'
 import {
   asChoiceField,
   notEmpty,
-  useChoiceField,
   useDynamicList,
   useField,
   useForm,
 } from '@shopify/react-form'
 import axios from 'axios'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import * as yup from 'yup'
+import withComingSoon from '../components/hoc/withComingSoon'
 import {
   defaultRegistrationType,
   registrationTypes,
 } from '../constants/registrationType'
 import { createParticipantsCheckoutSession } from '../services/stripe'
+import { ParticipantInformation } from '../types'
 import { Price } from '../utils/const'
+import { flags } from '../utils/featureFlag'
 import { RegistrationTypeList } from './../components/RegistrationType'
 import { Country } from './api/get-countries'
-import withComingSoon from '../components/hoc/withComingSoon'
-import { flags } from '../utils/featureFlag'
-import { ParticipantInformation } from '../types'
-import { MobileCancelMajor } from '@shopify/polaris-icons'
-import { useRouter } from 'next/router'
 
 let num = 2
 function personalInformationFactory(
@@ -181,6 +180,10 @@ function Register() {
   // redirection error from Stripe's page
   useEffect(() => {
     if (error) setRemoteErrors([new Error(error)])
+    const timeout = setTimeout(() => {
+      setRemoteErrors(null)
+    }, 3000)
+    return () => clearTimeout(timeout)
   }, [error])
 
   return (
@@ -204,6 +207,7 @@ function Register() {
             secondaryFooterActions={[
               {
                 content: 'add more participant',
+                icon: CustomerPlusMajor,
                 onAction: () =>
                   personalInformations.addItem({
                     email: 'participant@domain.com',
