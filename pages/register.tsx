@@ -1,10 +1,12 @@
 import {
   Banner,
+  Button,
   Card,
   Checkbox,
   Form,
   FormLayout,
   Heading,
+  Icon,
   Layout,
   Page,
   Select,
@@ -33,6 +35,7 @@ import { Country } from './api/get-countries'
 import withComingSoon from '../components/hoc/withComingSoon'
 import { flags } from '../utils/featureFlag'
 import { ParticipantInformation } from '../types'
+import { MobileCancelMajor } from '@shopify/polaris-icons'
 
 function personalInformationFactory(
   props: Partial<ParticipantInformation>
@@ -202,11 +205,23 @@ function Register() {
                 const registerForSelf = form.fields.registerForSelf.value
                 return (
                   <div
-                    className={classNames('rounded-lg my-6', {
-                      'p-4 shadow-sm border': isMultipleParticipants,
-                    })}
+                    className={classNames(
+                      'rounded-lg my-6 participant-container relative',
+                      {
+                        'p-4 shadow-sm border': isMultipleParticipants,
+                      }
+                    )}
                     key={i}
                   >
+                    {isMultipleParticipants && (
+                      <div className="absolute top-0 right-0 p-4">
+                        <Button
+                          onClick={() => personalInformations.removeItem(i)}
+                          plain={true}
+                          icon={<Icon source={MobileCancelMajor} />}
+                        />
+                      </div>
+                    )}
                     <FormLayout>
                       {isMultipleParticipants && (
                         <Heading>Participant {i + 1}</Heading>
