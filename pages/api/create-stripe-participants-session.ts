@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
 import queryString from 'query-string'
-import { PersonalInformation } from '../register'
 import { registrationTypes } from '../../constants/registrationType'
+import { CreateParticipantCheckoutSesssionPayload } from '../../types'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
 
@@ -11,7 +11,11 @@ const createStripeParticipantsSession = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
-  const { participants } = req.body as { participants: PersonalInformation[] }
+  const {
+    participants,
+    registerForSelf,
+    registrant,
+  } = req.body as CreateParticipantCheckoutSesssionPayload
   const firstParticipant = participants[0]
 
   const host = req.headers.host
@@ -27,7 +31,7 @@ const createStripeParticipantsSession = async (
         price_data: {
           currency: 'usd',
           product_data: {
-            name: 'Application	for	Commercial	Exhibits and	Sponsorship',
+            name: `Participant Registration As: ${p.registrationType?.toUpperCase()}`,
             description: '4th Veterinary	Ophthalmic	Surgery	Meeting	Jul	22-24, 2022',
             images: [redirectUrl + '/vosm_logo.png'],
             metadata: { ...p },
@@ -40,10 +44,14 @@ const createStripeParticipantsSession = async (
     }
   )
   try {
-    const cust = await stripe.customers.create({
-      email: firstParticipant.email,
-      name: firstParticipant.fullName,
-    })
+    const custData: Stripe.CustomerCreateParams = registerForSelf
+      ? {
+          email: firstParticipant.email,
+          name: firstParticipant.fullName,
+        }
+      : registrant
+
+    const cust = await stripe.customers.create(custData)
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
