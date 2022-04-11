@@ -3,6 +3,7 @@ import Stripe from 'stripe'
 import queryString from 'query-string'
 import { registrationTypes } from '../../constants/registrationType'
 import { CreateParticipantCheckoutSesssionPayload } from '../../types'
+import { db } from './constants/db'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
 
@@ -44,18 +45,36 @@ const createStripeParticipantsSession = async (
     }
   )
   try {
-    const custData: Stripe.CustomerCreateParams = registerForSelf
+    const registrantData: Stripe.CustomerCreateParams = registerForSelf
       ? {
           email: firstParticipant.email,
           name: firstParticipant.fullName,
         }
       : registrant
 
-    const cust = await stripe.customers.create(custData)
+    const cust = await stripe.customers.create(registrantData)
+    const today = new Date()
+
+    const EXPIRATION_TIME_HOUR = 1
+    const expInSeconds = Math.round(
+      today.setHours(today.getHours() + EXPIRATION_TIME_HOUR) / 1000
+    )
+
+    // guard from creating the session if no seats are available
+    const seatAvailabilityCount = await db.getSeatAvailability()
+    if (seatAvailabilityCount < lineItems.length) {
+      if (seatAvailabilityCount === 0) {
+        throw new Error('Sorry, we sold out!')
+      }
+      throw new Error(
+        `Sorry, only ${seatAvailabilityCount} seat(s) are remaining`
+      )
+    }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
+      expires_at: expInSeconds, // expires in one hour
       mode: 'payment',
       success_url: queryString.stringifyUrl({
         url: redirectUrl + '/payment-success',
@@ -71,7 +90,6 @@ const createStripeParticipantsSession = async (
       }),
       customer: cust.id,
     })
-    console.log('created session', session)
 
     res.json({ id: session.id })
   } catch (e) {
