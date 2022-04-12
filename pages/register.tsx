@@ -30,11 +30,14 @@ import {
   defaultRegistrationType,
   registrationTypes,
 } from '../constants/registrationType'
+import { useParticipantQuota } from '../hooks/useParticipantQuota'
 import { createParticipantsCheckoutSession } from '../services/stripe'
 import { ParticipantInformation } from '../types'
 import { Price } from '../utils/const'
 import { flags } from '../utils/featureFlag'
 import { RegistrationTypeList } from './../components/RegistrationType'
+import getAvailableSeats from './api/available-seats'
+import { db } from './api/constants/db'
 import { Country } from './api/get-countries'
 
 let num = 2
@@ -80,9 +83,11 @@ const emailValidation = (input) => {
   }
 }
 
-function Register() {
+function Register({ data }) {
   const route = useRouter()
   const [remoteErrors, setRemoteErrors] = useState(null)
+  const info = useParticipantQuota(data)
+  const count = info?.data
 
   const { error = '' } = route.query as {
     error: string
@@ -189,7 +194,7 @@ function Register() {
 
   return (
     <Page
-      title="Participant Registration"
+      title={`Participant Registration ${count.count}/${count.maxSeat}`}
       subtitle="4th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	22-24, 2022"
       additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
     >
@@ -332,6 +337,17 @@ function Register() {
       </Layout>
     </Page>
   )
+}
+
+export async function getStaticProps() {
+  try {
+    const data = await db.getSeatAvailability()
+    console.log('data', data)
+    return { props: { data } }
+  } catch (e) {
+    console.error('err', e)
+    return { props: { data: { count: 0, maxSeat: 100 } } }
+  }
 }
 
 export default flags.registration ? Register : withComingSoon(Register)

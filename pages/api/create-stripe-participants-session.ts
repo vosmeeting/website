@@ -92,7 +92,8 @@ const createStripeParticipantsSession = async (
     )
 
     // guard from creating the session if no seats are available
-    const seatAvailabilityCount = await db.getSeatAvailability()
+    const data = await db.getSeatAvailability()
+    const seatAvailabilityCount = data.maxSeat - data.count
     if (seatAvailabilityCount < lineItems.length) {
       if (seatAvailabilityCount === 0) {
         throw new Error('Sorry, we sold out!')
