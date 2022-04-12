@@ -5,8 +5,8 @@ export type RegistrationType = {
 }
 export const registrationTypes = [
   {
-    value: 'avco/evco',
-    label: `ACVO/EVCO Diplomate/Board Eligible*`,
+    value: 'avco/ecvo',
+    label: `ACVO/ECVO Diplomate/Board Eligible*`,
     price: 450,
     optionalComment: '*actively taking boards at the moment',
   },
@@ -16,7 +16,7 @@ export const registrationTypes = [
     label: 'Resident/Ophtalmology Intern',
     price: 250,
   },
-  { value: 'non-diplomates', label: 'Others', price: 550 },
+  { value: 'others', label: 'Others', price: 550 },
 ]
 
 export const defaultRegistrationType = registrationTypes[0]
