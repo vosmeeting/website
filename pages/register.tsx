@@ -1,41 +1,48 @@
 import {
   Banner,
+  Button,
   Card,
+  Checkbox,
   Form,
   FormLayout,
   Heading,
+  Icon,
   Layout,
   Page,
   Select,
   TextField,
 } from '@shopify/polaris'
-import { notEmpty, useDynamicList, useForm } from '@shopify/react-form'
+import { MobileCancelMajor, CustomerPlusMajor } from '@shopify/polaris-icons'
+import {
+  asChoiceField,
+  notEmpty,
+  useDynamicList,
+  useField,
+  useForm,
+} from '@shopify/react-form'
 import axios from 'axios'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import * as yup from 'yup'
+import withComingSoon from '../components/hoc/withComingSoon'
 import {
   defaultRegistrationType,
   registrationTypes,
 } from '../constants/registrationType'
 import { createParticipantsCheckoutSession } from '../services/stripe'
+import { ParticipantInformation } from '../types'
 import { Price } from '../utils/const'
+import { flags } from '../utils/featureFlag'
 import { RegistrationTypeList } from './../components/RegistrationType'
 import { Country } from './api/get-countries'
-import withComingSoon from '../components/hoc/withComingSoon'
-import { flags } from '../utils/featureFlag'
-export interface PersonalInformation {
-  fullName: string
-  organization: string
-  country: string
-  email: string
-  registrationType: string
-}
 
+let num = 2
 function personalInformationFactory(
-  props: Partial<PersonalInformation>
-): PersonalInformation {
+  props: Partial<ParticipantInformation>
+): ParticipantInformation {
   return {
+    id: (num++).toString(),
     country: props.country || '',
     email: props.email || '',
     fullName: props.fullName || '',
@@ -59,8 +66,27 @@ const ErrorBanner = ({ errors }) => {
   ) : null
 }
 
+const emailValidation = (input) => {
+  {
+    try {
+      yup
+        .string()
+        .required('email is required')
+        .email('please provide a valid email')
+        .validateSync(input)
+    } catch (e) {
+      return e.message
+    }
+  }
+}
+
 function Register() {
+  const route = useRouter()
   const [remoteErrors, setRemoteErrors] = useState(null)
+
+  const { error = '' } = route.query as {
+    error: string
+  }
   const [countries, setCountries] = useState<Country[]>([
     { country: 'United States', abbreviation: 'US' },
   ])
@@ -73,26 +99,17 @@ function Register() {
   const personalInformations = useDynamicList(
     {
       list: [
-        personalInformationFactory({
+        {
+          id: '1',
+          fullName: '',
+          organization: '',
           email: '',
           country: 'US',
           registrationType: defaultRegistrationType.value,
-        }),
+        },
       ],
       validates: {
-        email: [
-          (input) => {
-            try {
-              yup
-                .string()
-                .required('Company/Contact email is required')
-                .email('please provide a valid email')
-                .validateSync(input)
-            } catch (e) {
-              return e.message
-            }
-          },
-        ],
+        email: [emailValidation],
         organization: [notEmpty('clinic/school/company name is required')],
         country: [notEmpty('country is required')],
         fullName: [notEmpty('your name is required')],
@@ -101,14 +118,41 @@ function Register() {
     },
     personalInformationFactory
   )
+  const registerForSelf = useField(true)
+  const firstPersonInformation = personalInformations.fields[0]
   const form = useForm({
     fields: {
       persons: personalInformations.fields,
+      registerForSelf,
+      registrant: {
+        name: useField(
+          registerForSelf.value
+            ? firstPersonInformation.fullName.value
+            : {
+                value: '',
+                validates: [notEmpty('Registrant name is required')],
+              },
+          [registerForSelf.value, firstPersonInformation.fullName.value]
+        ),
+        email: useField(
+          registerForSelf.value
+            ? firstPersonInformation.email.value
+            : {
+                value: '',
+                validates: [emailValidation],
+              },
+          [registerForSelf.value, firstPersonInformation.email.value]
+        ),
+      },
     },
     async onSubmit(form) {
       let remoteErrors = []
       try {
-        await createParticipantsCheckoutSession({ participants: form.persons })
+        await createParticipantsCheckoutSession({
+          participants: form.persons,
+          registrant: form.registrant,
+          registerForSelf: form.registerForSelf,
+        })
       } catch (e) {
         remoteErrors.push(e)
       }
@@ -122,6 +166,7 @@ function Register() {
       return { status: 'success' }
     },
   })
+
   const totalPrice = useMemo(() => {
     return form.fields.persons.reduce((totalPrice, person) => {
       const price = registrationTypes.find(
@@ -131,6 +176,15 @@ function Register() {
       return totalPrice + price
     }, 0)
   }, [form.fields.persons])
+
+  // redirection error from Stripe's page
+  useEffect(() => {
+    if (error) setRemoteErrors([new Error(error)])
+    const timeout = setTimeout(() => {
+      setRemoteErrors(null)
+    }, 3000)
+    return () => clearTimeout(timeout)
+  }, [error])
 
   return (
     <Page
@@ -153,9 +207,10 @@ function Register() {
             secondaryFooterActions={[
               {
                 content: 'add more participant',
+                icon: CustomerPlusMajor,
                 onAction: () =>
                   personalInformations.addItem({
-                    email: 'your.email@domain.com',
+                    email: 'participant@domain.com',
                     registrationType: defaultRegistrationType.value,
                     country: 'US',
                   }),
@@ -164,30 +219,56 @@ function Register() {
           >
             <Form onSubmit={form.submit}>
               {personalInformations.fields.map((field, i, arr) => {
+                const isMultipleParticipants = arr.length > 1
+                const firsParticipant = i === 0
+                const registerForSelf = form.fields.registerForSelf.value
                 return (
                   <div
-                    className={classNames('rounded-lg my-6', {
-                      'p-4 shadow-sm border': arr.length > 1,
-                    })}
+                    className={classNames(
+                      'rounded-lg my-6 participant-container relative',
+                      {
+                        'p-4 shadow-sm border': isMultipleParticipants,
+                      }
+                    )}
                     key={i}
                   >
+                    {isMultipleParticipants && (
+                      <div className="absolute top-0 right-0 p-4">
+                        <Button
+                          onClick={() => personalInformations.removeItem(i)}
+                          plain={true}
+                          icon={<Icon source={MobileCancelMajor} />}
+                        />
+                      </div>
+                    )}
                     <FormLayout>
-                      {arr.length > 1 && <Heading>Participant {i + 1}</Heading>}
+                      {isMultipleParticipants && (
+                        <Heading>Participant {i + 1}</Heading>
+                      )}
                       <RegistrationTypeList
                         choiceList={registrationTypes}
                         selected={field.registrationType.value}
                         onChange={field.registrationType.onChange}
                         errorMessage={field.registrationType.error}
                       />
+
                       <FormLayout.Group>
                         <TextField
                           autoComplete="fullname"
-                          label="Your name"
+                          label={
+                            registerForSelf === true && !isMultipleParticipants
+                              ? 'Name'
+                              : 'Participant Name'
+                          }
                           {...field.fullName}
                         />
                         <TextField
                           autoComplete="email"
-                          label="Email address"
+                          label={
+                            registerForSelf === true && !isMultipleParticipants
+                              ? 'Email'
+                              : 'Participant Email'
+                          }
                           {...field.email}
                         />
                       </FormLayout.Group>
@@ -209,6 +290,37 @@ function Register() {
                           {...field.country}
                         />
                       </FormLayout.Group>
+
+                      {firsParticipant &&
+                        form.fields.registerForSelf.value === false && (
+                          <FormLayout.Group
+                            //@ts-ignore
+                            title={
+                              <div className="font-semibold text-base">
+                                Registrant Details
+                              </div>
+                            }
+                          >
+                            <TextField
+                              autoComplete="fullname"
+                              label="Name"
+                              {...form.fields.registrant.name}
+                            />
+                            <TextField
+                              autoComplete="email"
+                              label="Email"
+                              {...form.fields.registrant.email}
+                            />
+                          </FormLayout.Group>
+                        )}
+                      {firsParticipant && (
+                        <FormLayout.Group>
+                          <Checkbox
+                            label="Register for self"
+                            {...asChoiceField(form.fields.registerForSelf)}
+                          />
+                        </FormLayout.Group>
+                      )}
                     </FormLayout>
                   </div>
                 )

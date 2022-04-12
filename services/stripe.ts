@@ -1,6 +1,6 @@
 import { loadStripe } from '@stripe/stripe-js'
 import axios from 'axios'
-import { PersonalInformation } from '../pages/register'
+import { CreateParticipantCheckoutSesssionPayload } from '../types'
 
 const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
 const stripePromise = loadStripe(publishableKey)
@@ -22,9 +22,9 @@ export const createVendorCheckoutSession = async (payload) => {
   }
 }
 
-export const createParticipantsCheckoutSession = async (payload: {
-  participants: PersonalInformation[]
-}) => {
+export const createParticipantsCheckoutSession = async (
+  payload: CreateParticipantCheckoutSesssionPayload
+) => {
   const stripe = await stripePromise
   const checkoutSession = await axios.post(
     '/api/create-stripe-participants-session',

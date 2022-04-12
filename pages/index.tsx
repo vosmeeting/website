@@ -112,15 +112,29 @@ const Home: NextPage = () => {
               (literally down the block)
               <div className="flex justify-center sm:block">
                 <List>
-                  {['Hilton Rosemont', 'Embassy Suites', 'Double Tree'].map(
-                    (e) => (
-                      <List.Item key={e}>
-                        <PolarisLink url="" external>
-                          {e}
-                        </PolarisLink>
-                      </List.Item>
-                    )
-                  )}
+                  {[
+                    {
+                      label: 'Hilton Rosemont',
+                      link:
+                        'https://www.hilton.com/en/hotels/ordhrhh-hilton-rosemont-chicago-ohare/',
+                    },
+                    {
+                      label: 'Embassy Suites',
+                      link:
+                        'https://www.hilton.com/en/hotels/chirmes-embassy-suites-chicago-ohare-rosemont/',
+                    },
+                    {
+                      label: 'Double Tree',
+                      link:
+                        'https://www.hilton.com/en/hotels/chidtdt-doubletree-chicago-ohare-airport-rosemont/',
+                    },
+                  ].map((e) => (
+                    <List.Item key={e.label}>
+                      <PolarisLink url={e.link} external>
+                        {e.label}
+                      </PolarisLink>
+                    </List.Item>
+                  ))}
                 </List>
               </div>
             </div>

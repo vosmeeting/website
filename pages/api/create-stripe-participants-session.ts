@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
 import queryString from 'query-string'
-import { PersonalInformation } from '../register'
 import { registrationTypes } from '../../constants/registrationType'
+import { CreateParticipantCheckoutSesssionPayload } from '../../types'
+import { db } from './constants/db'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
 
@@ -11,7 +12,11 @@ const createStripeParticipantsSession = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
-  const { participants } = req.body as { participants: PersonalInformation[] }
+  const {
+    participants,
+    registerForSelf,
+    registrant,
+  } = req.body as CreateParticipantCheckoutSesssionPayload
   const firstParticipant = participants[0]
 
   const host = req.headers.host
@@ -27,7 +32,7 @@ const createStripeParticipantsSession = async (
         price_data: {
           currency: 'usd',
           product_data: {
-            name: 'Application	for	Commercial	Exhibits and	Sponsorship',
+            name: `Participant Registration As: ${p.registrationType?.toUpperCase()}`,
             description: '4th Veterinary	Ophthalmic	Surgery	Meeting	Jul	22-24, 2022',
             images: [redirectUrl + '/vosm_logo.png'],
             metadata: { ...p },
@@ -40,14 +45,36 @@ const createStripeParticipantsSession = async (
     }
   )
   try {
-    const cust = await stripe.customers.create({
-      email: firstParticipant.email,
-      name: firstParticipant.fullName,
-    })
+    const registrantData: Stripe.CustomerCreateParams = registerForSelf
+      ? {
+          email: firstParticipant.email,
+          name: firstParticipant.fullName,
+        }
+      : registrant
+
+    const cust = await stripe.customers.create(registrantData)
+    const today = new Date()
+
+    const EXPIRATION_TIME_HOUR = 1
+    const expInSeconds = Math.round(
+      today.setHours(today.getHours() + EXPIRATION_TIME_HOUR) / 1000
+    )
+
+    // guard from creating the session if no seats are available
+    const seatAvailabilityCount = await db.getSeatAvailability()
+    if (seatAvailabilityCount < lineItems.length) {
+      if (seatAvailabilityCount === 0) {
+        throw new Error('Sorry, we sold out!')
+      }
+      throw new Error(
+        `Sorry, only ${seatAvailabilityCount} seat(s) are remaining`
+      )
+    }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
+      expires_at: expInSeconds, // expires in one hour
       mode: 'payment',
       success_url: queryString.stringifyUrl({
         url: redirectUrl + '/payment-success',
@@ -63,7 +90,6 @@ const createStripeParticipantsSession = async (
       }),
       customer: cust.id,
     })
-    console.log('created session', session)
 
     res.json({ id: session.id })
   } catch (e) {
