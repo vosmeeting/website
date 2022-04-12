@@ -43,7 +43,7 @@ const handler: NextApiHandler = async (request, response) => {
       // TODO: temporarily substract the inventory
       // TODO: email the registrant of ongoing payment and attach the session.url
       break
-    case 'payment_intent.expired':
+    case 'checkout.session.expired':
       // TODO: revert substracting from payment_intent.created
       break
     default:
