@@ -101,9 +101,9 @@ function Register() {
       list: [
         {
           id: '1',
-          fullName: '',
+          fullName: 'John',
           organization: '',
-          email: '',
+          email: 'john.doe@mail.com',
           country: 'US',
           registrationType: defaultRegistrationType.value,
         },
@@ -182,6 +182,7 @@ function Register() {
     if (error) setRemoteErrors([new Error(error)])
     const timeout = setTimeout(() => {
       setRemoteErrors(null)
+      route.push(route.pathname)
     }, 3000)
     return () => clearTimeout(timeout)
   }, [error])
