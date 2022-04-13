@@ -212,6 +212,11 @@ function Register({ data }) {
       <Layout>
         {remoteErrors && <ErrorBanner errors={remoteErrors} />}
         <Layout.Section>
+          {count.count >= count.maxSeat && (
+            <Banner status="info"> Sorry we sold out!</Banner>
+          )}
+        </Layout.Section>
+        <Layout.Section>
           <Card
             sectioned
             title="Personal Information"
@@ -219,7 +224,7 @@ function Register({ data }) {
               content: 'register ' + new Price(totalPrice).toDollar(),
               onAction: form.submit,
               loading: form.submitting,
-              disabled: !form.dirty,
+              disabled: !form.dirty || count.count >= count.maxSeat,
             }}
             secondaryFooterActions={[
               {
