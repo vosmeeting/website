@@ -345,6 +345,16 @@ function Register({ data }) {
             </Form>
           </Card>
         </Layout.Section>
+        <Layout.Section>
+          <Heading>Cancellation Policy for VOSM 2022:</Heading>
+          <p className="italic">
+            Cancellations received by May 22nd will receive a full refund less a
+            10% administrative fee. Cancellations received by Jun 22nd will
+            receive a 50% refund. No cancellations will be refunded after Jun
+            22nd. All cancellations must be received in writing via email. No
+            refunds for no-shows
+          </p>
+        </Layout.Section>
       </Layout>
     </Page>
   )
