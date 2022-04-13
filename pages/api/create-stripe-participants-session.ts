@@ -4,6 +4,9 @@ import queryString from 'query-string'
 import { registrationTypes } from '../../constants/registrationType'
 import { CreateParticipantCheckoutSesssionPayload } from '../../types'
 import { db } from './constants/db'
+import { If, Exists, Match, Index } from 'faunadb'
+import { query as q } from 'faunadb'
+import { serverClient } from './constants/fauna.instance'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
 
@@ -35,7 +38,7 @@ const createStripeParticipantsSession = async (
             name: `Participant Registration As: ${p.registrationType?.toUpperCase()}`,
             description: '4th Veterinary	Ophthalmic	Surgery	Meeting	Jul	22-24, 2022',
             images: [redirectUrl + '/vosm_logo.png'],
-            metadata: { ...p },
+            metadata: { test: 'hello world' },
           },
 
           unit_amount: cents,
@@ -52,7 +55,35 @@ const createStripeParticipantsSession = async (
         }
       : registrant
 
-    const cust = await stripe.customers.create(registrantData)
+    let savedRegistrant = await serverClient.query<{
+      data: { customerId: string }
+    }>(
+      q.Let(
+        {
+          match: q.Match(q.Index('users_by_email'), registrant.email),
+          data: { data: registrant },
+        },
+        q.If(q.Exists(q.Var('match')), q.Get(q.Var('match')), null)
+      )
+    )
+
+    if (!savedRegistrant) {
+      // customer will be saved in webhook handler
+      savedRegistrant = await stripe.customers
+        .create(registrantData)
+        .then((cust) => {
+          return serverClient.query(
+            q.Create(q.Collection('users'), {
+              data: {
+                email: cust.email,
+                name: cust.name,
+                customerId: cust.id,
+              },
+            })
+          )
+        })
+    }
+
     const today = new Date()
 
     const EXPIRATION_TIME_HOUR = 1
@@ -61,7 +92,8 @@ const createStripeParticipantsSession = async (
     )
 
     // guard from creating the session if no seats are available
-    const seatAvailabilityCount = await db.getSeatAvailability()
+    const data = await db.getSeatAvailability()
+    const seatAvailabilityCount = data.maxSeat - data.count
     if (seatAvailabilityCount < lineItems.length) {
       if (seatAvailabilityCount === 0) {
         throw new Error('Sorry, we sold out!')
@@ -71,7 +103,9 @@ const createStripeParticipantsSession = async (
       )
     }
 
-    const session = await stripe.checkout.sessions.create({
+    console.log('savedRegistarnt', savedRegistrant)
+
+    const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       expires_at: expInSeconds, // expires in one hour
@@ -88,12 +122,26 @@ const createStripeParticipantsSession = async (
           error: 'payment was cancelled',
         },
       }),
-      customer: cust.id,
+      customer: savedRegistrant.data.customerId,
     })
 
-    res.json({ id: session.id })
+    await serverClient.query(
+      q.Create(q.Collection('checkout_sessions'), {
+        data: {
+          id: checkoutSession.id,
+          paymentIntent: checkoutSession.payment_intent,
+          status: checkoutSession.status,
+          customer: checkoutSession.customer,
+          participants,
+        },
+      })
+    )
+
+    res.status(200).json({ id: checkoutSession.id })
   } catch (e) {
-    res.status(500).send(e.message)
+    console.log('error', e)
+
+    res.status(500).send(e)
   }
 }
 
