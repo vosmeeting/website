@@ -158,7 +158,7 @@ function updatePaymentIntent(paymentIntent: Stripe.PaymentIntent) {
   )
 }
 
-function updateCheckoutSession(session: Stripe.Checkout.Session) {
+export function updateCheckoutSession(session: Stripe.Checkout.Session) {
   const payload = {
     id: session.id,
     paymentIntent: session.payment_intent,
