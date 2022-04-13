@@ -4,6 +4,7 @@ import { stripe } from './constants/stripe.instance'
 import { buffer } from 'micro'
 import Stripe from 'stripe'
 import { serverClient } from './constants/fauna.instance'
+import { logger } from '../../utils/logger'
 
 // Stripe requires the raw body to construct the event, so we have to diable the next parser
 export const config = {
@@ -22,25 +23,25 @@ const handler: NextApiHandler = async (request, response) => {
   try {
     event = stripe.webhooks.constructEvent(buf, sig, endpointSecret)
   } catch (err) {
-    console.error('error', err)
+    logger.error('error', err)
     return response.status(400).send(`Webhook Error: ${err.message}`)
   }
   const sessionData = event.data.object as any
 
   switch (event.type) {
     case 'checkout.session.completed':
-      console.log(event.type, sessionData)
+      logger.log(event.type, sessionData)
       // the one comes from webhook doesn't contain the `status`
       // which is important
       const theCorrectSessionData = await stripe.checkout.sessions.retrieve(
         sessionData.id
       )
 
-      console.log('the correct sessionData', theCorrectSessionData)
+      logger.log('the correct sessionData', theCorrectSessionData)
 
       return updateCheckoutSession(theCorrectSessionData)
         .then((checkoutSession: any) => {
-          console.log('updated checkout session in db', checkoutSession)
+          logger.log('updated checkout session in db', checkoutSession)
           response.status(200).send('ok')
         })
         .catch((err) => {
@@ -52,14 +53,14 @@ const handler: NextApiHandler = async (request, response) => {
       )
       return updateCheckoutSession(correctExpiredSessionData)
         .then((checkoutSession: any) => {
-          console.log('updated checkout session in db', checkoutSession)
+          logger.log('updated checkout session in db', checkoutSession)
           response.status(200).send('ok')
         })
         .catch((err) => {
           return response.status(400).send(`Fulfillment Error: ${err.message}`)
         })
     case 'payment_intent.created':
-      console.log(event.type, sessionData)
+      logger.log(event.type, sessionData)
       await serverClient
         .query(q.Create(q.Collection('payment_intents'), { data: sessionData }))
         .then((p) => response.status(200).send(p))
@@ -69,39 +70,76 @@ const handler: NextApiHandler = async (request, response) => {
     case 'payment_intent.succeeded':
       return updatePaymentIntent(sessionData)
         .then((intent) => {
-          console.log('successfully handleed update intent', intent)
+          logger.log('successfully handleed update intent', intent)
 
           response.send('ok')
-          if (!intent) console.error('payment intent not found')
+          if (!intent) logger.error('payment intent not found')
         })
         .catch((e) => response.status(500).send(e))
 
     case 'payment_intent.cancelled':
-      console.log(event.type, sessionData)
+      logger.log(event.type, sessionData)
 
       return updatePaymentIntent(sessionData)
         .then((intent) => {
           response.send('ok')
-          if (!intent) console.error('payment intent not found')
+          if (!intent) logger.error('payment intent not found')
         })
         .catch((e) => response.status(500).send(e))
     case 'customer.created':
       // handle customer creation
       // TODO: save user as 'registrant'
       const cust = sessionData
-      console.log('webook cust', cust)
+      logger.log('webook cust', cust)
 
       // don't handle this case
       // customer creation has been handled checkout session creation
       response.send('ok')
-
       break
+    case 'charge.succeeded':
+      return saveCharge(sessionData)
+        .then((charge) => {
+          response.send('ok')
+        })
+        .catch((e) => {
+          response.status(500).send(e)
+        })
+    case 'charge.refunded':
+      return updateCharge(sessionData)
+        .then((charge) => {
+          if (!charge) logger.error('charge not found')
+          response.status(200).send('ok')
+        })
+        .catch((e) => {
+          logger.error(e)
+          response.status(500).send(e)
+        })
     default:
-      console.error('unhandled event: ', event.type)
-      console.log(event.type, sessionData)
+      logger.error('unhandled event: ', event.type)
+      logger.log(event.type, sessionData)
       response.send('unhandled event')
       break
   }
+}
+
+function saveCharge(charge) {
+  return serverClient.query(q.Create(q.Collection('charges'), { data: charge }))
+}
+
+function updateCharge(charge: Stripe.Charge) {
+  return serverClient.query(
+    q.Let(
+      {
+        match: q.Match(q.Index('charges_by_id'), charge.id),
+        data: { data: charge },
+      },
+      q.If(
+        q.Exists(q.Var('match')),
+        q.Update(q.Select('ref', q.Get(q.Var('match'))), q.Var('data')),
+        null
+      )
+    )
+  )
 }
 
 function updatePaymentIntent(paymentIntent: Stripe.PaymentIntent) {

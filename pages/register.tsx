@@ -1,4 +1,5 @@
 import {
+  Badge,
   Banner,
   Button,
   Card,
@@ -12,7 +13,11 @@ import {
   Select,
   TextField,
 } from '@shopify/polaris'
-import { MobileCancelMajor, CustomerPlusMajor } from '@shopify/polaris-icons'
+import {
+  CustomerPlusMajor,
+  CustomersMinor,
+  MobileCancelMajor,
+} from '@shopify/polaris-icons'
 import {
   asChoiceField,
   notEmpty,
@@ -36,7 +41,6 @@ import { ParticipantInformation } from '../types'
 import { Price } from '../utils/const'
 import { flags } from '../utils/featureFlag'
 import { RegistrationTypeList } from './../components/RegistrationType'
-import getAvailableSeats from './api/available-seats'
 import { db } from './api/constants/db'
 import { Country } from './api/get-countries'
 
@@ -194,7 +198,14 @@ function Register({ data }) {
 
   return (
     <Page
-      title={`Participant Registration ${count.count}/${count.maxSeat}`}
+      title={`Participant Registration`}
+      titleMetadata={
+        //@ts-ignore
+        <Badge status="success">
+          <Icon source={CustomersMinor} />
+          {count.count}/{count.maxSeat}
+        </Badge>
+      }
       subtitle="4th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	22-24, 2022"
       additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
     >
