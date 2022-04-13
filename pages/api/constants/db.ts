@@ -6,7 +6,9 @@ export const db = {
     serverClient
       .query(
         q.Map(
-          q.Paginate(q.Documents(q.Collection('checkout_sessions'))),
+          q.Paginate(q.Documents(q.Collection('checkout_sessions')), {
+            size: 99999,
+          }),
           q.Lambda(
             'cs',
             q.Let(
@@ -24,6 +26,7 @@ export const db = {
         // I Can't do this operation with Fauna :(
         // using vanilla javascript..
         const sessions = result?.data
+
         const totalParticipantsCount = sessions
           .filter(({ session: s }) => {
             return ['open', 'complete'].includes(s?.status)
