@@ -1,8 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
 import queryString from 'query-string'
-import { PersonalInformation } from '../register'
 import { registrationTypes } from '../../constants/registrationType'
+import { CreateParticipantCheckoutSesssionPayload } from '../../types'
+import { db } from './constants/db'
+import { If, Exists, Match, Index } from 'faunadb'
+import { query as q } from 'faunadb'
+import { serverClient } from './constants/fauna.instance'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
 
@@ -11,7 +15,11 @@ const createStripeParticipantsSession = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
-  const { participants } = req.body as { participants: PersonalInformation[] }
+  const {
+    participants,
+    registerForSelf,
+    registrant,
+  } = req.body as CreateParticipantCheckoutSesssionPayload
   const firstParticipant = participants[0]
 
   const host = req.headers.host
@@ -27,10 +35,10 @@ const createStripeParticipantsSession = async (
         price_data: {
           currency: 'usd',
           product_data: {
-            name: 'Application	for	Commercial	Exhibits and	Sponsorship',
+            name: `Participant Registration As: ${p.registrationType?.toUpperCase()}`,
             description: '4th Veterinary	Ophthalmic	Surgery	Meeting	Jul	22-24, 2022',
             images: [redirectUrl + '/vosm_logo.png'],
-            metadata: { ...p },
+            metadata: { test: 'hello world' },
           },
 
           unit_amount: cents,
@@ -40,14 +48,67 @@ const createStripeParticipantsSession = async (
     }
   )
   try {
-    const cust = await stripe.customers.create({
-      email: firstParticipant.email,
-      name: firstParticipant.fullName,
-    })
+    const registrantData: Stripe.CustomerCreateParams = registerForSelf
+      ? {
+          email: firstParticipant.email,
+          name: firstParticipant.fullName,
+        }
+      : registrant
 
-    const session = await stripe.checkout.sessions.create({
+    let savedRegistrant = await serverClient.query<{
+      data: { customerId: string }
+    }>(
+      q.Let(
+        {
+          match: q.Match(q.Index('users_by_email'), registrant.email),
+          data: { data: registrant },
+        },
+        q.If(q.Exists(q.Var('match')), q.Get(q.Var('match')), null)
+      )
+    )
+
+    if (!savedRegistrant) {
+      // customer will be saved in webhook handler
+      savedRegistrant = await stripe.customers
+        .create(registrantData)
+        .then((cust) => {
+          return serverClient.query(
+            q.Create(q.Collection('users'), {
+              data: {
+                email: cust.email,
+                name: cust.name,
+                customerId: cust.id,
+              },
+            })
+          )
+        })
+    }
+
+    const today = new Date()
+
+    const EXPIRATION_TIME_HOUR = 1
+    const expInSeconds = Math.round(
+      today.setHours(today.getHours() + EXPIRATION_TIME_HOUR) / 1000
+    )
+
+    // guard from creating the session if no seats are available
+    const data = await db.getSeatAvailability()
+    const seatAvailabilityCount = data.maxSeat - data.count
+    if (seatAvailabilityCount < lineItems.length) {
+      if (seatAvailabilityCount === 0) {
+        throw new Error('Sorry, we sold out!')
+      }
+      throw new Error(
+        `Sorry, only ${seatAvailabilityCount} seat(s) are remaining`
+      )
+    }
+
+    console.log('savedRegistarnt', savedRegistrant)
+
+    const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
+      expires_at: expInSeconds, // expires in one hour
       mode: 'payment',
       success_url: queryString.stringifyUrl({
         url: redirectUrl + '/payment-success',
@@ -61,13 +122,26 @@ const createStripeParticipantsSession = async (
           error: 'payment was cancelled',
         },
       }),
-      customer: cust.id,
+      customer: savedRegistrant.data.customerId,
     })
-    console.log('created session', session)
 
-    res.json({ id: session.id })
+    await serverClient.query(
+      q.Create(q.Collection('checkout_sessions'), {
+        data: {
+          id: checkoutSession.id,
+          paymentIntent: checkoutSession.payment_intent,
+          status: checkoutSession.status,
+          customer: checkoutSession.customer,
+          participants,
+        },
+      })
+    )
+
+    res.status(200).json({ id: checkoutSession.id })
   } catch (e) {
-    res.status(500).send(e.message)
+    console.log('error', e)
+
+    res.status(500).send(e)
   }
 }
 
