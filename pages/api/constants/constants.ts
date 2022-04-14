@@ -1,1 +1,1 @@
-export const SEAT_AVAILABILITY = 190
+export const SEAT_AVAILABILITY = 200
