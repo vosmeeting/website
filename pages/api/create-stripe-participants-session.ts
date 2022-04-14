@@ -19,6 +19,7 @@ const createStripeParticipantsSession = async (
     participants,
     registerForSelf,
     registrant,
+    secretUrlId,
   } = req.body as CreateParticipantCheckoutSesssionPayload
   const firstParticipant = participants[0]
 
@@ -94,16 +95,20 @@ const createStripeParticipantsSession = async (
     // guard from creating the session if no seats are available
     const data = await db.getSeatAvailability()
     const seatAvailabilityCount = data.maxSeat - data.count
-    if (seatAvailabilityCount < lineItems.length) {
-      if (seatAvailabilityCount === 0) {
-        throw new Error('Sorry, we sold out!')
-      }
-      throw new Error(
-        `Sorry, only ${seatAvailabilityCount} seat(s) are remaining`
-      )
-    }
+    const isSecretUrl = db.validateSecretUrl(secretUrlId)
 
-    console.log('savedRegistarnt', savedRegistrant)
+    // special person bypass the availability count
+    if (!isSecretUrl) {
+      // check availability
+      if (seatAvailabilityCount < lineItems.length) {
+        if (seatAvailabilityCount === 0) {
+          throw new Error('Sorry, we sold out!')
+        }
+        throw new Error(
+          `Sorry, only ${seatAvailabilityCount} seat(s) are remaining`
+        )
+      }
+    }
 
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -133,6 +138,7 @@ const createStripeParticipantsSession = async (
           status: checkoutSession.status,
           customer: checkoutSession.customer,
           participants,
+          secretUrlId,
         },
       })
     )

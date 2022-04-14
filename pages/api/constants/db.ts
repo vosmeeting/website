@@ -1,6 +1,7 @@
 import { query as q } from 'faunadb'
 import { SEAT_AVAILABILITY } from './constants'
 import { serverClient } from './fauna.instance'
+const secretUrls = ['936058d8-eb5e-4d6d-b3dc-af30488859b4']
 export const db = {
   getSeatAvailability: () =>
     serverClient
@@ -25,15 +26,19 @@ export const db = {
       .then((result: any) => {
         // I Can't do this operation with Fauna :(
         // using vanilla javascript..
-        const sessions = result?.data
+        const sessions = result?.data.map(({ session }) => session)
 
         const totalParticipantsCount = sessions
-          .filter(({ session: s }) => {
+          .filter((s) => {
             return ['open', 'complete'].includes(s?.status)
           })
-          .reduce((acc, curr) => {
-            return acc + (curr?.session?.participants?.length || 0)
+          .filter((s) => !s.secretUrlId) // dont count the secret ones
+          .reduce((acc, s) => {
+            return acc + (s?.participants?.length || 0)
           }, 0)
         return { count: totalParticipantsCount, maxSeat: SEAT_AVAILABILITY }
       }),
+  validateSecretUrl: (url: string) => {
+    return secretUrls.includes(url)
+  },
 }

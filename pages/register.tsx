@@ -27,6 +27,7 @@ import {
 } from '@shopify/react-form'
 import axios from 'axios'
 import classNames from 'classnames'
+import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import * as yup from 'yup'
@@ -87,15 +88,17 @@ const emailValidation = (input) => {
   }
 }
 
-function Register({ data }) {
+function Register({ data, isSecretUrl }) {
   const route = useRouter()
   const [remoteErrors, setRemoteErrors] = useState(null)
   const info = useParticipantQuota(data)
   const count = info?.data
 
-  const { error = '' } = route.query as {
+  const { error = '', secretUrlId = '' } = route.query as {
     error: string
+    secretUrlId?: string
   }
+
   const [countries, setCountries] = useState<Country[]>([
     { country: 'United States', abbreviation: 'US' },
   ])
@@ -161,6 +164,7 @@ function Register({ data }) {
           participants: form.persons,
           registrant: form.registrant,
           registerForSelf: form.registerForSelf,
+          secretUrlId,
         })
       } catch (e) {
         remoteErrors.push(e)
@@ -212,9 +216,8 @@ function Register({ data }) {
       <Layout>
         {remoteErrors && <ErrorBanner errors={remoteErrors} />}
         <Layout.Section>
-          {count.count >= count.maxSeat && (
-            <Banner status="info"> Sorry we sold out!</Banner>
-          )}
+          {count.count >= count.maxSeat &&
+            !isSecretUrl(<Banner status="info"> Sorry we sold out!</Banner>)}
         </Layout.Section>
         <Layout.Section>
           <Card
@@ -224,7 +227,8 @@ function Register({ data }) {
               content: 'register ' + new Price(totalPrice).toDollar(),
               onAction: form.submit,
               loading: form.submitting,
-              disabled: !form.dirty || count.count >= count.maxSeat,
+              disabled:
+                !form.dirty || (count.count >= count.maxSeat && !isSecretUrl),
             }}
             secondaryFooterActions={[
               {
@@ -373,6 +377,17 @@ export async function getStaticProps() {
   } catch (e) {
     console.error('err', e)
     return { props: { data: { count: 0, maxSeat: 100 } } }
+  }
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { secretUrlId = '' } = context.query as {
+    secretUrlId: string
+  }
+  const valid = await db.validateSecretUrl(secretUrlId)
+
+  return {
+    props: { isSecretUrl: valid }, // will be passed to the page component as props
   }
 }
 
