@@ -142,7 +142,7 @@ function updateCharge(charge: Stripe.Charge) {
   )
 }
 
-function updatePaymentIntent(paymentIntent: Stripe.PaymentIntent) {
+export function updatePaymentIntent(paymentIntent: Stripe.PaymentIntent) {
   return serverClient.query(
     q.Let(
       {
