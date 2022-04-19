@@ -377,8 +377,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     secretUrlId: string
   }
 
-  const data = await db.getSeatAvailability()
-  const valid = await db.validateSecretUrl(secretUrlId)
+  const promises = await Promise.allSettled([
+    db.getSeatAvailability().catch((e) => console.error()),
+    db.validateSecretUrl(secretUrlId),
+  ])
+
+  console.log(promises)
+
+  const [data, valid] = promises.map((r) => r?.value)
 
   return {
     props: { isSecretUrl: valid, data }, // will be passed to the page component as props
