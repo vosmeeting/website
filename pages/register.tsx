@@ -31,6 +31,7 @@ import { get } from 'lodash'
 import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
+import { useQuery } from 'react-query'
 import * as yup from 'yup'
 import withComingSoon from '../components/hoc/withComingSoon'
 import {
@@ -89,7 +90,7 @@ const emailValidation = (input) => {
   }
 }
 
-function Register({ data, isSecretUrl }) {
+function Register({ data, isSecretUrl: initialIsSecretUrl }) {
   const route = useRouter()
   const [remoteErrors, setRemoteErrors] = useState(null)
   const info = useParticipantQuota(data || { maxSeat: 0, count: 0 })
@@ -99,6 +100,12 @@ function Register({ data, isSecretUrl }) {
     error: string
     secretUrlId?: string
   }
+  const secretUrlInfo = useQuery(
+    secretUrlId,
+    () => db.validateSecretUrl(secretUrlId),
+    { initialData: initialIsSecretUrl }
+  )
+  const isSecretUrl = secretUrlInfo.data
 
   const [countries, setCountries] = useState<Country[]>([
     { country: 'United States', abbreviation: 'US' },
@@ -202,6 +209,10 @@ function Register({ data, isSecretUrl }) {
     }, 3000)
     return () => clearTimeout(timeout)
   }, [error])
+
+  if (secretUrlInfo.isLoading) {
+    return 'loading..'
+  }
 
   return (
     <Page
@@ -373,22 +384,15 @@ function Register({ data, isSecretUrl }) {
   )
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { context: netlifyContext } = context?.req?.netlifyFunctionParams || {}
-
-  const sid =
-    get(context, 'query.secretUrlId') ||
-    get(netlifyContext, 'query.secretUrlId')
-
+export async function getStaticProps() {
   const promises = await Promise.allSettled([
     db.getSeatAvailability().catch((e) => console.error()),
-    db.validateSecretUrl(sid),
   ])
 
-  const [data = null, valid] = promises.map((r) => r?.value)
+  const [data = null] = promises.map((r) => r?.value)
 
   return {
-    props: { isSecretUrl: !!valid, data }, // will be passed to the page component as props
+    props: { isSecretUrl: false, data }, // will be passed to the page component as props
   }
 }
 
