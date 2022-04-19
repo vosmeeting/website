@@ -382,12 +382,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     db.validateSecretUrl(secretUrlId),
   ])
 
-  console.log(promises)
-
-  const [data, valid] = promises.map((r) => r?.value)
+  const [data = null, valid] = promises.map((r) => r?.value)
 
   return {
-    props: { isSecretUrl: valid, data }, // will be passed to the page component as props
+    props: { isSecretUrl: !!valid, data }, // will be passed to the page component as props
   }
 }
 

@@ -21,7 +21,8 @@ export const db = {
               }
             )
           )
-        )
+        ),
+        { queryTimeout: 2000 }
       )
       .then((result: any) => {
         // I Can't do this operation with Fauna :(
