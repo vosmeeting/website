@@ -27,6 +27,7 @@ import {
 } from '@shopify/react-form'
 import axios from 'axios'
 import classNames from 'classnames'
+import { get } from 'lodash'
 import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
@@ -373,13 +374,15 @@ function Register({ data, isSecretUrl }) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { secretUrlId = '' } = context.query as {
-    secretUrlId: string
-  }
+  const { context: netlifyContext } = context?.req?.netlifyFunctionParams || {}
+
+  const sid =
+    get(context, 'query.secretUrlId') ||
+    get(netlifyContext, 'query.secretUrlId')
 
   const promises = await Promise.allSettled([
     db.getSeatAvailability().catch((e) => console.error()),
-    db.validateSecretUrl(secretUrlId),
+    db.validateSecretUrl(sid),
   ])
 
   const [data = null, valid] = promises.map((r) => r?.value)

@@ -40,6 +40,8 @@ export const db = {
         return { count: totalParticipantsCount, maxSeat: SEAT_AVAILABILITY }
       }),
   validateSecretUrl: (url: string) => {
-    return secretUrls.includes(url)
+    return new Promise((resolve) => {
+      resolve(secretUrls.includes(url))
+    })
   },
 }
