@@ -125,6 +125,7 @@ const createStripeParticipantsSession = async (
         url: redirectUrl + '/register',
         query: {
           error: 'payment was cancelled',
+          secretUrlId,
         },
       }),
       customer: savedRegistrant.data.customerId,

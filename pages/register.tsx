@@ -91,7 +91,7 @@ const emailValidation = (input) => {
 function Register({ data, isSecretUrl }) {
   const route = useRouter()
   const [remoteErrors, setRemoteErrors] = useState(null)
-  const info = useParticipantQuota(data)
+  const info = useParticipantQuota(data || { maxSeat: 0, count: 0 })
   const count = info?.data
 
   const { error = '', secretUrlId = '' } = route.query as {
@@ -194,8 +194,10 @@ function Register({ data, isSecretUrl }) {
   useEffect(() => {
     if (error) setRemoteErrors([new Error(error)])
     const timeout = setTimeout(() => {
-      setRemoteErrors(null)
-      route.push(route.pathname)
+      if (error) {
+        setRemoteErrors(null)
+        route.push(route.pathname)
+      }
     }, 3000)
     return () => clearTimeout(timeout)
   }, [error])
@@ -216,8 +218,9 @@ function Register({ data, isSecretUrl }) {
       <Layout>
         {remoteErrors && <ErrorBanner errors={remoteErrors} />}
         <Layout.Section>
-          {count.count >= count.maxSeat &&
-            !isSecretUrl(<Banner status="info"> Sorry we sold out!</Banner>)}
+          {count.count >= count.maxSeat && !isSecretUrl && (
+            <Banner status="info"> Sorry we sold out!</Banner>
+          )}
         </Layout.Section>
         <Layout.Section>
           <Card
@@ -369,25 +372,16 @@ function Register({ data, isSecretUrl }) {
   )
 }
 
-export async function getStaticProps() {
-  try {
-    const data = await db.getSeatAvailability()
-    console.log('data', data)
-    return { props: { data } }
-  } catch (e) {
-    console.error('err', e)
-    return { props: { data: { count: 0, maxSeat: 100 } } }
-  }
-}
-
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { secretUrlId = '' } = context.query as {
     secretUrlId: string
   }
+
+  const data = await db.getSeatAvailability()
   const valid = await db.validateSecretUrl(secretUrlId)
 
   return {
-    props: { isSecretUrl: valid }, // will be passed to the page component as props
+    props: { isSecretUrl: valid, data }, // will be passed to the page component as props
   }
 }
 
