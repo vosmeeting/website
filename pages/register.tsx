@@ -242,8 +242,7 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }) {
               content: 'register ' + new Price(totalPrice).toDollar(),
               onAction: form.submit,
               loading: form.submitting,
-              disabled:
-                !form.dirty || (count.count >= count.maxSeat && !isSecretUrl),
+              disabled: count.count >= count.maxSeat && !isSecretUrl,
             }}
             secondaryFooterActions={[
               {
