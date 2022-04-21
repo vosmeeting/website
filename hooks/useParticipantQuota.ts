@@ -8,7 +8,7 @@ export const useParticipantQuota = (initialValue) => {
     'available_seat',
     () => getCount().then((res) => res.data.count),
     {
-      refetchInterval: 3000,
+      // refetchInterval: 60000,
       initialData: initialValue,
     }
   )

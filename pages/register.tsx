@@ -27,8 +27,11 @@ import {
 } from '@shopify/react-form'
 import axios from 'axios'
 import classNames from 'classnames'
+import { get } from 'lodash'
+import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
+import { useQuery } from 'react-query'
 import * as yup from 'yup'
 import withComingSoon from '../components/hoc/withComingSoon'
 import {
@@ -87,15 +90,23 @@ const emailValidation = (input) => {
   }
 }
 
-function Register({ data }) {
+function Register({ data, isSecretUrl: initialIsSecretUrl }) {
   const route = useRouter()
   const [remoteErrors, setRemoteErrors] = useState(null)
-  const info = useParticipantQuota(data)
+  const info = useParticipantQuota(data || { maxSeat: 0, count: 0 })
   const count = info?.data
 
-  const { error = '' } = route.query as {
+  const { error = '', secretUrlId = '' } = route.query as {
     error: string
+    secretUrlId?: string
   }
+  const secretUrlInfo = useQuery(
+    secretUrlId,
+    () => db.validateSecretUrl(secretUrlId),
+    { initialData: initialIsSecretUrl }
+  )
+  const isSecretUrl = secretUrlInfo.data
+
   const [countries, setCountries] = useState<Country[]>([
     { country: 'United States', abbreviation: 'US' },
   ])
@@ -161,6 +172,7 @@ function Register({ data }) {
           participants: form.persons,
           registrant: form.registrant,
           registerForSelf: form.registerForSelf,
+          secretUrlId,
         })
       } catch (e) {
         remoteErrors.push(e)
@@ -190,11 +202,17 @@ function Register({ data }) {
   useEffect(() => {
     if (error) setRemoteErrors([new Error(error)])
     const timeout = setTimeout(() => {
-      setRemoteErrors(null)
-      route.push(route.pathname)
+      if (error) {
+        setRemoteErrors(null)
+        route.push(route.pathname)
+      }
     }, 3000)
     return () => clearTimeout(timeout)
   }, [error])
+
+  if (secretUrlInfo.isLoading) {
+    return 'loading..'
+  }
 
   return (
     <Page
@@ -212,7 +230,7 @@ function Register({ data }) {
       <Layout>
         {remoteErrors && <ErrorBanner errors={remoteErrors} />}
         <Layout.Section>
-          {count.count >= count.maxSeat && (
+          {count.count >= count.maxSeat && !isSecretUrl && (
             <Banner status="info"> Sorry we sold out!</Banner>
           )}
         </Layout.Section>
@@ -224,7 +242,7 @@ function Register({ data }) {
               content: 'register ' + new Price(totalPrice).toDollar(),
               onAction: form.submit,
               loading: form.submitting,
-              disabled: !form.dirty || count.count >= count.maxSeat,
+              disabled: count.count >= count.maxSeat && !isSecretUrl,
             }}
             secondaryFooterActions={[
               {
@@ -366,13 +384,14 @@ function Register({ data }) {
 }
 
 export async function getStaticProps() {
-  try {
-    const data = await db.getSeatAvailability()
-    console.log('data', data)
-    return { props: { data } }
-  } catch (e) {
-    console.error('err', e)
-    return { props: { data: { count: 0, maxSeat: 100 } } }
+  const promises = await Promise.allSettled([
+    db.getSeatAvailability().catch((e) => console.error()),
+  ])
+
+  const [data = null] = promises.map((r) => r?.value)
+
+  return {
+    props: { isSecretUrl: false, data }, // will be passed to the page component as props
   }
 }
 

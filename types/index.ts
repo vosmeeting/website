@@ -14,4 +14,5 @@ export type CreateParticipantCheckoutSesssionPayload = {
     name: string
   }
   registerForSelf: boolean
+  secretUrlId?: string
 }
