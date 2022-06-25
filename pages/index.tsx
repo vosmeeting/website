@@ -1,5 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Page, Layout, Card, List, Link as PolarisLink } from '@shopify/polaris'
+import classNames from 'classnames'
+import { capitalize, groupBy } from 'lodash'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -14,6 +16,56 @@ import { flags } from '../utils/featureFlag'
 const images = Array.from({ length: 8 }).map((_, i) => ({
   url: `/vosm-images/vosm-${i + 1}.png`,
 }))
+
+class Medal {
+  constructor(public name: string, public value: number, public icon?: any) {}
+}
+type Sponsor = {
+  name: string
+  medal: Medal
+  filename: string
+}
+
+let [Prime, Platinum, Gold, Silver, Bronze] = [
+  'prime',
+  'platinum',
+  'gold',
+  'silver',
+  'bronze',
+].map((name, index) => new Medal(name, index))
+
+class SponsorRepo {
+  _sponsors: Sponsor[] = [
+    { name: 'AJL', medal: Silver, filename: 'ajl.png' },
+    { name: 'Animal Necessity', medal: null, filename: null },
+    { name: 'An-Vision', medal: Bronze, filename: 'an_vision.png' },
+    { name: 'B&L', medal: Prime, filename: 'bl.png' },
+    { name: 'ECFA', medal: Silver, filename: 'ecfa.png' },
+    { name: 'MST', medal: Platinum, filename: 'mst.png' },
+    { name: 'DIOPTRIX', medal: Gold, filename: 'dioptrix.png' },
+    { name: 'SENTRX', medal: Gold, filename: 'sentrx.png' },
+    { name: 'XORAN TECHNOLOGIES', medal: Bronze, filename: 'xoran.png' },
+  ]
+  baseUrl = '/sponsor-logos'
+
+  get sponsors() {
+    return this._sponsors
+      .filter((s) => s.medal)
+      .map((s) => ({
+        ...s,
+        imgSrc: this.baseUrl + '/' + s.filename,
+      }))
+  }
+
+  get sponsorsGroupedByType() {
+    return Object.entries(groupBy<Sponsor[]>(this.sponsors, 'medal.name'))
+      .map(([medalName, sponsors]) => [sponsors[0].medal, sponsors])
+      .sort(([medal], [medal2]) => medal.value - medal2.value)
+  }
+}
+
+const data = new SponsorRepo()
+console.log(data.sponsorsGroupedByType)
 
 const Home: NextPage = () => {
   return (
@@ -141,19 +193,55 @@ const Home: NextPage = () => {
           </div>
         </section>
         {flags.sponsors && (
-          <section className="flex flex-col items-center gap-y-6 sm:gap-y-12">
+          <section className="flex flex-col gap-y-6 sm:gap-y-12">
             <Title className="text-center sm:text-left">Sponsors</Title>
-            <ul className="flex flex-wrap justify-center gap-10">
-              {Array.from({ length: 3 }).map((sponsor, i) => (
-                <li
-                  className={`flex items-center justify-center rounded-2xl bg-vosm-light-blue text-slate-50`}
-                  style={{ width: 200, height: 200 }}
-                  key={i}
+            {data.sponsorsGroupedByType.map(([medal, sponsors], i) => {
+              const first = i === 0
+              const second = i === 1
+              // highest sponsor gets the biggest image width
+              const imageWidth = first ? 500 : second ? 250 : 250
+
+              return (
+                <div
+                  key={medal.name}
+                  className="flex flex-col gap-y-4 justify-left "
                 >
-                  sponsor {i + 1}
-                </li>
-              ))}
-            </ul>
+                  <h2
+                    className={classNames('pb-2 text-vosm-blue underline', {
+                      'text-center': true,
+                      'sm:text-4xl': first || second,
+                      'sm:text-3xl': i > 1,
+                    })}
+                  >
+                    {medal.name.toUpperCase()}
+                  </h2>
+                  <ul
+                    className={classNames('flex flex-wrap gap-x-10 gap-y-5', {
+                      'justify-center items-center': true,
+                    })}
+                  >
+                    {sponsors.map((sponsor, i) => (
+                      <li
+                        key={sponsor.name}
+                        className={`rounded-2xl text-slate-50 overflow-hidden`}
+                        style={{ width: imageWidth }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={sponsor.imgSrc}
+                          alt={sponsor.name}
+                          style={{
+                            width: '100%',
+                            objectFit: 'contain',
+                            objectPosition: 'center',
+                          }}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            })}
           </section>
         )}
       </div>
