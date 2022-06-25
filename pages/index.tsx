@@ -1,5 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Page, Layout, Card, List, Link as PolarisLink } from '@shopify/polaris'
+import resolveConfig from 'tailwindcss/resolveConfig'
+import tailwindConfig from '../tailwind.config'
 import classNames from 'classnames'
 import { capitalize, groupBy } from 'lodash'
 import type { NextPage } from 'next'
@@ -39,10 +41,10 @@ class SponsorRepo {
   _sponsors: Sponsor[] = [
     { name: 'AJL', medal: Silver, filename: 'ajl.png' },
     { name: 'Animal Necessity', medal: null, filename: null },
-    { name: 'An-Vision', medal: Bronze, filename: 'an_vision.png' },
-    { name: 'B&L', medal: Prime, filename: 'bl.png' },
     { name: 'ECFA', medal: Silver, filename: 'ecfa.png' },
+    { name: 'An-Vision', medal: Bronze, filename: 'an_vision.png' },
     { name: 'MST', medal: Platinum, filename: 'mst.png' },
+    { name: 'B&L', medal: Prime, filename: 'bl.png' },
     { name: 'DIOPTRIX', medal: Gold, filename: 'dioptrix.png' },
     { name: 'SENTRX', medal: Gold, filename: 'sentrx.png' },
     { name: 'XORAN TECHNOLOGIES', medal: Bronze, filename: 'xoran.png' },
@@ -58,6 +60,19 @@ class SponsorRepo {
       }))
   }
 
+  get sponsorsHighestInTheMiddle() {
+    return this.sponsorsSorted.map(function (v, i, a) {
+      var p = ~~(a.length / 2)
+      return i >= p ? a[a.length - i + p - 1] : v
+    })
+  }
+
+  get sponsorsSorted() {
+    return this.sponsors.sort(function (s1, s2) {
+      return s1.medal.value - s2.medal.value
+    })
+  }
+
   get sponsorsGroupedByType() {
     return Object.entries(groupBy<Sponsor[]>(this.sponsors, 'medal.name'))
       .map(([medalName, sponsors]) => [sponsors[0].medal, sponsors])
@@ -65,10 +80,11 @@ class SponsorRepo {
   }
 }
 
-const data = new SponsorRepo()
-console.log(data.sponsorsGroupedByType)
+const sponsorRepo = new SponsorRepo()
 
 const Home: NextPage = () => {
+  const fullConfig = resolveConfig(tailwindConfig)
+
   return (
     <Page>
       <Head>
@@ -194,63 +210,38 @@ const Home: NextPage = () => {
           </div>
         </section>
         {flags.sponsors && (
-          <section className="flex flex-col gap-y-6 sm:gap-y-12">
+          <section className="flex flex-col items-center gap-y-6 sm:gap-y-12">
             <Title className="text-center sm:text-left">Sponsors</Title>
-            <div className="flex flex-col gap-y-20">
-              {data.sponsorsGroupedByType.map(([medal, sponsors], i) => {
-                const first = i === 0
-                const second = i === 1
-                const rest = i > 1
-                // highest sponsor gets the biggest image width
-                const imageWidth = first ? 500 : second ? 250 : 250
-
+            <ul className="hidden flex-wrap justify-center gap-10 sm:flex">
+              {sponsorRepo.sponsors.map((sponsor, i) => {
+                const prime = sponsor.medal.name === 'prime'
                 return (
-                  <div
-                    key={medal.name}
-                    className={classNames('flex gap-y-4 justify-left ', {
-                      'flex-col': first || second,
-                      'gap-x-10 items-center': rest,
-                    })}
+                  <li
+                    className={`flex items-center justify-center rounded-2xl text-slate-50`}
+                    style={{ width: prime ? 400 : 200 }}
+                    key={i}
                   >
-                    <h2
-                      className={classNames('pb-2 underline', {
-                        'text-center': true,
-                        'text-4xl': first || second,
-                        'text-3xl': rest,
-                      })}
-                    >
-                      {medal.name
-                        .toUpperCase()
-                        .concat(medal.icon ? medal.icon : '')}
-                    </h2>
-                    <ul
-                      className={classNames('flex flex-wrap gap-x-10 gap-y-5', {
-                        'justify-center items-center': true,
-                      })}
-                    >
-                      {sponsors.map((sponsor, i) => (
-                        <li
-                          key={sponsor.name}
-                          className={`text-slate-50`}
-                          style={{ width: imageWidth }}
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={sponsor.imgSrc}
-                            alt={sponsor.name}
-                            style={{
-                              width: '100%',
-                              objectFit: 'contain',
-                              objectPosition: 'center',
-                            }}
-                          />
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={sponsor.imgSrc} alt={sponsor.name} />
+                  </li>
                 )
               })}
-            </div>
+            </ul>
+            <ul className="flex flex-wrap justify-center gap-10 sm:hidden">
+              {sponsorRepo.sponsorsSorted.map((sponsor, i) => {
+                const prime = sponsor.medal.name === 'prime'
+                return (
+                  <li
+                    className={`flex items-center justify-center rounded-2xl text-slate-50`}
+                    style={{ width: prime ? '70%' : 200 }}
+                    key={i}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={sponsor.imgSrc} alt={sponsor.name} />
+                  </li>
+                )
+              })}
+            </ul>
           </section>
         )}
       </div>
