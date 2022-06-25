@@ -34,7 +34,11 @@ let [Prime, Platinum, Gold, Silver, Bronze] = [
   'bronze',
 ].map((name, index) => new Medal(name, index))
 
-Prime.icon = '🏅'
+// Prime.icon = '💎'
+// Gold.icon = '🥇'
+// Silver.icon = '🥈'
+// Bronze.icon = '🥉'
+// Platinum.icon = '🏅'
 class SponsorRepo {
   _sponsors: Sponsor[] = [
     { name: 'AJL', medal: Silver, filename: 'ajl.png' },
@@ -66,7 +70,6 @@ class SponsorRepo {
 }
 
 const data = new SponsorRepo()
-console.log(data.sponsorsGroupedByType)
 
 const Home: NextPage = () => {
   return (
@@ -202,26 +205,30 @@ const Home: NextPage = () => {
                 const second = i === 1
                 const rest = i > 1
                 // highest sponsor gets the biggest image width
-                const imageWidth = first ? 500 : second ? 250 : 250
+                const imageWidth = first ? '80%' : second ? 250 : 250
 
                 return (
                   <div
                     key={medal.name}
-                    className={classNames('flex gap-y-4 justify-left ', {
-                      'flex-col': first || second,
-                      'gap-x-10 items-center': rest,
-                    })}
+                    className={classNames(
+                      'flex gap-y-6 flex-col items-center ',
+                      {
+                        'sm:flex-row': rest,
+                        'gap-x-10 items-center': rest,
+                      }
+                    )}
                   >
                     <h2
-                      className={classNames('pb-2 underline', {
-                        'text-center': true,
-                        'text-4xl': first || second,
-                        'text-3xl': rest,
-                      })}
+                      className={classNames(
+                        'pb-2 bg-vosm-light-blue text-vosm-blue rounded-full px-5 py-1 sm:px-10 sm:py-2',
+                        {
+                          'text-center': true,
+                          'text-xl sm:text-2xl': true,
+                        }
+                      )}
                     >
-                      {medal.name
-                        .toUpperCase()
-                        .concat(medal.icon ? medal.icon : '')}
+                      {medal.icon}
+                      {medal.name.toUpperCase()}
                     </h2>
                     <ul
                       className={classNames('flex flex-wrap gap-x-10 gap-y-5', {
