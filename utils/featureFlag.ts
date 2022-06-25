@@ -4,5 +4,5 @@ const overdue = now > due
 
 export const flags = {
   registration: true,
-  sponsors: false,
+  sponsors: true,
 }
