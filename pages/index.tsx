@@ -88,7 +88,7 @@ const Home: NextPage = () => {
           <div className="sm:text-justify">
             <Title className="leading-normal">The Conference</Title>
             <P>
-              We are excited to announce the <b>4th</b> Veterinary Ophthalmic
+              We are excited to announce the <b>5th</b> Veterinary Ophthalmic
               Surgery Meeting. This long awaited event will be an innovative
               meeting, with a dynamic format developed to encourage a candid
               debate among Veterinary Ophthalmologists with interests in
@@ -96,8 +96,8 @@ const Home: NextPage = () => {
             </P>
             <br />
             <P>
-              This is a limited-space event that will take place on July 22-24
-              <sup>th</sup>, 2022 in Chicago, IL.
+              This is a limited-space event that will take place on July 19-22
+              <sup>th</sup>, 2024 in Chicago, IL.
             </P>
             <br />
             <P>

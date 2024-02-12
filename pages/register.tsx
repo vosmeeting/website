@@ -224,7 +224,7 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }) {
           {count.count}/{count.maxSeat}
         </Badge>
       }
-      subtitle="4th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	22-24, 2022"
+      subtitle="5th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	19-22, 2024"
       additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
     >
       <Layout>
@@ -369,7 +369,7 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }) {
           </Card>
         </Layout.Section>
         <Layout.Section>
-          <Heading>Cancellation Policy for VOSM 2022:</Heading>
+          <Heading>Cancellation Policy for VOSM 2024:</Heading>
           <p className="italic">
             Cancellations received by May 22nd will receive a full refund less a
             10% administrative fee. Cancellations received by Jun 22nd will

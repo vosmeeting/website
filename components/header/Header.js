@@ -29,10 +29,10 @@ const Header = () => {
         <div className="text-center font-normal text-slate-50 sm:text-left">
           <p className="text-xl">We are excited to announce</p>
           <h1 className=" text-xl font-semibold sm:text-4xl">
-            4th Veterinary Ophthalmic Surgery Meeting
+            5th Veterinary Ophthalmic Surgery Meeting
           </h1>
           <p className="font-sans text-xl font-normal">
-            July 22-24<sup>th</sup> 2022, Chicago, IL
+            July 19-22<sup>nd</sup> 2024, Chicago, IL
           </p>
         </div>
       </div>
