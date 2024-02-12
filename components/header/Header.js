@@ -1,3 +1,4 @@
+//@ts-check
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -7,8 +8,7 @@ import Button from '../Buttons'
 import styles from './Header.module.scss'
 import { appConfig } from '../../domain/appConfig'
 
-// TODO: haven't handled the responsive design extensively
-const Header = () => {
+const Header = ({ ctaConfig }) => {
   return (
     <div className={styles.main}>
       <Image
@@ -37,10 +37,10 @@ const Header = () => {
           </p>
         </div>
       </div>
-      {appConfig.ff.registration && (
+      {ctaConfig && (
         <div className={'button-group'}>
-          <Button monochrome>
-            <Link href={'/register'}>Register</Link>
+          <Button disabled={ctaConfig.disabled} monochrome>
+            <Link href={'/register'}>{ctaConfig.copy}</Link>
           </Button>
         </div>
       )}
