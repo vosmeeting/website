@@ -17,10 +17,10 @@ export default function Footer() {
         </div>
         <div className="sm:block text-slate-50 font-normal ">
           <h1 className="text-lg sm:text-2xl md:text-4xl font-semibold">
-            4th Veterinary Ophthalmic <br /> Surgery Meeting
+            5th Veterinary Ophthalmic <br /> Surgery Meeting
           </h1>
           <p className="text-xl font-sans font-normal">
-            July 22-24<sup>th</sup> 2022, Chicago, IL
+            July 19-22<sup>nd</sup> 2024, Chicago, IL
           </p>
         </div>
       </div>

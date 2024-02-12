@@ -23,7 +23,7 @@ const CreateStripeSession = async (
       currency: 'usd',
       product_data: {
         name: 'Application	for	Commercial	Exhibits and	Sponsorship',
-        description: '4th Veterinary	Ophthalmic	Surgery	Meeting	Jul	22-24, 2022',
+        description: '5th Veterinary	Ophthalmic	Surgery	Meeting	Jul	19-22, 2024',
         images: [redirectURL + '/vosm_logo.png'],
       },
       unit_amount: cents,

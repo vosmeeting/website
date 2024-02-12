@@ -37,7 +37,7 @@ const createStripeParticipantsSession = async (
           currency: 'usd',
           product_data: {
             name: `Participant Registration As: ${p.registrationType?.toUpperCase()}`,
-            description: '4th Veterinary	Ophthalmic	Surgery	Meeting	Jul	22-24, 2022',
+            description: '5th Veterinary	Ophthalmic	Surgery	Meeting	Jul	19-22, 2024',
             images: [redirectUrl + '/vosm_logo.png'],
             metadata: { test: 'hello world' },
           },

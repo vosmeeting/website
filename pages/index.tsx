@@ -12,6 +12,7 @@ import hyatt from '../assets/hyatt.png'
 import Button from '../components/Buttons'
 import { P, Title } from '../components/typography'
 import { flags } from '../utils/featureFlag'
+import { appConfig } from '../domain/appConfig'
 
 const images = Array.from({ length: 8 }).map((_, i) => ({
   url: `/vosm-images/vosm-${i + 1}.png`,
@@ -88,7 +89,7 @@ const Home: NextPage = () => {
           <div className="sm:text-justify">
             <Title className="leading-normal">The Conference</Title>
             <P>
-              We are excited to announce the <b>4th</b> Veterinary Ophthalmic
+              We are excited to announce the <b>5th</b> Veterinary Ophthalmic
               Surgery Meeting. This long awaited event will be an innovative
               meeting, with a dynamic format developed to encourage a candid
               debate among Veterinary Ophthalmologists with interests in
@@ -96,8 +97,8 @@ const Home: NextPage = () => {
             </P>
             <br />
             <P>
-              This is a limited-space event that will take place on July 22-24
-              <sup>th</sup>, 2022 in Chicago, IL.
+              This is a limited-space event that will take place on July 19-22
+              <sup>nd</sup>, 2024 in Chicago, IL.
             </P>
             <br />
             <P>
@@ -196,9 +197,9 @@ const Home: NextPage = () => {
             </div>
           </div>
         </section>
-        {flags.sponsors && (
+        {appConfig.ff.sponsors && (
           <section className="flex flex-col gap-y-6 sm:gap-y-12">
-            <Title className="text-center sm:text-left">Sponsors</Title>
+            <Title className="text-center sm:text-left">2022 Sponsors</Title>
             <div className="flex flex-col gap-y-20">
               {data.sponsorsGroupedByType.map(([medal, sponsors], i) => {
                 const first = i === 0

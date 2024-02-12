@@ -76,7 +76,7 @@ export default function Sponsor() {
     amount: useField({
       value: amount,
       validates: [
-        notEmpty('Donation amount is required!'),
+        notEmpty('amount is required'),
         numericString('must be a valid amount: only numeric is accepted'),
       ],
     }),
@@ -125,7 +125,7 @@ export default function Sponsor() {
   return (
     <Page
       title="Application	for	Commercial	Exhibits and	Sponsorship"
-      subtitle="4th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	22-24, 2022"
+      subtitle="5th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	19-22, 2024"
       additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
       narrowWidth
     >
@@ -167,7 +167,7 @@ export default function Sponsor() {
               </FormLayout>
               <div className="mt-10 flex justify-center sm:justify-end">
                 <Button submit loading={submitting}>
-                  Proceed to payment
+                  Proceed to payment{' '}
                   {new Price(getValues(fields).amount).toDollar()}
                 </Button>
               </div>
