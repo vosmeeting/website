@@ -6,7 +6,6 @@ import bg from '../../assets/header_bg.png'
 import logo from '../../assets/vosm_logo.png'
 import Button from '../Buttons'
 import styles from './Header.module.scss'
-import { appConfig } from '../../domain/appConfig'
 
 const Header = ({ ctaConfig }) => {
   return (
