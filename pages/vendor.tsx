@@ -76,7 +76,7 @@ export default function Sponsor() {
     amount: useField({
       value: amount,
       validates: [
-        notEmpty('Donation amount is required!'),
+        notEmpty('amount is required'),
         numericString('must be a valid amount: only numeric is accepted'),
       ],
     }),

@@ -199,7 +199,7 @@ const Home: NextPage = () => {
         </section>
         {appConfig.ff.sponsors && (
           <section className="flex flex-col gap-y-6 sm:gap-y-12">
-            <Title className="text-center sm:text-left">Sponsors 2022</Title>
+            <Title className="text-center sm:text-left">2022 Sponsors</Title>
             <div className="flex flex-col gap-y-20">
               {data.sponsorsGroupedByType.map(([medal, sponsors], i) => {
                 const first = i === 0
