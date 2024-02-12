@@ -5,6 +5,7 @@ import bg from '../../assets/header_bg.png'
 import logo from '../../assets/vosm_logo.png'
 import Button from '../Buttons'
 import styles from './Header.module.scss'
+import { appConfig } from '../../domain/appConfig'
 
 // TODO: haven't handled the responsive design extensively
 const Header = () => {
@@ -36,11 +37,13 @@ const Header = () => {
           </p>
         </div>
       </div>
-      <div className={'button-group'}>
-        <Button monochrome>
-          <Link href={'/register'}>Register</Link>
-        </Button>
-      </div>
+      {appConfig.ff.registration && (
+        <div className={'button-group'}>
+          <Button monochrome>
+            <Link href={'/register'}>Register</Link>
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

@@ -42,10 +42,10 @@ import { useParticipantQuota } from '../hooks/useParticipantQuota'
 import { createParticipantsCheckoutSession } from '../services/stripe'
 import { ParticipantInformation } from '../types'
 import { Price } from '../utils/const'
-import { flags } from '../utils/featureFlag'
 import { RegistrationTypeList } from './../components/RegistrationType'
 import { db } from './api/constants/db'
 import { Country } from './api/get-countries'
+import { appConfig } from '../domain/appConfig'
 
 let num = 2
 function personalInformationFactory(
@@ -395,4 +395,4 @@ export async function getStaticProps() {
   }
 }
 
-export default flags.registration ? Register : withComingSoon(Register)
+export default appConfig.ff.registration ? Register : withComingSoon(Register)

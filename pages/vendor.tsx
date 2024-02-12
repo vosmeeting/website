@@ -167,7 +167,7 @@ export default function Sponsor() {
               </FormLayout>
               <div className="mt-10 flex justify-center sm:justify-end">
                 <Button submit loading={submitting}>
-                  Proceed to payment
+                  Proceed to payment{' '}
                   {new Price(getValues(fields).amount).toDollar()}
                 </Button>
               </div>

@@ -12,6 +12,7 @@ import hyatt from '../assets/hyatt.png'
 import Button from '../components/Buttons'
 import { P, Title } from '../components/typography'
 import { flags } from '../utils/featureFlag'
+import { appConfig } from '../domain/appConfig'
 
 const images = Array.from({ length: 8 }).map((_, i) => ({
   url: `/vosm-images/vosm-${i + 1}.png`,
@@ -196,7 +197,7 @@ const Home: NextPage = () => {
             </div>
           </div>
         </section>
-        {flags.sponsors && (
+        {appConfig.ff.sponsors && (
           <section className="flex flex-col gap-y-6 sm:gap-y-12">
             <Title className="text-center sm:text-left">Sponsors</Title>
             <div className="flex flex-col gap-y-20">
