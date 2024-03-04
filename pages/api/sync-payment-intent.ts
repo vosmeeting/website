@@ -1,32 +1,10 @@
-import { query as q } from 'faunadb'
-import { serverClient } from '../../infra/fauna.instance'
 import { stripe } from '../../infra/stripe.instance'
-import { updatePaymentIntent } from './webhook'
+import { db } from '../../infra/db'
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const sessions: {
-        data: { session: { id: string } }[]
-      } = await serverClient.query(
-        q.Map(
-          q.Paginate(q.Documents(q.Collection('checkout_sessions')), {
-            size: 99999,
-          }),
-          q.Lambda(
-            'cs',
-            q.Let(
-              {
-                session: q.Select(['data'], q.Get(q.Var('cs'))),
-              },
-              {
-                session: q.Var('session'),
-              }
-            )
-          )
-        )
-      )
-
+      const sessions = await db.getSessions()
       const paymentIntentsResult = await Promise.allSettled(
         sessions.data.map(({ session }) =>
           stripe.paymentIntents.retrieve(session.paymentIntent)
@@ -36,8 +14,9 @@ export default async function handler(req, res) {
       const updateResults = await Promise.all(
         paymentIntentsResult
           .filter((res) => res.status === 'fulfilled')
+          //@ts-expect-error
           .map((res) => res.value)
-          .map((pi) => updatePaymentIntent(pi))
+          .map((pi) => db.updatePaymentIntent(pi))
       )
 
       res.send(updateResults)

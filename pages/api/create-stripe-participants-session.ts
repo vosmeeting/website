@@ -4,9 +4,6 @@ import queryString from 'query-string'
 import { registrationTypes } from '../../constants/registrationType'
 import { CreateParticipantCheckoutSesssionPayload } from '../../types'
 import { db } from '../../infra/db'
-import { If, Exists, Match, Index } from 'faunadb'
-import { query as q } from 'faunadb'
-import { serverClient } from '../../infra/fauna.instance'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
 
@@ -22,6 +19,10 @@ const createStripeParticipantsSession = async (
     secretUrlId,
   } = req.body as CreateParticipantCheckoutSesssionPayload
   const firstParticipant = participants[0]
+  const selfRegistrant = {
+    email: firstParticipant.email,
+    name: firstParticipant.fullName,
+  }
 
   const host = req.headers.host
   const protocol = /^localhost(:\d+)?$/.test(host) ? 'http:' : 'https:'
@@ -50,39 +51,15 @@ const createStripeParticipantsSession = async (
   )
   try {
     const registrantData: Stripe.CustomerCreateParams = registerForSelf
-      ? {
-          email: firstParticipant.email,
-          name: firstParticipant.fullName,
-        }
+      ? selfRegistrant
       : registrant
 
-    let savedRegistrant = await serverClient.query<{
-      data: { customerId: string }
-    }>(
-      q.Let(
-        {
-          match: q.Match(q.Index('users_by_email'), registrant.email),
-          data: { data: registrant },
-        },
-        q.If(q.Exists(q.Var('match')), q.Get(q.Var('match')), null)
-      )
-    )
-
+    let savedRegistrant = await db.saveRegistrant(registrant)
     if (!savedRegistrant) {
-      // customer will be saved in webhook handler
+      // customer will be saved in webhook handler just in case
       savedRegistrant = await stripe.customers
         .create(registrantData)
-        .then((cust) => {
-          return serverClient.query(
-            q.Create(q.Collection('users'), {
-              data: {
-                email: cust.email,
-                name: cust.name,
-                customerId: cust.id,
-              },
-            })
-          )
-        })
+        .then((cust) => db.saveRegistrant(cust))
     }
 
     const today = new Date()
@@ -131,19 +108,7 @@ const createStripeParticipantsSession = async (
       customer: savedRegistrant.data.customerId,
     })
 
-    await serverClient.query(
-      q.Create(q.Collection('checkout_sessions'), {
-        data: {
-          id: checkoutSession.id,
-          paymentIntent: checkoutSession.payment_intent,
-          status: checkoutSession.status,
-          customer: checkoutSession.customer,
-          participants,
-          secretUrlId,
-        },
-      })
-    )
-
+    await db.saveCheckoutSession(checkoutSession, participants, secretUrlId)
     res.status(200).json({ id: checkoutSession.id })
   } catch (e) {
     console.log('error', e)

@@ -1,29 +1,8 @@
-import { serverClient } from '../../infra/fauna.instance'
-import { query as q } from 'faunadb'
 import { NextApiHandler } from 'next'
 import { stripe } from '../../infra/stripe.instance'
-import { updateCheckoutSession } from './webhook'
+import { db } from '../../infra/db'
 const syncSessions: NextApiHandler = async (req, res) => {
-  const sessions: {
-    data: { session: { id: string } }[]
-  } = await serverClient.query(
-    q.Map(
-      q.Paginate(q.Documents(q.Collection('checkout_sessions')), {
-        size: 99999,
-      }),
-      q.Lambda(
-        'cs',
-        q.Let(
-          {
-            session: q.Select(['data'], q.Get(q.Var('cs'))),
-          },
-          {
-            session: q.Var('session'),
-          }
-        )
-      )
-    )
-  )
+  const sessions = await db.getSessions()
 
   try {
     const results = await Promise.allSettled(
@@ -35,8 +14,9 @@ const syncSessions: NextApiHandler = async (req, res) => {
     const updateResults = await Promise.all(
       results
         .filter((res) => res.status === 'fulfilled')
+        //@ts-expect-error
         .map((res) => res.value)
-        .map((session) => updateCheckoutSession(session))
+        .map((session) => db.updateCheckoutSession(session))
     )
     res.send(updateResults)
   } catch (err) {

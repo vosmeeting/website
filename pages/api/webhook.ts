@@ -1,10 +1,9 @@
 import { NextApiHandler } from 'next'
-import { query as q } from 'faunadb'
 import { stripe } from '../../infra/stripe.instance'
 import { buffer } from 'micro'
 import Stripe from 'stripe'
-import { serverClient } from '../../infra/fauna.instance'
 import { logger } from '../../utils/logger'
+import { db } from '../../infra/db'
 
 // Stripe requires the raw body to construct the event, so we have to diable the next parser
 export const config = {
@@ -39,7 +38,8 @@ const handler: NextApiHandler = async (request, response) => {
 
       logger.log('the correct sessionData', theCorrectSessionData)
 
-      return updateCheckoutSession(theCorrectSessionData)
+      return db
+        .updateCheckoutSession(theCorrectSessionData)
         .then((checkoutSession: any) => {
           logger.log('updated checkout session in db', checkoutSession)
           response.status(200).send('ok')
@@ -51,7 +51,8 @@ const handler: NextApiHandler = async (request, response) => {
       const correctExpiredSessionData = await stripe.checkout.sessions.retrieve(
         sessionData.id
       )
-      return updateCheckoutSession(correctExpiredSessionData)
+      return db
+        .updateCheckoutSession(correctExpiredSessionData)
         .then((checkoutSession: any) => {
           logger.log('updated checkout session in db', checkoutSession)
           response.status(200).send('ok')
@@ -61,14 +62,16 @@ const handler: NextApiHandler = async (request, response) => {
         })
     case 'payment_intent.created':
       logger.log(event.type, sessionData)
-      await serverClient
-        .query(q.Create(q.Collection('payment_intents'), { data: sessionData }))
+
+      await db
+        .savePaymentIntent(sessionData)
         .then((p) => response.status(200).send(p))
         .catch((e) => response.status(500).send(e))
       // TODO: email the registrant of ongoing payment and attach the session.url
       break
     case 'payment_intent.succeeded':
-      return updatePaymentIntent(sessionData)
+      return db
+        .updatePaymentIntent(sessionData)
         .then((intent) => {
           logger.log('successfully handleed update intent', intent)
 
@@ -80,7 +83,8 @@ const handler: NextApiHandler = async (request, response) => {
     case 'payment_intent.cancelled':
       logger.log(event.type, sessionData)
 
-      return updatePaymentIntent(sessionData)
+      return db
+        .updatePaymentIntent(sessionData)
         .then((intent) => {
           response.send('ok')
           if (!intent) logger.error('payment intent not found')
@@ -97,7 +101,8 @@ const handler: NextApiHandler = async (request, response) => {
       response.send('ok')
       break
     case 'charge.succeeded':
-      return saveCharge(sessionData)
+      return db
+        .saveCharge(sessionData)
         .then((charge) => {
           response.send('ok')
         })
@@ -105,7 +110,8 @@ const handler: NextApiHandler = async (request, response) => {
           response.status(500).send(e)
         })
     case 'charge.refunded':
-      return updateCharge(sessionData)
+      return db
+        .updateCharge(sessionData)
         .then((charge) => {
           if (!charge) logger.error('charge not found')
           response.status(200).send('ok')
@@ -122,61 +128,4 @@ const handler: NextApiHandler = async (request, response) => {
   }
 }
 
-function saveCharge(charge) {
-  return serverClient.query(q.Create(q.Collection('charges'), { data: charge }))
-}
-
-function updateCharge(charge: Stripe.Charge) {
-  return serverClient.query(
-    q.Let(
-      {
-        match: q.Match(q.Index('charges_by_id'), charge.id),
-        data: { data: charge },
-      },
-      q.If(
-        q.Exists(q.Var('match')),
-        q.Update(q.Select('ref', q.Get(q.Var('match'))), q.Var('data')),
-        null
-      )
-    )
-  )
-}
-
-export function updatePaymentIntent(paymentIntent: Stripe.PaymentIntent) {
-  return serverClient.query(
-    q.Let(
-      {
-        match: q.Match(q.Index('payment_intents_by_id'), paymentIntent.id),
-        data: { data: paymentIntent },
-      },
-      q.If(
-        q.Exists(q.Var('match')),
-        q.Update(q.Select('ref', q.Get(q.Var('match'))), q.Var('data')),
-        null
-      )
-    )
-  )
-}
-
-export function updateCheckoutSession(session: Stripe.Checkout.Session) {
-  const payload = {
-    id: session.id,
-    paymentIntent: session.payment_intent,
-    status: session.status,
-    customer: session.customer,
-  }
-  return serverClient.query(
-    q.Let(
-      {
-        match: q.Match(q.Index('checkout_sessions_by_id'), payload.id),
-        data: { data: payload },
-      },
-      q.If(
-        q.Exists(q.Var('match')),
-        q.Update(q.Select('ref', q.Get(q.Var('match'))), q.Var('data')),
-        null
-      )
-    )
-  )
-}
 export default handler
