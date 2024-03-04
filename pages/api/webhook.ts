@@ -1,9 +1,9 @@
 import { NextApiHandler } from 'next'
 import { query as q } from 'faunadb'
-import { stripe } from './constants/stripe.instance'
+import { stripe } from '../../infra/stripe.instance'
 import { buffer } from 'micro'
 import Stripe from 'stripe'
-import { serverClient } from './constants/fauna.instance'
+import { serverClient } from '../../infra/fauna.instance'
 import { logger } from '../../utils/logger'
 
 // Stripe requires the raw body to construct the event, so we have to diable the next parser

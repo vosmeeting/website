@@ -1,1 +1,0 @@
-export const SEAT_AVAILABILITY = 200

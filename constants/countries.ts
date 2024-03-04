@@ -1,4 +1,4 @@
-const countryAlpha2 = [
+export const COUNTRIES = [
   {
     country: 'Afghanistan',
     abbreviation: 'AF',
@@ -979,6 +979,8 @@ const countryAlpha2 = [
     country: 'Zimbabwe',
     abbreviation: 'ZW',
   },
-]
+] as const
 
-export default countryAlpha2
+export type Countries = typeof COUNTRIES
+
+export default COUNTRIES

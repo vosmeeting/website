@@ -1,15 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import countryAlpha2 from './constants/countries'
-
-export type Country = {
-  country: string
-  abbreviation: string
-}
+import COUNTRIES, { Countries } from '../../constants/countries'
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Country[]>
+  res: NextApiResponse<Countries>
 ) {
-  res.status(200).json(countryAlpha2)
+  res.status(200).json(COUNTRIES)
 }

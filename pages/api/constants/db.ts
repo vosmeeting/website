@@ -1,6 +1,6 @@
 import { query as q } from 'faunadb'
-import { SEAT_AVAILABILITY } from './constants'
-import { serverClient } from './fauna.instance'
+import { serverClient } from '../../../infra/fauna.instance'
+import { appConfig } from '../../../domain/appConfig'
 const secretUrls = ['936058d8-eb5e-4d6d-b3dc-af30488859b4']
 export const db = {
   getSeatAvailability: () =>
@@ -37,7 +37,10 @@ export const db = {
           .reduce((acc, s) => {
             return acc + (s?.participants?.length || 0)
           }, 0)
-        return { count: totalParticipantsCount, maxSeat: SEAT_AVAILABILITY }
+        return {
+          count: totalParticipantsCount,
+          maxSeat: appConfig.seatAvailability,
+        }
       }),
   validateSecretUrl: (url: string) => {
     return new Promise((resolve) => {

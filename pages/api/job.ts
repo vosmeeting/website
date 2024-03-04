@@ -1,7 +1,7 @@
-import { serverClient } from './constants/fauna.instance'
+import { serverClient } from '../../infra/fauna.instance'
 import { query as q } from 'faunadb'
 import { NextApiHandler } from 'next'
-import { stripe } from './constants/stripe.instance'
+import { stripe } from '../../infra/stripe.instance'
 import { updateCheckoutSession } from './webhook'
 const syncSessions: NextApiHandler = async (req, res) => {
   const sessions: {

@@ -6,7 +6,7 @@ import { CreateParticipantCheckoutSesssionPayload } from '../../types'
 import { db } from './constants/db'
 import { If, Exists, Match, Index } from 'faunadb'
 import { query as q } from 'faunadb'
-import { serverClient } from './constants/fauna.instance'
+import { serverClient } from '../../infra/fauna.instance'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
 

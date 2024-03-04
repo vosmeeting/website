@@ -3,4 +3,5 @@ export const appConfig = {
     registration: false,
     sponsors: true,
   },
+  seatAvailability: 200,
 }

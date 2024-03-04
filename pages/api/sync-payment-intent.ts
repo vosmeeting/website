@@ -1,6 +1,6 @@
 import { query as q } from 'faunadb'
-import { serverClient } from './constants/fauna.instance'
-import { stripe } from './constants/stripe.instance'
+import { serverClient } from '../../infra/fauna.instance'
+import { stripe } from '../../infra/stripe.instance'
 import { updatePaymentIntent } from './webhook'
 
 export default async function handler(req, res) {
