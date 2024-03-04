@@ -19,6 +19,7 @@ import {
   MobileCancelMajor,
 } from '@shopify/polaris-icons'
 import {
+  FormError,
   asChoiceField,
   notEmpty,
   useDynamicList,
@@ -43,6 +44,7 @@ import { ParticipantInformation } from '../types'
 import { Price } from '../utils/const'
 import { RegistrationTypeList } from './../components/RegistrationType'
 import COUNTRIES from '../constants/countries'
+import { SeatAvailabilityData } from '../domain/databaseService'
 
 let num = 2
 function personalInformationFactory(
@@ -58,7 +60,7 @@ function personalInformationFactory(
   }
 }
 
-const ErrorBanner = ({ errors }) => {
+const ErrorBanner = ({ errors }: { errors: Error[] | FormError[] }) => {
   return errors.length > 0 ? (
     <Layout.Section>
       <Banner status="critical">
@@ -73,23 +75,28 @@ const ErrorBanner = ({ errors }) => {
   ) : null
 }
 
-const emailValidation = (input) => {
+const emailValidation = (email: string) => {
   {
     try {
       yup
         .string()
         .required('email is required')
         .email('please provide a valid email')
-        .validateSync(input)
+        .validateSync(email)
     } catch (e) {
-      return e.message
+      const error = e as Error
+      return error.message
     }
   }
 }
+type Props = {
+  data: SeatAvailabilityData
+  isSecretUrl: boolean
+}
 
-function Register({ data, isSecretUrl: initialIsSecretUrl }) {
+function Register({ data, isSecretUrl: initialIsSecretUrl }: Props) {
   const route = useRouter()
-  const [remoteErrors, setRemoteErrors] = useState(null)
+  const [remoteErrors, setRemoteErrors] = useState<FormError[] | null>(null)
   const info = useParticipantQuota(data || { maxSeat: 0, count: 0 })
   const count = info?.data
 
@@ -154,7 +161,7 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }) {
       },
     },
     async onSubmit(form) {
-      let remoteErrors = []
+      let remoteErrors: FormError[] = []
       try {
         await createParticipantsCheckoutSession({
           participants: form.persons,
@@ -163,7 +170,7 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }) {
           secretUrlId,
         })
       } catch (e) {
-        remoteErrors.push(e)
+        remoteErrors.push(e as FormError)
       }
       if (remoteErrors.length > 0) {
         setRemoteErrors(
@@ -369,6 +376,14 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }) {
       </Layout>
     </Page>
   )
+}
+
+export async function getStaticProps() {
+  const promises = await db.getSeatAvailability()
+  const props: Props = { isSecretUrl: false, data: promises }
+  return {
+    props,
+  }
 }
 
 export default appConfig.ff.registration ? Register : withComingSoon(Register)

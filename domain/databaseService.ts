@@ -1,16 +1,16 @@
 export interface SessionData {
-  status?: string
+  status: string
   secretUrlId?: string
   participants?: Array<any>
 }
 
-export interface SeatAvailability {
+export interface SeatAvailabilityData {
   count: number
   maxSeat: number
 }
 
 // Define the interface
 export interface IDatabaseService {
-  getSeatAvailability(): Promise<SeatAvailability>
+  getSeatAvailability(): Promise<SeatAvailabilityData>
   validateSecretUrl(url: string): Promise<boolean>
 }

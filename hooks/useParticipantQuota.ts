@@ -1,12 +1,14 @@
-import axios from 'axios'
 import { useQuery } from 'react-query'
+import { apiService } from '../infra/ApiService'
 
-export const getCount = () => axios.get('/api/available-seats')
-
-export const useParticipantQuota = (initialValue) => {
+type Data = {
+  maxSeat: number
+  count: number
+}
+export const useParticipantQuota = (initialValue: Data) => {
   return useQuery(
     'available_seat',
-    () => getCount().then((res) => res.data.count),
+    () => apiService.getCount().then((res) => res.data.count),
     {
       // refetchInterval: 60000,
       initialData: initialValue,

@@ -9,11 +9,11 @@ import {
   Stack,
   TextField,
 } from '@shopify/polaris'
-import { notEmpty, useField, useForm } from '@shopify/react-form'
-import axios from 'axios'
+import { FormError, notEmpty, useField, useForm } from '@shopify/react-form'
 import { useState } from 'react'
 import Illustration from './ComingSoonIllustration'
 import { Title } from './typography'
+import { apiService } from '../infra/ApiService'
 
 const ComingSoon = () => {
   const [status, setStatus] = useState<
@@ -31,12 +31,12 @@ const ComingSoon = () => {
     async onSubmit(form) {
       setStatus('submitting')
       try {
-        await axios.post('/api/create-stripe-customer', form)
+        await apiService.createStripeCustomer(form.email)
         setStatus('submitted')
-        return { status: 'success' }
+        return { status: 'success' } as const
       } catch (e) {
         setStatus('error')
-        return { status: 'fail', errors: [e] }
+        return { status: 'fail', errors: [e] as FormError[] }
       }
     },
   })

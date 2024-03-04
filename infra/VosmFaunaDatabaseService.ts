@@ -8,7 +8,7 @@ import faunadb from 'faunadb'
 
 // general use
 export const serverClient = new faunadb.Client({
-  secret: process.env.FAUNA_SERVER_SECRET,
+  secret: process.env.FAUNA_SERVER_SECRET!,
 })
 const secretUrls = appConfig.secretUrls
 
@@ -81,7 +81,7 @@ export class VosmFaunaDatabaseService {
   saveCheckoutSession(
     checkoutSession: Stripe.Checkout.Session,
     participants: ParticipantInformation[],
-    secretUrlId
+    secretUrlId: string
   ) {
     return serverClient.query(
       q.Create(q.Collection('checkout_sessions'), {
@@ -156,7 +156,7 @@ export class VosmFaunaDatabaseService {
       q.Create(q.Collection('charges'), { data: charge })
     )
   }
-  savePaymentIntent = (sessionData) =>
+  savePaymentIntent = (sessionData: any) =>
     serverClient.query(
       q.Create(q.Collection('payment_intents'), { data: sessionData })
     )
