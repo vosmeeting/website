@@ -1,5 +1,5 @@
 import { NextApiHandler } from 'next'
-import { db } from './constants/db'
+import { db } from '../../infra/db'
 import { appConfig } from '../../domain/appConfig'
 
 const getAvailableSeats: NextApiHandler = (req, res) => {

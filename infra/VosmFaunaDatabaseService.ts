@@ -1,10 +1,13 @@
+import { serverClient } from './fauna.instance'
 import { query as q } from 'faunadb'
-import { serverClient } from '../../../infra/fauna.instance'
-import { appConfig } from '../../../domain/appConfig'
-const secretUrls = ['936058d8-eb5e-4d6d-b3dc-af30488859b4']
-export const db = {
-  getSeatAvailability: () =>
-    serverClient
+import { appConfig } from '../domain/appConfig'
+import { SessionData } from '../domain/databaseService'
+
+const secretUrls = appConfig.secretUrls
+
+export class VosmFaunaDatabaseService {
+  getSeatAvailability() {
+    return serverClient
       .query(
         q.Map(
           q.Paginate(q.Documents(q.Collection('checkout_sessions')), {
@@ -25,26 +28,27 @@ export const db = {
         { queryTimeout: 2000 }
       )
       .then((result: any) => {
-        // I Can't do this operation with Fauna :(
-        // using vanilla javascript..
-        const sessions = result?.data.map(({ session }) => session)
+        const sessions: SessionData[] = result?.data.map(
+          ({ session }: { session: SessionData }) => session
+        )
 
         const totalParticipantsCount = sessions
-          .filter((s) => {
-            return ['open', 'complete'].includes(s?.status)
-          })
-          .filter((s) => !s.secretUrlId) // dont count the secret ones
-          .reduce((acc, s) => {
-            return acc + (s?.participants?.length || 0)
-          }, 0)
+          .filter((s) => ['open', 'complete'].includes(s?.status))
+          .filter((s) => !s.secretUrlId) // don't count the secret ones
+          .reduce((acc, s) => acc + (s?.participants?.length || 0), 0)
+
         return {
           count: totalParticipantsCount,
           maxSeat: appConfig.seatAvailability,
         }
-      }),
-  validateSecretUrl: (url: string) => {
+      })
+  }
+
+  validateSecretUrl(url: string) {
     return new Promise((resolve) => {
       resolve(secretUrls.includes(url))
     })
-  },
+  }
 }
+
+export const dbService = new VosmFaunaDatabaseService()

@@ -25,10 +25,7 @@ import {
   useField,
   useForm,
 } from '@shopify/react-form'
-import axios from 'axios'
 import classNames from 'classnames'
-import { get } from 'lodash'
-import { GetServerSidePropsContext } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from 'react-query'
@@ -38,14 +35,14 @@ import {
   defaultRegistrationType,
   registrationTypes,
 } from '../constants/registrationType'
+import { appConfig } from '../domain/appConfig'
 import { useParticipantQuota } from '../hooks/useParticipantQuota'
+import { db } from '../infra/db'
 import { createParticipantsCheckoutSession } from '../services/stripe'
 import { ParticipantInformation } from '../types'
 import { Price } from '../utils/const'
 import { RegistrationTypeList } from './../components/RegistrationType'
-import { db } from './api/constants/db'
-import { Country } from './api/get-countries'
-import { appConfig } from '../domain/appConfig'
+import COUNTRIES from '../constants/countries'
 
 let num = 2
 function personalInformationFactory(
@@ -106,15 +103,6 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }) {
     { initialData: initialIsSecretUrl }
   )
   const isSecretUrl = secretUrlInfo.data
-
-  const [countries, setCountries] = useState<Country[]>([
-    { country: 'United States', abbreviation: 'US' },
-  ])
-  useEffect(() => {
-    axios.get<Country[]>('/api/get-countries').then((res) => {
-      setCountries(res.data)
-    })
-  }, [])
 
   const personalInformations = useDynamicList(
     {
@@ -220,7 +208,7 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }) {
       titleMetadata={
         //@ts-ignore
         <Badge status="success">
-          <Icon source={CustomersMinor} />
+          {((<Icon source={CustomersMinor} />) as unknown) as string}
           {count.count}/{count.maxSeat}
         </Badge>
       }
@@ -321,7 +309,7 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }) {
 
                         <Select
                           label="Country"
-                          options={countries.map(
+                          options={COUNTRIES.map(
                             ({ country, abbreviation }) => ({
                               label: country,
                               value: abbreviation,
@@ -381,18 +369,6 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }) {
       </Layout>
     </Page>
   )
-}
-
-export async function getStaticProps() {
-  const promises = await Promise.allSettled([
-    db.getSeatAvailability().catch((e) => console.error()),
-  ])
-
-  const [data = null] = promises.map((r) => r?.value)
-
-  return {
-    props: { isSecretUrl: false, data }, // will be passed to the page component as props
-  }
 }
 
 export default appConfig.ff.registration ? Register : withComingSoon(Register)
