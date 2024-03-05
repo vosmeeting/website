@@ -1,13 +1,17 @@
-import { stripe } from '../../infra/stripe.instance'
+import { stripeInteractor } from '../../infra/StripeInteractor'
 import { db } from '../../infra/db'
+import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === 'POST') {
     try {
       const sessions = await db.getSessions()
       const paymentIntentsResult = await Promise.allSettled(
         sessions.data.map(({ session }) =>
-          stripe.paymentIntents.retrieve(session.paymentIntent)
+          stripeInteractor.retrivePaymentIntents(session.paymentIntent)
         )
       )
 

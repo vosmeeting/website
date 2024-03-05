@@ -1,6 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import { CheckIcon } from './icons'
+import { RegistrationType } from '../constants/registrationType'
 
 export function RegistrationType({
   priceInDollar = 0,
@@ -10,7 +11,7 @@ export function RegistrationType({
   onChange,
   value,
   ...props
-}) {
+}: any) {
   const iconSize = 24
   return (
     <div className="mb-8">
@@ -55,12 +56,19 @@ export function RegistrationType({
   )
 }
 
+type Props = {
+  choiceList: RegistrationType[]
+  selected: string
+  onChange: (value: string) => any
+  errorMessage?: string
+}
+
 export function RegistrationTypeList({
   choiceList = [],
   selected,
   onChange,
   errorMessage,
-}) {
+}: Props) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       {choiceList.map(({ label, value, price, optionalComment }) => {

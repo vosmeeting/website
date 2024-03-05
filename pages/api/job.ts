@@ -1,13 +1,17 @@
 import { NextApiHandler } from 'next'
-import { stripe } from '../../infra/stripe.instance'
 import { db } from '../../infra/db'
+import { stripeInteractor } from '../../infra/StripeInteractor'
+
+/**
+ * I believe this endpoint is to manually sync stalled data from the DB with stripe's data
+ */
 const syncSessions: NextApiHandler = async (req, res) => {
   const sessions = await db.getSessions()
 
   try {
     const results = await Promise.allSettled(
       sessions.data.map(({ session }) =>
-        stripe.checkout.sessions.retrieve(session.id)
+        stripeInteractor.retriveCheckoutSessions(session.id)
       )
     )
 

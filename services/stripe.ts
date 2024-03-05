@@ -1,11 +1,13 @@
 import { loadStripe } from '@stripe/stripe-js'
 import axios from 'axios'
-import { CreateParticipantCheckoutSesssionPayload } from '../types'
+import { VendorCheckoutSessionPayload } from '../types'
 
 const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
 const stripePromise = loadStripe(publishableKey)
 
-export const createVendorCheckoutSession = async (payload) => {
+export const createVendorCheckoutSession = async (
+  payload: VendorCheckoutSessionPayload
+) => {
   const stripe = await stripePromise
   const checkoutSession = await axios.post(
     '/api/create-stripe-session',
@@ -19,24 +21,5 @@ export const createVendorCheckoutSession = async (payload) => {
   })
   if (result.error) {
     alert(result.error.message)
-  }
-}
-
-export const createParticipantsCheckoutSession = async (
-  payload: CreateParticipantCheckoutSesssionPayload
-) => {
-  const stripe = await stripePromise
-  const checkoutSession = await axios.post(
-    '/api/create-stripe-participants-session',
-    payload
-  )
-  if (!stripe) {
-    throw new Error('stripe is not ready')
-  }
-  const result = await stripe.redirectToCheckout({
-    sessionId: checkoutSession.data.id,
-  })
-  if (result.error) {
-    throw new Error(result.error.message)
   }
 }

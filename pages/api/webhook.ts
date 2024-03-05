@@ -1,9 +1,9 @@
 import { NextApiHandler } from 'next'
-import { stripe } from '../../infra/stripe.instance'
 import { buffer } from 'micro'
 import Stripe from 'stripe'
 import { logger } from '../../utils/logger'
 import { db } from '../../infra/db'
+import { stripeInteractor } from '../../infra/StripeInteractor'
 
 // Stripe requires the raw body to construct the event, so we have to diable the next parser
 export const config = {
@@ -15,15 +15,19 @@ export const config = {
 const handler: NextApiHandler = async (request, response) => {
   const buf = await buffer(request)
   const sig = request.headers['stripe-signature']
-  const endpointSecret = process.env.WEBHOOK_SECRET
 
   let event: Stripe.Event | never
 
+  if (!sig) {
+    throw new Error('non stripe signature request')
+  }
+
   try {
-    event = stripe.webhooks.constructEvent(buf, sig, endpointSecret)
+    event = stripeInteractor.constructEvent(buf, sig)
   } catch (err) {
+    const error = err as Error
     logger.error('error', err)
-    return response.status(400).send(`Webhook Error: ${err.message}`)
+    return response.status(400).send(`Webhook Error: ${error.message}`)
   }
   const sessionData = event.data.object as any
 
@@ -32,7 +36,7 @@ const handler: NextApiHandler = async (request, response) => {
       logger.log(event.type, sessionData)
       // the one comes from webhook doesn't contain the `status`
       // which is important
-      const theCorrectSessionData = await stripe.checkout.sessions.retrieve(
+      const theCorrectSessionData = await stripeInteractor.retriveCheckoutSessions(
         sessionData.id
       )
 
@@ -48,7 +52,7 @@ const handler: NextApiHandler = async (request, response) => {
           return response.status(400).send(`Fulfillment Error: ${err.message}`)
         })
     case 'checkout.session.expired':
-      const correctExpiredSessionData = await stripe.checkout.sessions.retrieve(
+      const correctExpiredSessionData = await stripeInteractor.retriveCheckoutSessions(
         sessionData.id
       )
       return db

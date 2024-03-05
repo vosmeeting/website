@@ -60,7 +60,7 @@ export class VosmFaunaDatabaseService {
       })
   }
 
-  validateSecretUrl(url: string) {
+  validateSecretUrl(url: any) {
     return new Promise((resolve) => {
       resolve(secretUrls.includes(url))
     })
@@ -81,18 +81,26 @@ export class VosmFaunaDatabaseService {
   saveCheckoutSession(
     checkoutSession: Stripe.Checkout.Session,
     participants: ParticipantInformation[],
-    secretUrlId: string
+    secretUrlId?: string
   ) {
     return serverClient.query(
       q.Create(q.Collection('checkout_sessions'), {
-        data: {
-          id: checkoutSession.id,
-          paymentIntent: checkoutSession.payment_intent,
-          status: checkoutSession.status,
-          customer: checkoutSession.customer,
-          participants,
-          secretUrlId,
-        },
+        data: secretUrlId
+          ? {
+              id: checkoutSession.id,
+              paymentIntent: checkoutSession.payment_intent,
+              status: checkoutSession.status,
+              customer: checkoutSession.customer,
+              participants,
+              secretUrlId,
+            }
+          : {
+              id: checkoutSession.id,
+              paymentIntent: checkoutSession.payment_intent,
+              status: checkoutSession.status,
+              customer: checkoutSession.customer,
+              participants,
+            },
       })
     )
   }

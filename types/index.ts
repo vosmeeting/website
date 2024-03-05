@@ -16,3 +16,17 @@ export type CreateParticipantCheckoutSesssionPayload = {
   registerForSelf: boolean
   secretUrlId?: string
 }
+
+type VendorDTO = {
+  email: string
+  companyName: string
+  companyTelephone: string
+}
+
+type Item = {
+  amount: number // in dollar
+}
+export type VendorCheckoutSessionPayload = {
+  item: Item
+  vendor: VendorDTO
+}

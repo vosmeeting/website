@@ -45,6 +45,7 @@ import { Price } from '../utils/const'
 import { RegistrationTypeList } from './../components/RegistrationType'
 import COUNTRIES from '../constants/countries'
 import { SeatAvailabilityData } from '../domain/databaseService'
+import { apiService } from '../infra/ApiService'
 
 let num = 2
 function personalInformationFactory(
@@ -163,7 +164,7 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }: Props) {
     async onSubmit(form) {
       let remoteErrors: FormError[] = []
       try {
-        await createParticipantsCheckoutSession({
+        await apiService.createParticipantsCheckoutSession({
           participants: form.persons,
           registrant: form.registrant,
           registerForSelf: form.registerForSelf,
@@ -186,8 +187,8 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }: Props) {
   const totalPrice = useMemo(() => {
     return form.fields.persons.reduce((totalPrice, person) => {
       const price = registrationTypes.find(
-        (r) => r.value === person.registrationType.value
-      ).price
+        (r) => r.value! === person!.registrationType.value
+      )!.price
 
       return totalPrice + price
     }, 0)

@@ -13,6 +13,7 @@ import {
   TextField,
 } from '@shopify/polaris'
 import {
+  FormError,
   getValues,
   notEmpty,
   numericString,
@@ -152,14 +153,14 @@ function Sponsor() {
   const { fields, submit, submitting, submitErrors } = useForm({
     fields: schema,
     async onSubmit(form) {
-      let remoteErrors = []
+      let remoteErrors: FormError[] = []
 
       try {
         await createVendorCheckoutSession({
           ...form,
-          images: [`${process.env.NEXT_PUBLIC_HOST}/vosm_logo.png`],
         })
       } catch (e) {
+        const error = e as FormError
         remoteErrors.push(e) // your API call goes here
       }
 

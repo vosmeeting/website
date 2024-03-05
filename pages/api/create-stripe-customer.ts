@@ -1,24 +1,24 @@
-import { NextApiResponse } from 'next'
-// import calcPrice from "../../services/calc-price";
-import Stripe from 'stripe'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
+import { NextApiRequest, NextApiResponse } from 'next'
+import { stripeInteractor } from '../../infra/StripeInteractor'
+import { Attendee } from '../../domain/Vendor'
 
 // eslint-disable-next-line import/no-anonymous-default-export
-const CreateStripeCustomer = async (req, res: NextApiResponse) => {
+const CreateStripeCustomer = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
   const { email, name } = req.body
 
   try {
-    const cust = await stripe.customers.create({
-      email: email,
-      name: name,
-    })
+    const customer = new Attendee(email, name)
+    const cust = await stripeInteractor.createCustomer(customer)
 
     console.log('created customer with:', cust)
 
     res.json({ id: cust.id })
   } catch (e) {
-    res.status(500).send(e.message)
+    const error = e as Error
+    res.status(500).send(error.message)
   }
 }
 

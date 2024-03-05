@@ -2,8 +2,10 @@ export type RegistrationType = {
   value: string
   label: string
   price: number
+  optionalComment?: string
 }
-export const registrationTypes = [
+
+export const registrationTypes: RegistrationType[] = [
   {
     value: 'avco/ecvo',
     label: `ACVO/ECVO Diplomate/Board Eligible*`,
