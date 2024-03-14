@@ -13,69 +13,64 @@ export const config = {
   }
 };
 
+async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
+  const reservationId = paymentIntent.metadata?.reservationId;
+  if (reservationId) {
+    await mongoDatabaseService.changeReservationStatus(reservationId, 'paid');
+    logger.info(`Payment intent succeeded for reservation ${reservationId}`);
+  }
+}
+
+async function handlePaymentIntentCancelled(paymentIntent: Stripe.PaymentIntent) {
+  const reservationId = paymentIntent.metadata?.reservationId;
+  if (reservationId) {
+    await mongoDatabaseService.changeReservationStatus(reservationId, 'cancelled');
+    logger.info(`Payment intent succeeded for reservation ${reservationId}`);
+  }
+}
+
 const handler: NextApiHandler = async (request, response) => {
   const buf = await buffer(request);
   const sig = request.headers['stripe-signature'];
 
-  let event: Stripe.Event;
-
   if (!sig) {
+    logger.error('Webhook Error: Missing Stripe Signature');
     return response.status(400).send('Webhook Error: Missing Stripe Signature');
   }
 
+  let event: Stripe.Event;
+
   try {
     event = stripeInteractor.constructEvent(buf, sig);
+    logger.info('Received webhook event', event);
   } catch (e) {
     const err = e as Error;
-    logger.error('error', err);
+    logger.error('Error constructing event:', err.message);
     return response.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  const sessionData = event.data.object as any;
-  let checkoutSession;
-  let reservationId;
-
-  checkoutSession = await stripeInteractor.retriveCheckoutSessions(sessionData.id);
-  reservationId = checkoutSession ? checkoutSession.metadata?.reservationId : null;
-
-  switch (event.type) {
-    case 'checkout.session.expired':
-      if (reservationId) {
-        await mongoDatabaseService.changeReservationStatus(reservationId, 'released');
-      }
-      response.status(200).send('Session expired handled');
-      break;
-    case 'payment_intent.succeeded':
-      if (reservationId) {
-        await mongoDatabaseService.changeReservationStatus(reservationId, 'paid');
-      }
-      response.status(200).send('Payment intent succeeded handled');
-      break;
-    case 'payment_intent.cancelled':
-      if (reservationId) {
-        await mongoDatabaseService.changeReservationStatus(reservationId, 'cancelled'); // Assuming you have a 'cancelled' status
-      }
-      response.status(200).send('Payment intent cancelled handled');
-      break;
-    case 'customer.created':
-      // Handle customer creation logic here if necessary
-      response.status(200).send('Customer created handled');
-      break;
-    case 'charge.succeeded':
-      // Handle charge succeeded logic here if necessary
-      response.status(200).send('Charge succeeded handled');
-      break;
-    case 'charge.refunded':
-      if (reservationId) {
-        await mongoDatabaseService.changeReservationStatus(reservationId, 'refunded');
-      }
-      response.status(200).send('Charge refunded handled');
-      break;
-    default:
-      logger.error('Unhandled event:', event.type);
-      response.status(200).send('Unhandled event');
-      break;
+  try {
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+        // Handle payment intent success
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        await handlePaymentIntentSucceeded(paymentIntent);
+        break;
+      case 'payment_intent.canceled':
+        const paymentIntentCancelled = event.data.object as Stripe.PaymentIntent;
+        await handlePaymentIntentCancelled(paymentIntentCancelled);
+        break;
+      // Add more case handlers for different event types as needed
+      default:
+        logger.warn('Unhandled event type:', event.type);
+    }
+  } catch (e) {
+    const err = e as Error;
+    logger.error('Error handling event:', err.message);
+    return response.status(500).send('Internal Server Error');
   }
+
+  response.status(200).send({ received: true });
 };
 
 export default handler;

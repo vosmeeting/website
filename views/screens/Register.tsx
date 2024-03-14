@@ -32,12 +32,12 @@ import { apiService } from '../../infra/ApiService';
 import { useParticipantQuota } from '../hooks/useParticipantQuota';
 import { RegistrationTypeList } from '../components/RegistrationType';
 import { Price } from '../../domain/Price';
-import { ParticipantInformationDTO } from '../../types';
 import { SeatAvailabilityData } from '../../domain/databaseService';
 import { appConfig } from '../../domain/config/appConfig';
 import { ErrorBanner } from './ErrorBanner.1';
 import { Badge } from '../components/Badge';
 import { secretUrlService } from '../../infra/SecretUrlService';
+import { ParticipantInformationDTO } from '../../types';
 
 let num = 2;
 function personalInformationFactory(
