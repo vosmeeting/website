@@ -1,16 +1,23 @@
-import { NextApiHandler } from 'next'
-import { db } from '../../infra/db'
-import { appConfig } from '../../domain/appConfig'
+import { NextApiRequest, NextApiResponse } from 'next';
+import { SeatAvailabilityData } from '../../domain/databaseService';
+import { mongoDatabaseService } from '../../infra/database/mongo-database-service/MongoDatabaseService';
 
-const getAvailableSeats: NextApiHandler = (req, res) => {
+export default async (req: NextApiRequest, res: NextApiResponse<SeatAvailabilityData>) => {
   if (req.method === 'GET') {
-    return db
-      .getSeatAvailability()
-      .then((count) => res.send({ count, maxSeat: appConfig.seatAvailability }))
+    const latestMeeting = await mongoDatabaseService.getLatestMeeting();
+    if (!latestMeeting) {
+      return res.status(500).send('No meeting found' as any);
+    }
+    return mongoDatabaseService
+      .getReservedSeatsCount(latestMeeting.id)
+      .then((count) =>
+        res.send({
+          count: count,
+          maxSeat: latestMeeting.maxParticipants
+        })
+      )
       .catch((e) => {
-        res.status(500).send(e)
-      })
+        res.status(500).send(e);
+      });
   }
-}
-
-export default getAvailableSeats
+};

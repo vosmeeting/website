@@ -1,32 +1,38 @@
-export interface ParticipantInformation {
-  id: string
-  fullName: string
-  organization: string
-  country: string
-  email: string
-  registrationType: string
+export interface ParticipantInformationDTO {
+  id: string;
+  fullName: string;
+  organization: string;
+  country: string;
+  email: string;
+  registrationType: string;
 }
 
-export type CreateParticipantCheckoutSesssionPayload = {
-  participants: ParticipantInformation[]
-  registrant: {
-    email: string
-    name: string
-  }
-  registerForSelf: boolean
-  secretUrlId?: string
+export interface RegistrantInformationDTO {
+  name: string;
+  email: string;
 }
+
+export type CreateParticipantCheckoutSesssionPayloadDTO =
+  | {
+      participants: ParticipantInformationDTO[];
+      registrant: RegistrantInformationDTO;
+      secretUrlId?: string;
+    }
+  | {
+      participants: ParticipantInformationDTO[];
+      secretUrlId?: string;
+    };
 
 type VendorDTO = {
-  email: string
-  companyName: string
-  companyTelephone: string
-}
+  email: string;
+  companyName: string;
+  companyTelephone: string;
+};
 
 type Item = {
-  amount: number // in dollar
-}
+  amount: number; // in dollar
+};
 export type VendorCheckoutSessionPayload = {
-  item: Item
-  vendor: VendorDTO
-}
+  item: Item;
+  vendor: VendorDTO;
+};

@@ -1,36 +1,22 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { stripeInteractor } from '../../infra/StripeInteractor'
-import { Vendor } from '../../domain/Vendor'
-import { VendorCheckoutSessionPayload } from '../../types'
+import { NextApiRequest, NextApiResponse } from 'next';
+import { stripeInteractor } from '../../infra/StripeInteractor';
+import { Vendor } from '../../domain/Vendor';
+import { VendorCheckoutSessionPayload } from '../../types';
 
-// eslint-disable-next-line import/no-anonymous-default-export
-const CreateStripeSession = async (
-  req: NextApiRequest,
-  res: NextApiResponse
-) => {
-  const { item, vendor: _vendorDTO } = req.body as VendorCheckoutSessionPayload
+export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const { item, vendor: _vendorDTO } = req.body as VendorCheckoutSessionPayload;
 
-  const vendor = new Vendor(
-    _vendorDTO.email,
-    _vendorDTO.companyName,
-    _vendorDTO.companyTelephone
-  )
+  const vendor = new Vendor(_vendorDTO.email, _vendorDTO.companyName, _vendorDTO.companyTelephone);
 
-  const host = req.headers.host!
-  const protocol = /^localhost(:\d+)?$/.test(host) ? 'http:' : 'https:'
-  const redirectURL = protocol + '//' + host
+  const host = req.headers.host!;
+  const protocol = /^localhost(:\d+)?$/.test(host) ? 'http:' : 'https:';
+  const redirectURL = protocol + '//' + host;
 
-  const session = await stripeInteractor.createVendorCheckoutSessions(
-    item,
-    vendor,
-    redirectURL
-  )
+  const session = await stripeInteractor.createVendorCheckoutSessions(item, vendor, redirectURL);
   try {
-    res.json({ id: session.id })
+    res.json({ id: session.id });
   } catch (e) {
-    const error = e as Error
-    res.status(500).send(error.message)
+    const error = e as Error;
+    res.status(500).send(error.message);
   }
-}
-
-export default CreateStripeSession
+};

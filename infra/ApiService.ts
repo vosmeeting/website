@@ -1,55 +1,52 @@
-import axios from 'axios'
+import axios from 'axios';
 import {
-  CreateParticipantCheckoutSesssionPayload,
-  VendorCheckoutSessionPayload,
-} from '../types'
-import { loadStripe } from '@stripe/stripe-js'
+  CreateParticipantCheckoutSesssionPayloadDTO,
+  VendorCheckoutSessionPayload
+} from '../types';
+import { loadStripe } from '@stripe/stripe-js';
+import { appConfig } from '../domain/config/appConfig';
+import { SeatAvailabilityData } from '../domain/databaseService';
 
 class ApiService {
-  private publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-  private stripePromise = loadStripe(this.publishableKey)
-  createStripeCustomer(email: string) {
-    return axios.post('/api/create-stripe-customer', { email })
+  constructor(private publishableKey: string) {
+    this.getParticipantsCount = this.getParticipantsCount.bind(this);
+    this.createVendorCheckoutSession = this.createVendorCheckoutSession.bind(this);
+    this.createParticipantsCheckoutSession = this.createParticipantsCheckoutSession.bind(this);
   }
-  getCount = () => axios.get('/api/available-seats')
-
-  createVendorCheckoutSession = async (
-    payload: VendorCheckoutSessionPayload
-  ) => {
-    const stripe = await this.stripePromise
-    const checkoutSession = await axios.post(
-      '/api/create-stripe-session',
-      payload
-    )
-    if (!stripe) {
-      throw new Error('stripe is not ready')
-    }
-    const result = await stripe.redirectToCheckout({
-      sessionId: checkoutSession.data.id,
-    })
-    if (result.error) {
-      alert(result.error.message)
-    }
+  saveUserToBeNotified(email: string) {
+    // TODO: implement
+  }
+  getParticipantsCount() {
+    return axios.get<SeatAvailabilityData>('/api/available-seats').then((res) => res.data);
   }
 
-  createParticipantsCheckoutSession = async (
-    payload: CreateParticipantCheckoutSesssionPayload
-  ) => {
-    const stripe = await this.stripePromise
-    const checkoutSession = await axios.post(
-      '/api/create-stripe-participants-session',
-      payload
-    )
+  async createVendorCheckoutSession(payload: VendorCheckoutSessionPayload) {
+    const stripe = await loadStripe(this.publishableKey);
+    const checkoutSession = await axios.post('/api/create-stripe-session', payload);
     if (!stripe) {
-      throw new Error('stripe is not ready')
+      throw new Error('stripe is not ready');
     }
     const result = await stripe.redirectToCheckout({
-      sessionId: checkoutSession.data.id,
-    })
+      sessionId: checkoutSession.data.id
+    });
     if (result.error) {
-      throw new Error(result.error.message)
+      throw new Error(result.error.message);
+    }
+  }
+
+  async createParticipantsCheckoutSession(payload: CreateParticipantCheckoutSesssionPayloadDTO) {
+    const stripe = await loadStripe(this.publishableKey);
+    const checkoutSession = await axios.post('/api/create-stripe-participants-session', payload);
+    if (!stripe) {
+      throw new Error('stripe is not ready');
+    }
+    const result = await stripe.redirectToCheckout({
+      sessionId: checkoutSession.data.id
+    });
+    if (result.error) {
+      throw new Error(result.error.message);
     }
   }
 }
 
-export const apiService = new ApiService()
+export const apiService = new ApiService(appConfig.keys.stripePublishableKey);

@@ -1,22 +1,22 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
-import Footer from '../components/Footer'
-import enTranslations from '@shopify/polaris/locales/en.json'
-import { AppProvider, CustomProperties } from '@shopify/polaris'
-import styles from './CustomPropertyOverride.module.scss'
-import { Header } from '../components/header'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { useRouter } from 'next/router'
+import '../styles/globals.css';
+import type { AppProps } from 'next/app';
+import Footer from '../views/components/Footer';
+import enTranslations from '@shopify/polaris/locales/en.json';
+import { AppProvider, CustomProperties } from '@shopify/polaris';
+import styles from '../styles/CustomPropertyOverride.module.scss';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { useRouter } from 'next/router';
+import { Header } from '../views/components/header/Header';
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const router = useRouter()
+  const router = useRouter();
   const landingPageConfig = {
-    copy: 'Registration Opening Soon',
-    disabled: true,
-  }
-  const homePage = router.pathname === '/'
+    copy: 'Register',
+    disabled: false
+  };
+  const homePage = router.pathname === '/';
   return (
     <QueryClientProvider client={queryClient}>
       <AppProvider i18n={enTranslations}>
@@ -29,7 +29,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         </CustomProperties>
       </AppProvider>
     </QueryClientProvider>
-  )
+  );
 }
 
-export default MyApp
+export default MyApp;
