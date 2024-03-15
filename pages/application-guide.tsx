@@ -224,7 +224,7 @@ export default function AppConsent() {
                       'Late fee for registration ($250); Deadline for submitting proceedings ads and marketing Opportunities',
                   },
                   { term: 'Jul/22/22', description: 'Reception' },
-                  { term: 'Jul/19-22/24', description: 'Meeting' },
+                  { term: 'Jul/19-21/24', description: 'Meeting' },
                 ]}
               />
             </TextContainer>

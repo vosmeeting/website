@@ -224,7 +224,7 @@ function Register({ data, isSecretUrl: initialIsSecretUrl }) {
           {count.count}/{count.maxSeat}
         </Badge>
       }
-      subtitle="5th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	19-22, 2024"
+      subtitle="5th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	19-21, 2024"
       additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
     >
       <Layout>

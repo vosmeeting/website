@@ -97,8 +97,8 @@ const Home: NextPage = () => {
             </P>
             <br />
             <P>
-              This is a limited-space event that will take place on July 19-22
-              <sup>nd</sup>, 2024 in Chicago, IL.
+              This is a limited-space event that will take place on July 19-21
+              <sup>st</sup>, 2024 in Chicago, IL.
             </P>
             <br />
             <P>
