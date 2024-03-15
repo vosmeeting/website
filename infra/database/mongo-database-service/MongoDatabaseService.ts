@@ -15,6 +15,7 @@ export class MongoDatabaseService {
     date: Date;
     maxParticipants: number;
   }) {
+    await this.connectPromise;
     const meeting = new Meeting({
       title: meetingData.title,
       description: meetingData.description,
@@ -26,6 +27,7 @@ export class MongoDatabaseService {
   }
 
   async getLatestMeeting() {
+    await this.connectPromise;
     return Meeting.findOne({}).sort({ date: -1 }).exec();
   }
 
@@ -34,6 +36,7 @@ export class MongoDatabaseService {
     participantIds: string[];
     heldUntil: Date;
   }) {
+    await this.connectPromise;
     const meeting = await Meeting.findById(reservationData.meetingId).exec();
     const reservedSeatsCount = await this.getReservedSeatsCount(reservationData.meetingId);
     const availableSeats = meeting.maxParticipants - reservedSeatsCount;
@@ -58,10 +61,12 @@ export class MongoDatabaseService {
     reservationId: string,
     status: 'paid' | 'released' | 'refunded' | 'cancelled'
   ) {
+    await this.connectPromise;
     return Reservation.findByIdAndUpdate(reservationId, { status, heldUntil: null }).exec();
   }
 
   async findRegistrantByEmail(email: string) {
+    await this.connectPromise;
     return Registrant.findOne({ email }).exec();
   }
 
@@ -70,6 +75,7 @@ export class MongoDatabaseService {
     email: string;
     stripeCustomerId: string;
   }) {
+    await this.connectPromise;
     const registrant = new Registrant({
       name: registrantData.name,
       email: registrantData.email,
@@ -91,6 +97,7 @@ export class MongoDatabaseService {
     const filter = { email: participantData.email }; // Unique identifier for the participant
     const update = { ...participantData };
     const options = { new: true, upsert: true }; // Return the modified document rather than the original. upsert = true creates a new doc if no match is found.
+    await this.connectPromise;
 
     const participant = await Participant.findOneAndUpdate(filter, update, options).exec();
     return participant;

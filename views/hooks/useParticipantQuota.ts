@@ -4,7 +4,7 @@ import { SeatAvailabilityData } from '../../domain/databaseService';
 
 export const useParticipantQuota = (initialValue: SeatAvailabilityData) => {
   return useQuery('available_seat', () => apiService.getParticipantsCount(), {
-    // refetchInterval: 60000,
+    refetchInterval: 30000,
     initialData: initialValue
   });
 };

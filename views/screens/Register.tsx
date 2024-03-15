@@ -76,7 +76,6 @@ export function Register() {
   const route = useRouter();
   const [remoteErrors, setRemoteErrors] = useState<FormError[] | null>(null);
   const info = useParticipantQuota({ count: 0, maxSeat: 0 });
-  const count = info?.data || { maxSeat: 0, count: 0 };
 
   const { error = '', secretUrlId = '' } = route.query as {
     error: string;
@@ -194,7 +193,11 @@ export function Register() {
         <Badge size="small" status="success">
           <span className="flex items-center gap-x-2">
             <Icon source={CustomersMinor} />
-            <p className="text-sm font-bold">{`${count.count}/${count.maxSeat}`}</p>
+            {info.data ? (
+              <p className="text-sm font-bold">{`${info.data.count}/${info.data.maxSeat}`}</p>
+            ) : (
+              '...'
+            )}
           </span>
         </Badge>
       }
@@ -204,7 +207,7 @@ export function Register() {
       <Layout>
         {remoteErrors && <ErrorBanner errors={remoteErrors} />}
         <Layout.Section>
-          {count.count >= count.maxSeat && !isSecretUrl && (
+          {info.data && info.data.count >= info.data.maxSeat && !isSecretUrl && (
             <Banner status="info"> Sorry we sold out!</Banner>
           )}
         </Layout.Section>
@@ -216,7 +219,7 @@ export function Register() {
               content: 'register ' + new Price(totalPrice).toDollar(),
               onAction: form.submit,
               loading: form.submitting,
-              disabled: count.count >= count.maxSeat && !isSecretUrl
+              disabled: info.data ? info.data.count >= info.data.maxSeat && !isSecretUrl : true
             }}
             secondaryFooterActions={[
               {
