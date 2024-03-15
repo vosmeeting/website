@@ -42,14 +42,14 @@ const handler: NextApiHandler = async (request, response) => {
 
   try {
     event = stripeInteractor.constructEvent(buf, sig);
-    logger.info('Received webhook event', event);
+    logger.info(`Received webhook event for even type ${event.type} with data`, event.data);
+    //@ts-expect-error
+    logger.info(`metadata for event type: ${event.type}`, event.data.object.metadata);
   } catch (e) {
     const err = e as Error;
     logger.error('Error constructing event:', err.message);
     return response.status(400).send(`Webhook Error: ${err.message}`);
   }
-  const dataObject = event.data.object;
-  console.log('dataObject', dataObject);
 
   try {
     switch (event.type) {

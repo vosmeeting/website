@@ -58,10 +58,13 @@ export class StripeInteractor {
     expInSeconds: number,
     successUrl: string,
     cancelUrl: string,
-    dbCustId: string,
+    stripeCustId: string,
     reservationId: string,
+    userId: string,
+    meetingId: string,
     secretUrlId?: string
   ) {
+    const metadata = { userId, meetingId, reservationId };
     const checkoutSession = await this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
@@ -84,9 +87,10 @@ export class StripeInteractor {
               error: 'payment was cancelled'
             }
       }),
-      customer: dbCustId,
-      metadata: {
-        reservationId
+      customer: stripeCustId,
+      metadata,
+      payment_intent_data: {
+        metadata
       }
     });
     return checkoutSession;

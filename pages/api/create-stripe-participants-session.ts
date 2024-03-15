@@ -96,6 +96,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       cancelUrl,
       registrant.stripeCustomerId,
       reservation.id,
+      registrant.id,
+      meeting.id,
       payload.secretUrlId
     );
 
