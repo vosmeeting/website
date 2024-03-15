@@ -38,7 +38,7 @@ export const Header = ({ ctaConfig }: Props) => {
             5th Veterinary Ophthalmic Surgery Meeting
           </h1>
           <p className="font-sans text-xl font-normal">
-            July 19-22<sup>nd</sup> 2024, Chicago, IL
+            July 19-21<sup>st</sup> 2024, Chicago, IL
           </p>
         </div>
       </div>
