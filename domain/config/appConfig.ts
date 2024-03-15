@@ -13,9 +13,8 @@ export const appConfig = {
   defaultRegistrationType: registrationTypes[0],
   paymentWindowMinutes: 30,
   keys: {
+    mongoUri: 'mongodb+srv://vosm:hUIbvbKsFk4DeOAz@cluster0.njmubqo.mongodb.net/vosm-staging',
     stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-    faunaSecret: process.env.FAUNA_SERVER_SECRET!,
-    mongoUri: process.env.MONGO_URI!,
     stripeSecretKey: process.env.STRIPE_SECRET_KEY!,
     stripeWebhookSecret: process.env.WEBHOOK_SECRET!
   },
