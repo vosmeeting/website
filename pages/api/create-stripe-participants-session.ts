@@ -68,7 +68,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             currency: 'usd',
             product_data: {
               name: `Participant Registration As: ${p.registrationType?.toUpperCase()}`,
-              description: '5th Veterinary	Ophthalmic	Surgery	Meeting	Jul	19-22, 2024',
+              description: `5th Veterinary	Ophthalmic	Surgery	Meeting	${appConfig.willHeld}`,
               images: [publicUrl + '/vosm_logo.png'],
               metadata: { test: 'hello world' }
             },

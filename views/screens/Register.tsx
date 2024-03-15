@@ -198,7 +198,7 @@ export function Register() {
           </span>
         </Badge>
       }
-      subtitle="5th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	19-22, 2024"
+      subtitle={`5th Veterinary	Ophthalmic	Surgery	Meeting	&bull; ${appConfig.willHeld}`}
       additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
     >
       <Layout>

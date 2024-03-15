@@ -14,6 +14,7 @@ import * as yup from 'yup';
 import Button from '../components/Buttons';
 import { Price } from '../../domain/Price';
 import { apiService } from '../../infra/ApiService';
+import { appConfig } from '../../domain/config/appConfig';
 
 export function Vendor() {
   const route = useRouter();
@@ -119,7 +120,7 @@ export function Vendor() {
   return (
     <Page
       title="Application	for	Commercial	Exhibits and	Sponsorship"
-      subtitle="5th Veterinary	Ophthalmic	Surgery	Meeting	&bull; Jul	19-22, 2024"
+      subtitle={`5th Veterinary	Ophthalmic	Surgery	Meeting	&bull; ${appConfig.willHeld}`}
       additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
       narrowWidth
     >

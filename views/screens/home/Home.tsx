@@ -35,7 +35,7 @@ export const Home: NextPage = () => {
             </P>
             <br />
             <P>
-              This is a limited-space event that will take place on July 19-22
+              This is a limited-space event that will take place on July 19-21
               <sup>nd</sup>, 2024 in Chicago, IL.
             </P>
             <br />
@@ -106,15 +106,18 @@ export const Home: NextPage = () => {
                   {[
                     {
                       label: 'Hilton Rosemont',
-                      link: 'https://www.hilton.com/en/hotels/ordhrhh-hilton-rosemont-chicago-ohare/'
+                      link:
+                        'https://www.hilton.com/en/hotels/ordhrhh-hilton-rosemont-chicago-ohare/'
                     },
                     {
                       label: 'Embassy Suites',
-                      link: 'https://www.hilton.com/en/hotels/chirmes-embassy-suites-chicago-ohare-rosemont/'
+                      link:
+                        'https://www.hilton.com/en/hotels/chirmes-embassy-suites-chicago-ohare-rosemont/'
                     },
                     {
                       label: 'Double Tree',
-                      link: 'https://www.hilton.com/en/hotels/chidtdt-doubletree-chicago-ohare-airport-rosemont/'
+                      link:
+                        'https://www.hilton.com/en/hotels/chidtdt-doubletree-chicago-ohare-airport-rosemont/'
                     }
                   ].map((e) => (
                     <List.Item key={e.label}>
