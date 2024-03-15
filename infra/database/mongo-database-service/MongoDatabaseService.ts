@@ -29,25 +29,36 @@ export class MongoDatabaseService {
     return Meeting.findOne({}).sort({ date: -1 }).exec();
   }
 
-  // Create a new reservation
-  async createReservation(reservationData: {
+  async initReservation(reservationData: {
     meetingId: string;
     participantIds: string[];
-    status: 'reserved' | 'paid' | 'released' | 'refunded' | 'cancelled';
+    heldUntil: Date;
   }) {
+    const meeting = await Meeting.findById(reservationData.meetingId).exec();
+    const reservedSeatsCount = await this.getReservedSeatsCount(reservationData.meetingId);
+    const availableSeats = meeting.maxParticipants - reservedSeatsCount;
+    if (!meeting) {
+      throw new Error('Meeting not found');
+    }
+
+    if (availableSeats < reservationData.participantIds.length) {
+      throw new Error('Not enough available seats');
+    }
+
     const reservation = new Reservation({
       meetingId: new mongoose.Types.ObjectId(reservationData.meetingId),
       participantIds: reservationData.participantIds,
-      status: reservationData.status
+      status: 'reserved',
+      heldUntil: reservationData.heldUntil
     });
     await reservation.save();
     return reservation;
   }
-  async changeReservationStatus(
+  async alterFromReserved(
     reservationId: string,
-    status: 'reserved' | 'paid' | 'released' | 'refunded' | 'cancelled'
+    status: 'paid' | 'released' | 'refunded' | 'cancelled'
   ) {
-    return Reservation.findByIdAndUpdate(reservationId, { status }).exec();
+    return Reservation.findByIdAndUpdate(reservationId, { status, heldUntil: null }).exec();
   }
 
   async findRegistrantByEmail(email: string) {
@@ -87,9 +98,22 @@ export class MongoDatabaseService {
 
   // Get the count of reserved seats for a meeting
   async getReservedSeatsCount(meetingId: string): Promise<number> {
+    await this.connectPromise;
     const meetingObjectId = new mongoose.Types.ObjectId(meetingId);
+
     const reservations = await Reservation.aggregate([
-      { $match: { meetingId: meetingObjectId, status: { $in: ['reserved', 'paid'] } } },
+      {
+        $match: {
+          meetingId: meetingObjectId,
+          $or: [
+            { status: 'paid' }, // Always include paid reservations
+            {
+              status: 'reserved',
+              heldUntil: { $gt: new Date() } // Include reserved reservations that are still within the payment window
+            }
+          ]
+        }
+      },
       { $unwind: '$participantIds' },
       { $group: { _id: null, count: { $sum: 1 } } }
     ]);

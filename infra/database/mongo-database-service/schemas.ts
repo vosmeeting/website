@@ -11,6 +11,7 @@ export interface IReservation extends Document {
   participantIds: mongoose.Types.ObjectId[];
   status: 'reserved' | 'paid' | 'released' | 'refunded';
   createdAt: Date;
+  heldUntil: Date | null;
 }
 
 export interface IParticipant extends Document {
@@ -18,7 +19,6 @@ export interface IParticipant extends Document {
   email: string;
   meetingId: mongoose.Types.ObjectId;
   reservedBy: mongoose.Types.ObjectId;
-  status: 'registered' | 'reserved' | 'paid' | 'released' | 'refunded';
   organization: string;
   country: string;
 }
@@ -41,7 +41,8 @@ const reservationSchema = new Schema({
   meetingId: { type: Schema.Types.ObjectId, ref: 'Meeting', required: true },
   participantIds: [{ type: Schema.Types.ObjectId, ref: 'Participant' }],
   status: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  heldUntil: { type: Date, default: null }
 });
 
 const participantSchema = new Schema({

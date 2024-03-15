@@ -10,7 +10,7 @@ export type RegistrationType = {
 export const appConfig = {
   registrationTypes,
   defaultRegistrationType: registrationTypes[0],
-  paymentWindowHour: 1, // 1 hour
+  paymentWindowMinutes: 30,
   keys: {
     stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
     faunaSecret: process.env.FAUNA_SERVER_SECRET!,

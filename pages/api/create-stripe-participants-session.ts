@@ -80,24 +80,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     );
 
-    // guard from creating the session if no seats are available
-    const totalParticipantsCount = await mongoDatabaseService.getReservedSeatsCount(meetingId);
-    const seatAvailabilityCount = appConfig.seatAvailability - totalParticipantsCount;
-
-    if (seatAvailabilityCount < payload.participants.length) {
-      throw new Error('No seats available');
-    }
     // create a reservation for the participants
-    const reservation = await mongoDatabaseService.createReservation({
+    const reservation = await mongoDatabaseService.initReservation({
       meetingId: meetingId,
       participantIds: dbParticipantIds,
-      status: 'reserved'
+      heldUntil: new Date(Date.now() + appConfig.paymentWindowMinutes * 60 * 1000)
     });
 
     const today = new Date();
-    const expInSeconds = Math.round(
-      today.setHours(today.getHours() + appConfig.paymentWindowHour) / 1000
-    );
+    const expInSeconds = Math.floor(today.getTime() / 1000) + 60 * appConfig.paymentWindowMinutes;
     const checkoutSession = await stripeInteractor.createParticipantCheckoutSession(
       lineItems,
       expInSeconds,

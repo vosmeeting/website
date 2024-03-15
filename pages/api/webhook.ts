@@ -16,7 +16,7 @@ export const config = {
 async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
   const reservationId = paymentIntent.metadata?.reservationId;
   if (reservationId) {
-    await mongoDatabaseService.changeReservationStatus(reservationId, 'paid');
+    await mongoDatabaseService.alterFromReserved(reservationId, 'paid');
     logger.info(`Payment intent succeeded for reservation ${reservationId}`);
   }
 }
@@ -24,7 +24,7 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
 async function handlePaymentIntentCancelled(paymentIntent: Stripe.PaymentIntent) {
   const reservationId = paymentIntent.metadata?.reservationId;
   if (reservationId) {
-    await mongoDatabaseService.changeReservationStatus(reservationId, 'cancelled');
+    await mongoDatabaseService.alterFromReserved(reservationId, 'cancelled');
     logger.info(`Payment intent succeeded for reservation ${reservationId}`);
   }
 }
@@ -48,6 +48,8 @@ const handler: NextApiHandler = async (request, response) => {
     logger.error('Error constructing event:', err.message);
     return response.status(400).send(`Webhook Error: ${err.message}`);
   }
+  const dataObject = event.data.object;
+  console.log('dataObject', dataObject);
 
   try {
     switch (event.type) {
