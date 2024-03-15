@@ -63,10 +63,10 @@ const registrantSchema = new Schema({
 });
 
 export const Meeting =
-  mongoose.models.Meeting || mongoose.model<IMeeting>('Meeting', meetingSchema);
+  mongoose.models?.Meeting || mongoose.model<IMeeting>('Meeting', meetingSchema);
 export const Reservation =
-  mongoose.models.Reservation || mongoose.model<IReservation>('Reservation', reservationSchema);
+  mongoose.models?.Reservation || mongoose.model<IReservation>('Reservation', reservationSchema);
 export const Participant =
-  mongoose.models.Participant || mongoose.model<IParticipant>('Participant', participantSchema);
+  mongoose.models?.Participant || mongoose.model<IParticipant>('Participant', participantSchema);
 export const Registrant =
-  mongoose.models.Registrant || mongoose.model<IRegistrant>('Registrant', registrantSchema);
+  mongoose.models?.Registrant || mongoose.model<IRegistrant>('Registrant', registrantSchema);

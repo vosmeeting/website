@@ -38,6 +38,7 @@ import { ErrorBanner } from './ErrorBanner.1';
 import { Badge } from '../components/Badge';
 import { secretUrlService } from '../../infra/SecretUrlService';
 import { ParticipantInformationDTO } from '../../types';
+import { getAvailableSeats } from '../../use-cases/getAvailableSeats';
 
 let num = 2;
 function personalInformationFactory(
@@ -72,10 +73,10 @@ export type Props = {
   isSecretUrl: boolean;
 };
 
-export function Register() {
+export function Register({ data }: Props) {
   const route = useRouter();
   const [remoteErrors, setRemoteErrors] = useState<FormError[] | null>(null);
-  const info = useParticipantQuota({ count: 0, maxSeat: 0 });
+  const info = useParticipantQuota(data);
 
   const { error = '', secretUrlId = '' } = route.query as {
     error: string;
@@ -201,7 +202,7 @@ export function Register() {
           </span>
         </Badge>
       }
-      subtitle={`5th Veterinary	Ophthalmic	Surgery	Meeting	&bull; ${appConfig.willHeld}`}
+      subtitle={'5th Veterinary	Ophthalmic	Surgery	Meeting • ' + `${appConfig.willHeld}`}
       additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
     >
       <Layout>

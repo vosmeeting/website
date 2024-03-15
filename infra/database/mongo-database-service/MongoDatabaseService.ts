@@ -1,5 +1,5 @@
 import mongoose, { Mongoose } from 'mongoose';
-import { Meeting, Reservation, Participant, Registrant } from './schemas';
+import { Meeting, Reservation, Participant, Registrant, IMeeting } from './schemas';
 import { appConfig } from '../../../domain/config/appConfig';
 
 export class MongoDatabaseService {
@@ -28,7 +28,7 @@ export class MongoDatabaseService {
 
   async getLatestMeeting() {
     await this.connectPromise;
-    return Meeting.findOne({}).sort({ date: -1 }).exec();
+    return Meeting.findOne({}).sort({ date: -1 }).exec() as Promise<IMeeting>;
   }
 
   async initReservation(reservationData: {
