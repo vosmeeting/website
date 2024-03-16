@@ -13,8 +13,8 @@ class ApiService {
     this.createVendorCheckoutSession = this.createVendorCheckoutSession.bind(this);
     this.createParticipantsCheckoutSession = this.createParticipantsCheckoutSession.bind(this);
   }
-  saveUserToBeNotified(email: string) {
-    // TODO: implement
+  saveUserToBeNotified(email: string, name: string) {
+    return axios.post('/api/notify-user', { email, name }).then((res) => res.data);
   }
   getParticipantsCount() {
     return axios.get<SeatAvailabilityData>('/api/available-seats').then((res) => res.data);
