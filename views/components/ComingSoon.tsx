@@ -25,12 +25,13 @@ const ComingSoon = () => {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { submit, submitErrors } = useForm({
     fields: {
-      email
+      email,
+      name
     },
     async onSubmit(form) {
       setStatus('submitting');
       try {
-        await apiService.saveUserToBeNotified(form.email);
+        await apiService.saveUserToBeNotified(form.email, form.name);
         setStatus('submitted');
         return { status: 'success' } as const;
       } catch (e) {

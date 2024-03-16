@@ -73,13 +73,15 @@ export class MongoDatabaseService {
   async createRegistrant(registrantData: {
     name: string;
     email: string;
-    stripeCustomerId: string;
+    stripeCustomerId?: string;
+    notifyMe?: boolean;
   }) {
     await this.connectPromise;
     const registrant = new Registrant({
       name: registrantData.name,
       email: registrantData.email,
-      stripeCustomerId: registrantData.stripeCustomerId
+      stripeCustomerId: registrantData.stripeCustomerId,
+      notifyMe: registrantData.notifyMe
     });
     await registrant.save();
     return registrant;

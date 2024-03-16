@@ -19,10 +19,11 @@ export const appConfig = {
     stripeWebhookSecret: process.env.WEBHOOK_SECRET!
   },
   ff: {
-    registration: true,
+    registration: false,
     sponsors: true
   },
-  seatAvailability: 200,
+  // deprecated, now in a Meeting entity from the database
+  // seatAvailability: 200,
   secretUrls: ['936058d8-eb5e-4d6d-b3dc-af30488859b4'],
   boothLocations: [
     {

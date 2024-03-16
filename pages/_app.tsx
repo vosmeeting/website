@@ -7,15 +7,17 @@ import styles from '../styles/CustomPropertyOverride.module.scss';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useRouter } from 'next/router';
 import { Header } from '../views/components/header/Header';
+import { appConfig } from '../domain/config/appConfig';
 
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const landingPageConfig = {
-    copy: 'Register',
-    disabled: false
-  };
+
+  const landingPageConfig = appConfig.ff.registration
+    ? { copy: 'Register', disabled: false }
+    : { copy: 'Registration Opening Soon', disabled: true };
+
   const homePage = router.pathname === '/';
   return (
     <QueryClientProvider client={queryClient}>

@@ -58,7 +58,8 @@ const participantSchema = new Schema({
 const registrantSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  stripeCustomerId: { type: String, required: true },
+  notifyMe: { type: Boolean, required: false },
+  stripeCustomerId: { type: String, required: false },
   participantId: { type: Schema.Types.ObjectId, ref: 'Participant', default: null, required: false }
 });
 
