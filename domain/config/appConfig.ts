@@ -19,7 +19,7 @@ export const appConfig = {
     stripeWebhookSecret: process.env.WEBHOOK_SECRET!
   },
   ff: {
-    registration: false,
+    registration: true,
     sponsors: true
   },
   // deprecated, now in a Meeting entity from the database
