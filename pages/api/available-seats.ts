@@ -1,16 +1,15 @@
-import { NextApiHandler } from 'next'
-import { SEAT_AVAILABILITY } from './constants/constants'
-import { db } from './constants/db'
+import { NextApiRequest, NextApiResponse } from 'next';
+import { SeatAvailabilityData } from '../../domain/databaseService';
+import { getAvailableSeats } from '../../use-cases/getAvailableSeats';
 
-const getAvailableSeats: NextApiHandler = (req, res) => {
+export default async (req: NextApiRequest, res: NextApiResponse<SeatAvailabilityData | Error>) => {
   if (req.method === 'GET') {
-    return db
-      .getSeatAvailability()
-      .then((count) => res.send({ count, maxSeat: SEAT_AVAILABILITY }))
-      .catch((e) => {
-        res.status(500).send(e)
-      })
+    try {
+      const data = await getAvailableSeats();
+      res.send(data);
+    } catch (e) {
+      const err = e as Error;
+      res.status(500).send(err);
+    }
   }
-}
-
-export default getAvailableSeats
+};

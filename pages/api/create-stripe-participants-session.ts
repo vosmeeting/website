@@ -1,154 +1,109 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import Stripe from 'stripe'
-import queryString from 'query-string'
-import { registrationTypes } from '../../constants/registrationType'
-import { CreateParticipantCheckoutSesssionPayload } from '../../types'
-import { db } from './constants/db'
-import { If, Exists, Match, Index } from 'faunadb'
-import { query as q } from 'faunadb'
-import { serverClient } from './constants/fauna.instance'
+import { NextApiRequest, NextApiResponse } from 'next';
+import Stripe from 'stripe';
+import { CreateParticipantCheckoutSesssionPayloadDTO } from '../../types';
+import { stripeInteractor } from '../../infra/StripeInteractor';
+import { appConfig } from '../../domain/config/appConfig';
+import { mongoDatabaseService } from '../../infra/database/mongo-database-service/MongoDatabaseService';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, undefined)
-
-// eslint-disable-next-line import/no-anonymous-default-export
-const createStripeParticipantsSession = async (
-  req: NextApiRequest,
-  res: NextApiResponse
-) => {
-  const {
-    participants,
-    registerForSelf,
-    registrant,
-    secretUrlId,
-  } = req.body as CreateParticipantCheckoutSesssionPayload
-  const firstParticipant = participants[0]
-
-  const host = req.headers.host
-  const protocol = /^localhost(:\d+)?$/.test(host) ? 'http:' : 'https:'
-  const redirectUrl = protocol + '//' + host
-
-  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = participants.map(
-    (p) => {
-      const cents =
-        registrationTypes.find((r) => r.value === p.registrationType).price *
-        100
-      return {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: `Participant Registration As: ${p.registrationType?.toUpperCase()}`,
-            description: '5th Veterinary	Ophthalmic	Surgery	Meeting	Jul	19-21, 2024',
-            images: [redirectUrl + '/vosm_logo.png'],
-          },
-
-          unit_amount: cents,
-        },
-        quantity: 1,
-      }
-    }
-  )
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const registrantData: Stripe.CustomerCreateParams = registerForSelf
-      ? {
-          email: firstParticipant.email,
-          name: firstParticipant.fullName,
-        }
-      : registrant
+    const payload = req.body as CreateParticipantCheckoutSesssionPayloadDTO;
 
-    let savedRegistrant = await serverClient.query<{
-      data: { customerId: string }
-    }>(
-      q.Let(
-        {
-          match: q.Match(q.Index('users_by_email'), registrant.email),
-          data: { data: registrant },
-        },
-        q.If(q.Exists(q.Var('match')), q.Get(q.Var('match')), null)
-      )
-    )
+    const meeting = await mongoDatabaseService.getLatestMeeting();
+    if (!meeting) {
+      throw new Error('No meeting found');
+    }
+    const meetingId = meeting.id;
 
-    if (!savedRegistrant) {
-      // customer will be saved in webhook handler
-      savedRegistrant = await stripe.customers
-        .create(registrantData)
-        .then((cust) => {
-          return serverClient.query(
-            q.Create(q.Collection('users'), {
-              data: {
-                email: cust.email,
-                name: cust.name,
-                customerId: cust.id,
-              },
-            })
-          )
-        })
+    const host = req.headers.host!;
+    const protocol = /^localhost(:\d+)?$/.test(host) ? 'http:' : 'https:';
+    const publicUrl = protocol + '//' + host;
+    const successUrl = publicUrl + '/payment-success';
+    const cancelUrl = publicUrl + '/register';
+    const firstParticipant = payload.participants[0];
+
+    let dbParticipantIds: string[] = [];
+    const registrantCreationAttribute =
+      'registrant' in payload
+        ? // use the registrant details if provided
+          { name: payload.registrant.name, email: payload.registrant.email }
+        : // if not, use the first participant details, which most likely are the registrant's
+          { name: firstParticipant.fullName, email: firstParticipant.email };
+
+    let registrant = await mongoDatabaseService.findRegistrantByEmail(
+      registrantCreationAttribute.email
+    );
+
+    if (!registrant) {
+      const registrantCust = await stripeInteractor.createCustomer({
+        email: registrantCreationAttribute.email,
+        name: registrantCreationAttribute.name
+      });
+
+      registrant = await mongoDatabaseService.createRegistrant({
+        email: registrantCreationAttribute.email,
+        name: registrantCreationAttribute.name,
+        stripeCustomerId: registrantCust.id
+      });
     }
 
-    const today = new Date()
+    for (const p of payload.participants) {
+      const participantDb = await mongoDatabaseService.createOrUpdateParticipant({
+        country: p.country,
+        email: p.email,
+        meetingId,
+        name: p.fullName,
+        organization: p.organization
+      });
 
-    const EXPIRATION_TIME_HOUR = 1
-    const expInSeconds = Math.round(
-      today.setHours(today.getHours() + EXPIRATION_TIME_HOUR) / 1000
-    )
+      dbParticipantIds.push(participantDb.id);
+    }
 
-    // guard from creating the session if no seats are available
-    const data = await db.getSeatAvailability()
-    const seatAvailabilityCount = data.maxSeat - data.count
-    const isSecretUrl = db.validateSecretUrl(secretUrlId)
+    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = payload.participants.map(
+      (p) => {
+        const cents =
+          appConfig.registrationTypes.find((r) => r.value === p.registrationType)!.price * 100;
+        return {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: `Participant Registration As: ${p.registrationType?.toUpperCase()}`,
+              description: `5th Veterinary	Ophthalmic	Surgery	Meeting	${appConfig.willHeld}`,
+              images: [publicUrl + '/vosm_logo.png'],
+              metadata: { test: 'hello world' }
+            },
 
-    // special person bypass the availability count
-    if (!isSecretUrl) {
-      // check availability
-      if (seatAvailabilityCount < lineItems.length) {
-        if (seatAvailabilityCount === 0) {
-          throw new Error('Sorry, we sold out!')
-        }
-        throw new Error(
-          `Sorry, only ${seatAvailabilityCount} seat(s) are remaining`
-        )
+            unit_amount: cents
+          },
+          quantity: 1
+        };
       }
-    }
+    );
 
-    const checkoutSession = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: lineItems,
-      expires_at: expInSeconds, // expires in one hour
-      mode: 'payment',
-      success_url: queryString.stringifyUrl({
-        url: redirectUrl + '/payment-success',
-        query: {
-          from: '/register',
-        },
-      }),
-      cancel_url: queryString.stringifyUrl({
-        url: redirectUrl + '/register',
-        query: {
-          error: 'payment was cancelled',
-          secretUrlId,
-        },
-      }),
-      customer: savedRegistrant.data.customerId,
-    })
+    // create a reservation for the participants
+    const reservation = await mongoDatabaseService.initReservation({
+      meetingId: meetingId,
+      participantIds: dbParticipantIds,
+      heldUntil: new Date(Date.now() + appConfig.paymentWindowMinutes * 60 * 1000)
+    });
 
-    await serverClient.query(
-      q.Create(q.Collection('checkout_sessions'), {
-        data: {
-          id: checkoutSession.id,
-          paymentIntent: checkoutSession.payment_intent,
-          status: checkoutSession.status,
-          customer: checkoutSession.customer,
-          participants,
-          secretUrlId,
-        },
-      })
-    )
+    const today = new Date();
+    const expInSeconds = Math.floor(today.getTime() / 1000) + 60 * appConfig.paymentWindowMinutes;
+    const checkoutSession = await stripeInteractor.createParticipantCheckoutSession(
+      lineItems,
+      expInSeconds,
+      successUrl,
+      cancelUrl,
+      registrant.stripeCustomerId,
+      reservation.id,
+      registrant.id,
+      meeting.id,
+      payload.secretUrlId
+    );
 
-    res.status(200).json({ id: checkoutSession.id })
-  } catch (e) {
-    console.log('error', e)
-
-    res.status(500).send(e)
+    res.status(200).json({ id: checkoutSession.id, reservationId: reservation.id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Could not create the session' });
   }
-}
-
-export default createStripeParticipantsSession
+};

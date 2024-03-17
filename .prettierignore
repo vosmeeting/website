@@ -1,0 +1,17 @@
+# Ignore artifacts:
+build
+coverage
+dist
+
+public
+insomnia
+.vscode
+.husky
+.idea
+.github
+node_modules
+scripts
+whatsapp-templates
+
+# Ignore all HTML files:
+*.html
