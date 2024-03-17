@@ -13,6 +13,6 @@ export const registrationTypes: RegistrationType[] = [
     label: 'Resident/Ophtalmology Intern',
     price: 300
   },
-  { value: 'others', label: 'Other Veterinary Ophthalmologists', price: 650 },
-  { value: 'guest', label: 'Guest entry for reception', price: 75 }
+  { value: 'others', label: 'Other Veterinary Ophthalmologists', price: 650 }
+  // { value: 'guest', label: 'Guest entry for reception', price: 75 }
 ];
