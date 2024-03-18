@@ -222,7 +222,7 @@ export function Register({ data }: Props) {
               loading: form.submitting,
               disabled: info.data ? info.data.count >= info.data.maxSeat && !isSecretUrl : true
             }}
-            secondaryFooterActions={[
+{/*             secondaryFooterActions={[
               {
                 content: 'add more participant',
                 icon: CustomerPlusMajor,
@@ -233,7 +233,7 @@ export function Register({ data }: Props) {
                     country: 'US'
                   })
               }
-            ]}
+            ]} */}
           >
             <Form onSubmit={form.submit}>
               {personalInformations.fields.map((field, i, arr) => {
