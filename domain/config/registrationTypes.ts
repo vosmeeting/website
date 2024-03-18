@@ -2,10 +2,9 @@ import { RegistrationType } from './appConfig';
 
 export const registrationTypes: RegistrationType[] = [
   {
-    value: 'avco/ecvo',
-    label: `ACVO/ECVO Diplomate/Board Eligible*`,
-    price: 550,
-    optionalComment: '*actively taking boards at the moment'
+    value: 'acvo/ecvo',
+    label: `ACVO/ECVO Diplomate`,
+    price: 550
   },
   { value: 'speaker', label: 'Speaker', price: 450 },
   {
