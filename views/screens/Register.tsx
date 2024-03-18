@@ -222,18 +222,6 @@ export function Register({ data }: Props) {
               loading: form.submitting,
               disabled: info.data ? info.data.count >= info.data.maxSeat && !isSecretUrl : true
             }}
-{/*             secondaryFooterActions={[
-              {
-                content: 'add more participant',
-                icon: CustomerPlusMajor,
-                onAction: () =>
-                  personalInformations.addItem({
-                    email: 'participant@domain.com',
-                    registrationType: appConfig.defaultRegistrationType.value,
-                    country: 'US'
-                  })
-              }
-            ]} */}
           >
             <Form onSubmit={form.submit}>
               {personalInformations.fields.map((field, i, arr) => {
