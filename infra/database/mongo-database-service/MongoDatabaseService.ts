@@ -5,6 +5,9 @@ import { appConfig } from '../../../domain/config/appConfig';
 export class MongoDatabaseService {
   connectPromise: Promise<Mongoose>;
   constructor(private dbUri: string) {
+    if (!dbUri) {
+      throw new Error('MongoDatabaseService error: MONGODB URI is not set');
+    }
     this.connectPromise = mongoose.connect(dbUri);
   }
 
