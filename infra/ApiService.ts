@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import {
   CreateParticipantCheckoutSesssionPayloadDTO,
   VendorCheckoutSessionPayload
@@ -35,16 +35,35 @@ class ApiService {
   }
 
   async createParticipantsCheckoutSession(payload: CreateParticipantCheckoutSesssionPayloadDTO) {
+    // Load Stripe with the publishable key
     const stripe = await loadStripe(this.publishableKey);
-    const checkoutSession = await axios.post('/api/create-stripe-participants-session', payload);
     if (!stripe) {
-      throw new Error('stripe is not ready');
+      throw new Error('Stripe is not ready');
     }
-    const result = await stripe.redirectToCheckout({
-      sessionId: checkoutSession.data.id
-    });
-    if (result.error) {
-      throw new Error(result.error.message);
+
+    try {
+      // Attempt to create a checkout session with the server-side endpoint
+      const checkoutSession = await axios.post('/api/create-stripe-participants-session', payload);
+
+      // Proceed to Stripe's checkout with the session ID
+      const result = await stripe.redirectToCheckout({
+        sessionId: checkoutSession.data.id
+      });
+
+      // Handle possible errors from Stripe's checkout redirection
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+    } catch (e) {
+      const error = e as AxiosError;
+      // Check if the error response is from Axios and has the expected format
+      if (error.response && error.response.data && error.response.data.message) {
+        // Extract and throw the custom error message from the server response
+        throw new Error(error.response.data.message);
+      } else {
+        // Fallback error handling if the error format is not as expected
+        throw new Error('An unexpected error occurred');
+      }
     }
   }
 }

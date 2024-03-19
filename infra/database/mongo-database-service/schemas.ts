@@ -50,7 +50,6 @@ const participantSchema = new Schema({
   email: { type: String, required: true, unique: true },
   meetingId: { type: Schema.Types.ObjectId, ref: 'Meeting', required: false },
   reservedBy: { type: Schema.Types.ObjectId, ref: 'Participant', default: null },
-  status: { type: String, default: 'registered' },
   organization: { type: String, required: true },
   country: { type: String, required: true }
 });
