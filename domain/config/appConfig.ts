@@ -19,7 +19,7 @@ export const appConfig = {
     stripeWebhookSecret: process.env.WEBHOOK_SECRET!
   },
   ff: {
-    registration: true,
+    registration: false,
     sponsors: true
   },
   secretUrls: ['936058d8-eb5e-4d6d-b3dc-af30488859b4'],
