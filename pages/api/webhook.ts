@@ -2,7 +2,7 @@
 import { NextApiHandler } from 'next';
 import { buffer } from 'micro';
 import Stripe from 'stripe';
-import { logger } from '../../utils/logger';
+import { server_logger } from '../../utils/logger';
 import { stripeInteractor } from '../../infra/StripeInteractor';
 import { mongoDatabaseService } from '../../infra/database/mongo-database-service/MongoDatabaseService';
 
@@ -17,7 +17,7 @@ async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent)
   const reservationId = paymentIntent.metadata?.reservationId;
   if (reservationId) {
     await mongoDatabaseService.alterFromReserved(reservationId, 'paid');
-    logger.info(`Payment intent succeeded for reservation ${reservationId}`);
+    server_logger.info(`Payment intent succeeded for reservation ${reservationId}`);
   }
 }
 
@@ -25,7 +25,7 @@ async function handlePaymentIntentCancelled(paymentIntent: Stripe.PaymentIntent)
   const reservationId = paymentIntent.metadata?.reservationId;
   if (reservationId) {
     await mongoDatabaseService.alterFromReserved(reservationId, 'cancelled');
-    logger.info(`Payment intent succeeded for reservation ${reservationId}`);
+    server_logger.info(`Payment intent succeeded for reservation ${reservationId}`);
   }
 }
 
@@ -34,7 +34,7 @@ const handler: NextApiHandler = async (request, response) => {
   const sig = request.headers['stripe-signature'];
 
   if (!sig) {
-    logger.error('Webhook Error: Missing Stripe Signature');
+    server_logger.error('Webhook Error: Missing Stripe Signature');
     return response.status(400).send('Webhook Error: Missing Stripe Signature');
   }
 
@@ -42,12 +42,12 @@ const handler: NextApiHandler = async (request, response) => {
 
   try {
     event = stripeInteractor.constructEvent(buf, sig);
-    logger.info(`Received webhook event for even type ${event.type} with data`, event.data);
+    server_logger.info(`Received webhook event for even type ${event.type} with data`, event.data);
     //@ts-expect-error
-    logger.info(`metadata for event type: ${event.type}`, event.data.object.metadata);
+    server_logger.info(`metadata for event type: ${event.type}`, event.data.object.metadata);
   } catch (e) {
     const err = e as Error;
-    logger.error('Error constructing event:', err.message);
+    server_logger.error('Error constructing event:', err.message);
     return response.status(400).send(`Webhook Error: ${err.message}`);
   }
 
@@ -64,11 +64,11 @@ const handler: NextApiHandler = async (request, response) => {
         break;
       // Add more case handlers for different event types as needed
       default:
-        logger.warn('Unhandled event type:', event.type);
+        server_logger.warn('Unhandled event type:', event.type);
     }
   } catch (e) {
     const err = e as Error;
-    logger.error('Error handling event:', err.message);
+    server_logger.error('Error handling event:', err.message);
     return response.status(500).send('Internal Server Error');
   }
 
