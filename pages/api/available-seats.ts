@@ -9,7 +9,8 @@ export default async (req: NextApiRequest, res: NextApiResponse<SeatAvailability
       res.send(data);
     } catch (e) {
       const err = e as Error;
-      res.status(500).send(err);
+      console.error(err);
+      res.status(500).send({ message: `Something went wrong: ${err.message}` } as Error);
     }
   }
 };
