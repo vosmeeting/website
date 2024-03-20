@@ -36,3 +36,7 @@ export type VendorCheckoutSessionPayload = {
   item: Item;
   vendor: VendorDTO;
 };
+export interface SeatAvailabilityData {
+  count: number;
+  maxSeat: number;
+}

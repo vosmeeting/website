@@ -32,7 +32,7 @@ import { apiService } from '../../infra/ApiService';
 import { useParticipantQuota } from '../hooks/useParticipantQuota';
 import { RegistrationTypeList } from '../components/RegistrationType';
 import { Price } from '../../domain/Price';
-import { SeatAvailabilityData } from '../../domain/databaseService';
+import { SeatAvailabilityData } from '../../types';
 import { appConfig } from '../../domain/config/appConfig';
 import { ErrorBanner } from './ErrorBanner.1';
 import { Badge } from '../components/Badge';

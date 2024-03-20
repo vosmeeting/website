@@ -1,4 +1,4 @@
-import { SeatAvailabilityData } from '../domain/databaseService';
+import { SeatAvailabilityData } from '../types';
 import { mongoDatabaseService } from '../infra/database/mongo-database-service/MongoDatabaseService';
 
 export const getAvailableSeats = async (): Promise<SeatAvailabilityData> => {

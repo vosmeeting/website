@@ -5,7 +5,7 @@ import {
 } from '../types';
 import { loadStripe } from '@stripe/stripe-js';
 import { appConfig } from '../domain/config/appConfig';
-import { SeatAvailabilityData } from '../domain/databaseService';
+import { SeatAvailabilityData } from '../types';
 
 class ApiService {
   constructor(private publishableKey: string) {

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { SeatAvailabilityData } from '../../domain/databaseService';
+import { SeatAvailabilityData } from '../../types';
 import { getAvailableSeats } from '../../use-cases/getAvailableSeats';
 
 export default async (req: NextApiRequest, res: NextApiResponse<SeatAvailabilityData | Error>) => {
