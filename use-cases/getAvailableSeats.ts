@@ -1,12 +1,12 @@
-import { SeatAvailabilityData } from '../types';
+import { SeatAvailabilityDTO } from '../types';
 import { mongoDatabaseService } from '../infra/database/mongo-database-service/MongoDatabaseService';
 
-export const getAvailableSeats = async (): Promise<SeatAvailabilityData> => {
+export const getAvailableSeats = async (): Promise<SeatAvailabilityDTO> => {
   const latestMeeting = await mongoDatabaseService.getLatestMeeting();
   if (!latestMeeting) {
     throw new Error('no last meeting found');
   }
   return mongoDatabaseService
-    .getReservedSeatsCount(latestMeeting.id)
+    .getRegularReservedSeatsCount(latestMeeting.id)
     .then((count) => ({ count, maxSeat: latestMeeting.maxParticipants }));
 };

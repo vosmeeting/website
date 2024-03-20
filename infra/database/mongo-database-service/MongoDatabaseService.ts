@@ -1,6 +1,7 @@
 import mongoose, { Mongoose } from 'mongoose';
 import { Meeting, Reservation, Participant, Registrant, IMeeting } from './schemas';
 import { appConfig } from '../../../domain/config/appConfig';
+import { v4 as uuid } from 'uuid';
 
 export class MongoDatabaseService {
   connectPromise: Promise<Mongoose>;
@@ -23,10 +24,28 @@ export class MongoDatabaseService {
       title: meetingData.title,
       description: meetingData.description,
       date: meetingData.date,
-      maxParticipants: meetingData.maxParticipants
+      maxParticipants: meetingData.maxParticipants,
+      secretUrlId: uuid()
     });
     await meeting.save();
     return meeting;
+  }
+
+  async createReservation(reservationData: {
+    meetingId: string;
+    participantIds: string[];
+    heldUntil: Date;
+    withSecretUrl: boolean;
+  }) {
+    const reservation = new Reservation({
+      meetingId: new mongoose.Types.ObjectId(reservationData.meetingId),
+      participantIds: reservationData.participantIds,
+      status: 'reserved',
+      heldUntil: reservationData.heldUntil,
+      withSecretUrl: reservationData.withSecretUrl
+    });
+    await reservation.save();
+    return reservation;
   }
 
   async getLatestMeeting() {
@@ -34,32 +53,11 @@ export class MongoDatabaseService {
     return Meeting.findOne({}).sort({ date: -1 }).exec() as Promise<IMeeting>;
   }
 
-  async initReservation(reservationData: {
-    meetingId: string;
-    participantIds: string[];
-    heldUntil: Date;
-  }) {
-    await this.connectPromise;
-    const meeting = await Meeting.findById(reservationData.meetingId).exec();
-    const reservedSeatsCount = await this.getReservedSeatsCount(reservationData.meetingId);
-    const availableSeats = meeting.maxParticipants - reservedSeatsCount;
-    if (!meeting) {
-      throw new Error('Meeting not found');
-    }
-
-    if (availableSeats < reservationData.participantIds.length) {
-      throw new Error('Not enough available seats');
-    }
-
-    const reservation = new Reservation({
-      meetingId: new mongoose.Types.ObjectId(reservationData.meetingId),
-      participantIds: reservationData.participantIds,
-      status: 'reserved',
-      heldUntil: reservationData.heldUntil
-    });
-    await reservation.save();
-    return reservation;
+  async findMeetingById(meetingId: string) {
+    const meeting = await Meeting.findById(meetingId).exec();
+    return meeting;
   }
+
   async alterFromReserved(
     reservationId: string,
     status: 'paid' | 'released' | 'refunded' | 'cancelled'
@@ -109,7 +107,7 @@ export class MongoDatabaseService {
   }
 
   // Get the count of reserved seats for a meeting
-  async getReservedSeatsCount(meetingId: string): Promise<number> {
+  async getRegularReservedSeatsCount(meetingId: string): Promise<number> {
     await this.connectPromise;
     const meetingObjectId = new mongoose.Types.ObjectId(meetingId);
 
@@ -117,6 +115,7 @@ export class MongoDatabaseService {
       {
         $match: {
           meetingId: meetingObjectId,
+          withSecretUrl: { $ne: true }, // Exclude reservations with withSecretUrl: true
           $or: [
             { status: 'paid' }, // Always include paid reservations
             {

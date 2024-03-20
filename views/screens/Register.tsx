@@ -26,19 +26,16 @@ import {
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
 import { COUNTRIES } from '../../utils/contry_codes';
 import { apiService } from '../../infra/ApiService';
 import { useParticipantQuota } from '../hooks/useParticipantQuota';
 import { RegistrationTypeList } from '../components/RegistrationType';
 import { Price } from '../../domain/Price';
-import { SeatAvailabilityData } from '../../types';
+import { SeatAvailabilityDTO } from '../../types';
 import { appConfig } from '../../domain/config/appConfig';
 import { ErrorBanner } from './ErrorBanner.1';
 import { Badge } from '../components/Badge';
-import { secretUrlService } from '../../infra/SecretUrlService';
 import { ParticipantInformationDTO } from '../../types';
-import { getAvailableSeats } from '../../use-cases/getAvailableSeats';
 
 let num = 2;
 function personalInformationFactory(
@@ -69,7 +66,7 @@ export const emailValidation = (email: string) => {
   }
 };
 export type Props = {
-  data: SeatAvailabilityData;
+  data: SeatAvailabilityDTO;
   isSecretUrl: boolean;
 };
 
@@ -82,14 +79,6 @@ export function Register({ data }: Props) {
     error: string;
     secretUrlId?: string;
   };
-  const secretUrlInfo = useQuery(
-    secretUrlId,
-    () => secretUrlService.validateSecretUrl(secretUrlId),
-    {
-      initialData: false
-    }
-  );
-  const isSecretUrl = secretUrlInfo.data;
 
   const personalInformations = useDynamicList(
     {
@@ -183,10 +172,6 @@ export function Register({ data }: Props) {
     return () => clearTimeout(timeout);
   }, [error]);
 
-  if (secretUrlInfo.isLoading) {
-    return 'loading..';
-  }
-
   return (
     <Page
       title={`Participant Registration`}
@@ -208,9 +193,11 @@ export function Register({ data }: Props) {
       <Layout>
         {remoteErrors && <ErrorBanner errors={remoteErrors} />}
         <Layout.Section>
-          {info.data && info.data.count >= info.data.maxSeat && !isSecretUrl && (
-            <Banner status="info"> Sorry we sold out!</Banner>
-          )}
+          {info.data
+            ? info.data.count >= info.data.maxSeat && (
+                <Banner status="info"> Sorry we sold out!</Banner>
+              )
+            : null}
         </Layout.Section>
         <Layout.Section>
           <Card
@@ -220,7 +207,7 @@ export function Register({ data }: Props) {
               content: 'register ' + new Price(totalPrice).toDollar(),
               onAction: form.submit,
               loading: form.submitting,
-              disabled: info.data ? info.data.count >= info.data.maxSeat && !isSecretUrl : true
+              disabled: info.data ? info.data.count >= info.data.maxSeat : true
             }}
           >
             <Form onSubmit={form.submit}>
