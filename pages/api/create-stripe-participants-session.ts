@@ -24,7 +24,7 @@ async function initReservation(
     meetingId: string;
     participantIds: string[];
     heldUntil: Date;
-    withSecretUrl: boolean;
+    reservationType: 'vip' | 'regular';
   }
 ) {
   await db.connectPromise;
@@ -36,7 +36,7 @@ async function initReservation(
     throw new Error('Meeting not found');
   }
 
-  if (reservationData.withSecretUrl) {
+  if (reservationData.reservationType === 'vip') {
     // bypass
   } else if (exceedMaxCapacity) {
     throw new Error('Not enough available seats');
@@ -132,7 +132,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       meetingId: meetingId,
       participantIds: dbParticipantIds,
       heldUntil: new Date(Date.now() + appConfig.paymentWindowMinutes * 60 * 1000),
-      withSecretUrl: secretUrlId ? true : false
+      reservationType: secretUrlId ? 'vip' : 'regular'
     });
 
     const today = new Date();

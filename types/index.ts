@@ -35,3 +35,5 @@ export interface SeatAvailabilityDTO {
   count: number;
   maxSeat: number;
 }
+
+export type ReservationType = 'vip' | 'regular';

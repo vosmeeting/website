@@ -13,6 +13,7 @@ export interface IReservation extends Document {
   status: 'reserved' | 'paid' | 'released' | 'refunded';
   createdAt: Date;
   heldUntil: Date | null;
+  type: 'regular' | 'vip';
 }
 
 export interface IParticipant extends Document {
@@ -45,7 +46,7 @@ const reservationSchema = new Schema({
   status: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   heldUntil: { type: Date, default: null },
-  withSecretUrl: { type: Boolean, default: false }
+  type: { type: String, default: 'regular' }
 });
 
 const participantSchema = new Schema({

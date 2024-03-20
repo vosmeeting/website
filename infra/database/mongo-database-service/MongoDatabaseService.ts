@@ -2,6 +2,7 @@ import mongoose, { Mongoose } from 'mongoose';
 import { Meeting, Reservation, Participant, Registrant, IMeeting } from './schemas';
 import { appConfig } from '../../../domain/config/appConfig';
 import { v4 as uuid } from 'uuid';
+import { ReservationType } from '../../../types';
 
 export class MongoDatabaseService {
   connectPromise: Promise<Mongoose>;
@@ -35,14 +36,14 @@ export class MongoDatabaseService {
     meetingId: string;
     participantIds: string[];
     heldUntil: Date;
-    withSecretUrl: boolean;
+    reservationType: ReservationType;
   }) {
     const reservation = new Reservation({
       meetingId: new mongoose.Types.ObjectId(reservationData.meetingId),
       participantIds: reservationData.participantIds,
       status: 'reserved',
       heldUntil: reservationData.heldUntil,
-      withSecretUrl: reservationData.withSecretUrl
+      type: reservationData.reservationType
     });
     await reservation.save();
     return reservation;
@@ -115,7 +116,7 @@ export class MongoDatabaseService {
       {
         $match: {
           meetingId: meetingObjectId,
-          withSecretUrl: { $ne: true }, // Exclude reservations with withSecretUrl: true
+          type: { $ne: 'vip' }, // Exclude vip ones
           $or: [
             { status: 'paid' }, // Always include paid reservations
             {
