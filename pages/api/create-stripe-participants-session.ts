@@ -58,6 +58,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (secretUrlId) {
       // validates and throw if not correct
       if (meeting.secretUrlId !== secretUrlId) {
+        console.log(meeting);
+        console.log('url secretid', secretUrlId);
         throw new Error('invalid secret url!');
       }
     }

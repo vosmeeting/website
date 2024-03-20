@@ -28,7 +28,6 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { COUNTRIES } from '../../utils/contry_codes';
 import { apiService } from '../../infra/ApiService';
-import { useParticipantQuota } from '../hooks/useParticipantQuota';
 import { RegistrationTypeList } from '../components/RegistrationType';
 import { Price } from '../../domain/Price';
 import { RegisterPageQuery, SeatAvailabilityDTO } from '../../types';
@@ -66,11 +65,10 @@ export const emailValidation = (email: string) => {
   }
 };
 
-export function Register() {
+export function RegisterPrivate() {
   const route = useRouter();
-  const { error = '' } = route.query as RegisterPageQuery;
+  const { error = '', secretUrlId } = route.query as RegisterPageQuery;
   const [remoteErrors, setRemoteErrors] = useState<FormError[] | null>(null);
-  const info = useParticipantQuota();
 
   const personalInformations = useDynamicList(
     {
@@ -126,11 +124,11 @@ export function Register() {
       try {
         await apiService.createParticipantsCheckoutSession({
           participants: form.persons,
-          registrant: form.registrant
+          registrant: form.registrant,
+          secretUrlId: secretUrlId
         });
       } catch (e) {
         remoteErrors.push(e as FormError);
-        console.error(e);
       }
       if (remoteErrors.length > 0) {
         setRemoteErrors([remoteErrors].map((e) => new Error('there was some network issue')));
@@ -166,30 +164,20 @@ export function Register() {
   return (
     <Page
       title={`Participant Registration`}
+      subtitle={'5th Veterinary	Ophthalmic	Surgery	Meeting • ' + `${appConfig.willHeld}`}
+      additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
       titleMetadata={
-        <Badge size="small" status="success">
-          <span className="flex items-center gap-x-2">
+        <Badge size="small" status="attention">
+          <span className="flex items-center gap-x-1">
             <Icon source={CustomersMinor} />
-            {info.data ? (
-              <p className="text-sm font-bold">{`${info.data.count}/${info.data.maxSeat}`}</p>
-            ) : (
-              '...'
-            )}
+            <span className="font-bold">VIP ONLY</span>
           </span>
         </Badge>
       }
-      subtitle={'5th Veterinary	Ophthalmic	Surgery	Meeting • ' + `${appConfig.willHeld}`}
-      additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
     >
       <Layout>
         {remoteErrors && <ErrorBanner errors={remoteErrors} />}
-        <Layout.Section>
-          {info.data
-            ? info.data.count >= info.data.maxSeat && (
-                <Banner status="info"> Sorry we sold out!</Banner>
-              )
-            : null}
-        </Layout.Section>
+
         <Layout.Section>
           <Card
             sectioned
@@ -198,7 +186,7 @@ export function Register() {
               content: 'register ' + new Price(totalPrice).toDollar(),
               onAction: form.submit,
               loading: form.submitting,
-              disabled: info.data ? info.data.count >= info.data.maxSeat : true
+              disabled: form.submitting
             }}
             secondaryFooterActions={[
               {

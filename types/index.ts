@@ -37,3 +37,8 @@ export interface SeatAvailabilityDTO {
 }
 
 export type ReservationType = 'vip' | 'regular';
+
+export type RegisterPageQuery = {
+  error: string;
+  secretUrlId?: string;
+};
