@@ -12,16 +12,11 @@ export interface RegistrantInformationDTO {
   email: string;
 }
 
-export type CreateParticipantCheckoutSesssionPayloadDTO =
-  | {
-      participants: ParticipantInformationDTO[];
-      registrant: RegistrantInformationDTO;
-      secretUrlId?: string;
-    }
-  | {
-      participants: ParticipantInformationDTO[];
-      secretUrlId?: string;
-    };
+export type CreateParticipantCheckoutSesssionPayloadDTO = {
+  participants: ParticipantInformationDTO[];
+  registrant?: RegistrantInformationDTO;
+  secretUrlId?: string;
+};
 
 type VendorDTO = {
   email: string;
@@ -32,7 +27,18 @@ type VendorDTO = {
 type Item = {
   amount: number; // in dollar
 };
-export type VendorCheckoutSessionPayload = {
+export type VendorCheckoutSessionDTO = {
   item: Item;
   vendor: VendorDTO;
+};
+export interface SeatAvailabilityDTO {
+  count: number;
+  maxSeat: number;
+}
+
+export type ReservationType = 'vip' | 'regular';
+
+export type RegisterPageQuery = {
+  error: string;
+  secretUrlId?: string;
 };

@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { SeatAvailabilityData } from '../../domain/databaseService';
+import { SeatAvailabilityDTO } from '../../types';
 import { getAvailableSeats } from '../../use-cases/getAvailableSeats';
 
-export default async (req: NextApiRequest, res: NextApiResponse<SeatAvailabilityData | Error>) => {
+export default async (req: NextApiRequest, res: NextApiResponse<SeatAvailabilityDTO | Error>) => {
   if (req.method === 'GET') {
     try {
       const data = await getAvailableSeats();

@@ -4,6 +4,7 @@ export interface IMeeting extends Document {
   title: string;
   description: string;
   maxParticipants: number;
+  secretUrlId: string;
 }
 
 export interface IReservation extends Document {
@@ -12,6 +13,7 @@ export interface IReservation extends Document {
   status: 'reserved' | 'paid' | 'released' | 'refunded';
   createdAt: Date;
   heldUntil: Date | null;
+  type: 'regular' | 'vip';
 }
 
 export interface IParticipant extends Document {
@@ -34,7 +36,8 @@ const meetingSchema = new Schema({
   title: { type: String, required: true },
   description: String,
   date: { type: Date, required: true },
-  maxParticipants: { type: Number, required: true }
+  maxParticipants: { type: Number, required: true },
+  secretUrlId: { type: String, required: true } // Assuming the UUID is a required string.
 });
 
 const reservationSchema = new Schema({
@@ -42,7 +45,8 @@ const reservationSchema = new Schema({
   participantIds: [{ type: Schema.Types.ObjectId, ref: 'Participant' }],
   status: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-  heldUntil: { type: Date, default: null }
+  heldUntil: { type: Date, default: null },
+  type: { type: String, default: 'regular' }
 });
 
 const participantSchema = new Schema({

@@ -1,11 +1,11 @@
 import axios, { AxiosError } from 'axios';
 import {
   CreateParticipantCheckoutSesssionPayloadDTO,
-  VendorCheckoutSessionPayload
+  SeatAvailabilityDTO,
+  VendorCheckoutSessionDTO
 } from '../types';
 import { loadStripe } from '@stripe/stripe-js';
 import { appConfig } from '../domain/config/appConfig';
-import { SeatAvailabilityData } from '../domain/databaseService';
 
 class ApiService {
   constructor(private publishableKey: string) {
@@ -17,10 +17,10 @@ class ApiService {
     return axios.post('/api/notify-user', { email, name }).then((res) => res.data);
   }
   getParticipantsCount() {
-    return axios.get<SeatAvailabilityData>('/api/available-seats').then((res) => res.data);
+    return axios.get<SeatAvailabilityDTO>('/api/available-seats').then((res) => res.data);
   }
 
-  async createVendorCheckoutSession(payload: VendorCheckoutSessionPayload) {
+  async createVendorCheckoutSession(payload: VendorCheckoutSessionDTO) {
     const stripe = await loadStripe(this.publishableKey);
     const checkoutSession = await axios.post('/api/create-stripe-session', payload);
     if (!stripe) {
