@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { stripeInteractor } from '../../infra/StripeInteractor';
 import { Vendor } from '../../domain/Vendor';
-import { VendorCheckoutSessionPayload } from '../../types';
+import { VendorCheckoutSessionDTO } from '../../types';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { item, vendor: _vendorDTO } = req.body as VendorCheckoutSessionPayload;
+  const { item, vendor: _vendorDTO } = req.body as VendorCheckoutSessionDTO;
 
   const vendor = new Vendor(_vendorDTO.email, _vendorDTO.companyName, _vendorDTO.companyTelephone);
 
