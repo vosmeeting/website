@@ -102,8 +102,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     );
 
     res.status(200).json({ id: checkoutSession.id, reservationId: reservation.id });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Could not create the session' });
+  } catch (e) {
+    const error = e as Error;
+    res.status(500).json({ message: error.message });
   }
 };

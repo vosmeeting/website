@@ -153,7 +153,7 @@ export function Register({ data }: Props) {
         console.error(e);
       }
       if (remoteErrors.length > 0) {
-        setRemoteErrors([remoteErrors].map((e) => new Error('there was some network issue')));
+        setRemoteErrors(remoteErrors.map((e) => new Error(e.message)));
         return { status: 'fail', errors: remoteErrors };
       }
 
