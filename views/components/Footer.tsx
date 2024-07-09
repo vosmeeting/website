@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import logo from '../../assets/vosm_logo.png';
+import { logo } from '../../assets';
 
 export default function Footer() {
   return (
