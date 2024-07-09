@@ -2,9 +2,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import bg from './header_bg.png';
-import logo from '../../../assets/vosm_logo.png';
 import Button from '../Buttons';
 import styles from './Header.module.scss';
+import { logo } from '../../../assets';
 
 type Props = {
   ctaConfig?: {
