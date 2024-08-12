@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const landingPageConfig = appConfig.ff.registration
     ? { copy: 'Register', disabled: false }
-    : { copy: 'Registration Opening Soon', disabled: true };
+    : { copy: 'Registration Closed', disabled: true };
 
   const homePage = router.pathname === '/';
   return (
