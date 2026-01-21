@@ -13,7 +13,7 @@ export const PaymentFailed: NextPage = () => {
         <title>Veterinary Opthalmic Surgery Meeting</title>
         <meta
           name="description"
-          content="We are excited to announce the 3rd Veterinary Ophthalmic Surgery Meeting. This long awaited event will be an innovative meeting, with a dynamic format developed to encourage a candid debate among Veterinary Ophthalmologists with interests in Surgery."
+          content="We are excited to announce the 6th Veterinary Ophthalmic Surgery Meeting. This long awaited event will be an innovative meeting, with a dynamic format developed to encourage a candid debate among Veterinary Ophthalmologists with interests in Surgery."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
