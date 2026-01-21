@@ -120,8 +120,8 @@ export function Vendor() {
   return (
     <Page
       title="Application	for	Commercial	Exhibits and	Sponsorship"
-      subtitle={`5th Veterinary	Ophthalmic	Surgery	Meeting	&bull; ${appConfig.willHeld}`}
-      additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
+      subtitle={`6th Veterinary	Ophthalmic	Surgery	Meeting	&bull; ${appConfig.willHeld}`}
+      additionalMetadata="Courtyard by Marriott London Heathrow Airport,	Harlington,	UK"
       narrowWidth
     >
       <Card title="Company Contact Information" sectioned>
