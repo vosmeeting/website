@@ -8,7 +8,7 @@ export type RegistrationType = {
 };
 
 export const appConfig = {
-  willHeld: 'Jul 19-21, 2024',
+  willHeld: 'Jul 17-19, 2026',
   registrationTypes,
   defaultRegistrationType: registrationTypes[0],
   paymentWindowMinutes: 30,
