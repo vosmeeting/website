@@ -35,10 +35,10 @@ export const Header = ({ ctaConfig }: Props) => {
         <div className="text-center font-normal text-slate-50 sm:text-left">
           <p className="text-xl">We are excited to announce</p>
           <h1 className=" text-xl font-semibold sm:text-4xl">
-            5th Veterinary Ophthalmic Surgery Meeting
+            6th Veterinary Ophthalmic Surgery Meeting
           </h1>
           <p className="font-sans text-xl font-normal">
-            July 19-21<sup>st</sup> 2024, Chicago, IL
+            July 17-19<sup>th</sup> 2026, London, UK
           </p>
         </div>
       </div>

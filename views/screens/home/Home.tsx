@@ -19,7 +19,7 @@ export const Home: NextPage = () => {
         <title>Veterinary Opthalmic Surgery Meeting</title>
         <meta
           name="description"
-          content="We are excited to announce the 3rd Veterinary Ophthalmic Surgery Meeting. This long awaited event will be an innovative meeting, with a dynamic format developed to encourage a candid debate among Veterinary Ophthalmologists with interests in Surgery."
+          content="We are excited to announce the 6th Veterinary Ophthalmic Surgery Meeting. This long awaited event will be an innovative meeting, with a dynamic format developed to encourage a candid debate among Veterinary Ophthalmologists with interests in Surgery."
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -29,14 +29,14 @@ export const Home: NextPage = () => {
           <div className="sm:text-justify">
             <Title className="leading-normal">The Conference</Title>
             <P>
-              We are excited to announce the <b>5th</b> Veterinary Ophthalmic Surgery Meeting. This
+              We are excited to announce the <b>6th</b> Veterinary Ophthalmic Surgery Meeting. This
               long awaited event will be an innovative meeting, with a dynamic format developed to
               encourage a candid debate among Veterinary Ophthalmologists with interests in Surgery.
             </P>
             <br />
             <P>
-              This is a limited-space event that will take place on July 19-21
-              <sup>st</sup>, 2024 in Chicago, IL.
+              This is a limited-space event that will take place on July 17-19
+              <sup>th</sup>, 2026 in London, UK.
             </P>
             <br />
             <P>
@@ -69,7 +69,7 @@ export const Home: NextPage = () => {
             </Swiper>
           </div>
         </section>
-
+{/* 
         <section className="grid grid-cols-1 gap-x-12 text-center sm:grid-cols-2 sm:text-left">
           <Title className="col-span-full font-normal">Location</Title>
 
@@ -127,7 +127,7 @@ export const Home: NextPage = () => {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
         {appConfig.ff.sponsors && (
           <section className="flex flex-col gap-y-6 sm:gap-y-12">
             <Title className="text-center sm:text-left">2022 Sponsors</Title>

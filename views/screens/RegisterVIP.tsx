@@ -164,8 +164,8 @@ export function RegisterPrivate() {
   return (
     <Page
       title={`Participant Registration`}
-      subtitle={'5th Veterinary	Ophthalmic	Surgery	Meeting • ' + `${appConfig.willHeld}`}
-      additionalMetadata="Hyatt	Regency	O’Hare,	Rosemont,	IL"
+      subtitle={'6th Veterinary	Ophthalmic	Surgery	Meeting • ' + `${appConfig.willHeld}`}
+      additionalMetadata="Courtyard by Marriott London Heathrow Airport, Harlington, UK"
       titleMetadata={
         <Badge size="small" status="attention">
           <span className="flex items-center gap-x-1">
@@ -301,7 +301,7 @@ export function RegisterPrivate() {
           </Card>
         </Layout.Section>
         <Layout.Section>
-          <Heading>Cancellation Policy for VOSM 2024:</Heading>
+          <Heading>Cancellation Policy for VOSM 2026:</Heading>
           <p className="italic">
             Cancellations received by May 22nd will receive a full refund less a 10% administrative
             fee. Cancellations received by Jun 22nd will receive a 50% refund. No cancellations will
